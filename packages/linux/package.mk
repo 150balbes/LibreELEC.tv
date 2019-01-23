@@ -185,6 +185,12 @@ pre_make_target() {
 }
 
 make_target() {
+
+  if [ "$PROJECT" = "Amlogic" ]; then
+    cp -rL $(get_build_dir media_tree_aml)/drivers/media/platform/meson/dvb $PKG_BUILD/drivers/media/platform/meson/
+    echo "obj-y += dvb/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
+  fi 
+
   kernel_make modules
   kernel_make INSTALL_MOD_PATH=$INSTALL/$(get_kernel_overlay_dir) modules_install
   rm -f $INSTALL/$(get_kernel_overlay_dir)/lib/modules/*/build

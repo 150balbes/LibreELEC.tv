@@ -23,4 +23,12 @@ unpack() {
   rm -rf $PKG_BUILD/drivers/staging/media/atomisp
   sed -i 's|^.*drivers/staging/media/atomisp.*$||' \
     $PKG_BUILD/drivers/staging/media/Kconfig
+  if [ "$PROJECT" = "Amlogic" ]; then
+    cp -rL $(get_build_dir linux)/drivers/media/platform/meson/vdec $PKG_BUILD/drivers/media/platform/meson/
+    cp -rL $(get_build_dir media_tree_aml)/drivers/media/platform/meson/dvb $PKG_BUILD/drivers/media/platform/meson/
+    rm $PKG_BUILD/drivers/media/platform/qcom/venus/*.c
+    rm $PKG_BUILD/drivers/media/platform/qcom/venus/*.h
+    echo "obj-y += dvb/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
+    echo "obj-y += vdec/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
+  fi
 }

@@ -1,0 +1,134 @@
+commit ecf55f3410f80999ed47aa1f8319750a8e6d10d8
+Author: Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Sun Oct 21 15:14:49 2018 +0200
+
+    media: videodev2.h: Add Amlogic compressed format
+    
+    Add V4L2_PIX_FMT_AM21C which is a lossless, compressed framebuffer
+    format.
+    
+    It is used by the video decoding and the display IP on many Amlogic
+    SoCs.
+
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 54afc9c7ee6e..7b1834f4a62d 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1338,11 +1337,12 @@
+ 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
+ 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
+ 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
+ 		case V4L2_PIX_FMT_SUNXI_TILED_NV12: descr = "Sunxi Tiled NV12 Format"; break;
++		case V4L2_PIX_FMT_AM21C:	descr = "Amlogic Compressed Format"; break;
+ 		default:
++			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+ 			if (fmt->description[0])
+ 				return;
+-			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+ 			flags = 0;
+ 			snprintf(fmt->description, sz, "%c%c%c%c%s",
+ 					(char)(fmt->pixelformat & 0x7f),
+@@ -2705,6 +2680,45 @@
+ 	return v4l2_ioctls[_IOC_NR(cmd)].ioctl == cmd;
+ }
+ 
++#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
++static bool v4l2_ioctl_m2m_queue_is_output(unsigned int cmd, void *arg)
++{
++	switch (cmd) {
++	case VIDIOC_CREATE_BUFS: {
++		struct v4l2_create_buffers *cbufs = arg;
++
++		return V4L2_TYPE_IS_OUTPUT(cbufs->format.type);
++	}
++	case VIDIOC_REQBUFS: {
++		struct v4l2_requestbuffers *rbufs = arg;
++
++		return V4L2_TYPE_IS_OUTPUT(rbufs->type);
++	}
++	case VIDIOC_QBUF:
++	case VIDIOC_DQBUF:
++	case VIDIOC_QUERYBUF:
++	case VIDIOC_PREPARE_BUF: {
++		struct v4l2_buffer *buf = arg;
++
++		return V4L2_TYPE_IS_OUTPUT(buf->type);
++	}
++	case VIDIOC_EXPBUF: {
++		struct v4l2_exportbuffer *expbuf = arg;
++
++		return V4L2_TYPE_IS_OUTPUT(expbuf->type);
++	}
++	case VIDIOC_STREAMON:
++	case VIDIOC_STREAMOFF: {
++		int *type = arg;
++
++		return V4L2_TYPE_IS_OUTPUT(*type);
++	}
++	default:
++		return false;
++	}
++}
++#endif
++
+ static struct mutex *v4l2_ioctl_get_lock(struct video_device *vdev,
+ 					 struct v4l2_fh *vfh, unsigned int cmd,
+ 					 void *arg)
+@@ -2714,8 +2728,12 @@
+ #if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+ 	if (vfh && vfh->m2m_ctx &&
+ 	    (v4l2_ioctls[_IOC_NR(cmd)].flags & INFO_FL_QUEUE)) {
+-		if (vfh->m2m_ctx->q_lock)
+-			return vfh->m2m_ctx->q_lock;
++		bool is_output = v4l2_ioctl_m2m_queue_is_output(cmd, arg);
++		struct v4l2_m2m_queue_ctx *ctx = is_output ?
++			&vfh->m2m_ctx->out_q_ctx : &vfh->m2m_ctx->cap_q_ctx;
++
++		if (ctx->q.lock)
++			return ctx->q.lock;
+ 	}
+ #endif
+ 	if (vdev->queue && vdev->queue->lock &&--- a/include/media/v4l2-ioctl.h	2019-01-13 09:24:10.000000000 +0100
++++ b/include/media/v4l2-ioctl.h	2019-01-21 20:34:45.227729000 +0100
+@@ -487,6 +487,12 @@
+ 	int (*vidioc_s_modulator)(struct file *file, void *fh,
+ 				  const struct v4l2_modulator *a);
+ 	/* Crop ioctls */
++	int (*vidioc_cropcap)(struct file *file, void *fh,
++			      struct v4l2_cropcap *a);
++	int (*vidioc_g_crop)(struct file *file, void *fh,
++			     struct v4l2_crop *a);
++	int (*vidioc_s_crop)(struct file *file, void *fh,
++			     const struct v4l2_crop *a);
+ 	int (*vidioc_g_pixelaspect)(struct file *file, void *fh,
+ 				    int buf_type, struct v4l2_fract *aspect);
+ 	int (*vidioc_g_selection)(struct file *file, void *fh,
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index aa90a9a7edaf..a28acee1cb52 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -675,6 +675,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_Y12I     v4l2_fourcc('Y', '1', '2', 'I') /* Greyscale 12-bit L/R interleaved */
+ #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
+ #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
++#define V4L2_PIX_FMT_AM21C    v4l2_fourcc('A', 'M', '2', '1') /* Amlogic compressed block mode  */
+ #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
+ 
+ 
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 5d1a3685bea9..aa90a9a7edaf 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -722,8 +722,9 @@ struct v4l2_fmtdesc {
+ 	__u32		    reserved[4];
+ };
+ 
+-#define V4L2_FMT_FLAG_COMPRESSED 0x0001
+-#define V4L2_FMT_FLAG_EMULATED   0x0002
++#define V4L2_FMT_FLAG_COMPRESSED	0x0001
++#define V4L2_FMT_FLAG_EMULATED		0x0002
++#define V4L2_FMT_FLAG_NO_SOURCE_CHANGE	0x0004
+ 
+ 	/* Frame Size and frame rate enumeration */
+ /*
+
