@@ -96,7 +96,6 @@ if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
 fi
 
 post_patch() {
-pwd
   if [ "$PROJECT" = "Amlogic" ]; then
     cp -rL $(get_build_dir media_tree_aml)/drivers/media/platform/meson/dvb $PKG_BUILD/drivers/media/platform/meson/
     echo "obj-y += dvb/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
