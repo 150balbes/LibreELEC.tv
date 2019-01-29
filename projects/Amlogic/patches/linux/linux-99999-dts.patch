@@ -1,6 +1,6 @@
-commit 1a6338b686b7f3f61a4015666d6630023c978a08
+commit 3f81fea20eb0165c61878e96c7de122c746a6fce
 Author: afl1 <afl2001@gmail.com>
-Date:   Tue Jan 29 08:48:55 2019 +0100
+Date:   Tue Jan 29 22:07:34 2019 +0100
 
     dts
 
@@ -322,7 +322,7 @@ index 000000000000..b105f2935071
 +
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts
 new file mode 100644
-index 000000000000..69e031371fed
+index 000000000000..5b4e71560734
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts
 @@ -0,0 +1,22 @@
@@ -368,7 +368,7 @@ index bfd65d1a8959..81bcd9857b66 100644
  			mux {
  				groups = "eth_mdio",
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 313f88f8759e..139e0fefcf7a 100644
+index 313f88f8759e..166ec11f6cee 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 @@ -196,6 +196,58 @@
@@ -389,7 +389,7 @@ index 313f88f8759e..139e0fefcf7a 100644
 +		ts0 = "serial";
 +		ts0_control = <0>;
 +		ts0_invert = <0>;
-+		dtv_demod0_i2c_adap_id = <0>;
++		dtv_demod0_i2c_adap_id = <1>;
 +		pinctrl-0 = <&dvb_s_ts0_pins>;
 +		pinctrl-1 = <&dvb_s_ts1_pins>;
 +		pinctrl-names = "s_ts0", "s_ts1";
