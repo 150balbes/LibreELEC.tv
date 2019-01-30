@@ -1,11 +1,11 @@
-commit 4ca74ed47eef746a99bba358a7839c79d11f4647
+commit 3f81fea20eb0165c61878e96c7de122c746a6fce
 Author: afl1 <afl2001@gmail.com>
-Date:   Sun Jan 20 13:09:34 2019 +0100
+Date:   Tue Jan 29 22:07:34 2019 +0100
 
-    dts: internal dvb driver
+    dts
 
 diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index a97c0e2d7bc6..de934d915804 100644
+index a97c0e2d7bc6..c67e4ddc36ab 100644
 --- a/arch/arm64/boot/dts/amlogic/Makefile
 +++ b/arch/arm64/boot/dts/amlogic/Makefile
 @@ -10,6 +10,8 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-vega-s95-meta.dtb
@@ -17,7 +17,7 @@ index a97c0e2d7bc6..de934d915804 100644
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-hwacom-amazetv.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-khadas-vim.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc.dtb
-@@ -17,6 +19,11 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
+@@ -17,9 +19,17 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
@@ -25,17 +25,23 @@ index a97c0e2d7bc6..de934d915804 100644
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-ki-plus.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-kii-pro.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-m8s-dvb.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-c300-pro.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-c300.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-c300-pro.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-c400-pro.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-gxm-s912-kiii-pro.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-khadas-vim2.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-nexbox-a1.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-ki-plus.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-ki-plus.dts
 new file mode 100644
-index 000000000000..199ad9318485
+index 000000000000..aa2968791ad1
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-ki-plus.dts
 @@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
 +/*
 + * Author: afl1 <afl2001@gmail.com>
 + */
@@ -51,65 +57,31 @@ index 000000000000..199ad9318485
 +};
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts
 new file mode 100644
-index 000000000000..b54188bf44a8
+index 000000000000..229301cbcd5b
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
 +/*
 + * Author: afl1 <afl2001@gmail.com>
 + */
 +
 +#include "meson-gxbb-p201.dts"
++#include "meson-gxl-dvb.dtsi"
 +/ {
 +	model = "MeCool KII Pro";
 +
-+	dvb {
-+		compatible = "amlogic,dvb";
-+		reg = <0x0 0xc1108c40 0x0 0x20>,
-+		      <0x0 0xc1105800 0x0 0x3c0>;
-+		reg-names = "afifo", "stbtop";
-+		dev_name = "avl6862";
-+		status = "okay";
-+		fec_reset_gpio-gpios0 = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
-+		power_ctrl_gpio-gpios0 = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
-+		//"parallel","serial","disable"
-+		ts0 = "parallel";
-+		ts0_control = <0>;
-+		ts0_invert = <0>;
-+		dtv_demod0_i2c_adap_id = <0>;
-+		pinctrl-0 = <&dvb_p_ts0_pins>;
-+		pinctrl-1 = <&dvb_s_ts0_pins>;
-+		pinctrl-names = "p_ts0", "s_ts0";
-+		clocks = <&clkc CLKID_DEMUX>,
-+			 <&clkc CLKID_ASYNC_FIFO>,
-+			 <&clkc CLKID_AHB_ARB0>,
-+			 <&clkc CLKID_DOS_PARSER>;
-+		clock-names = "demux", "asyncfifo", "ahbarb0", "uparsertop";
-+		resets = <&reset RESET_PERIPHS_ASYNC_0>,
-+			 <&reset RESET_DEMUX>,
-+			 <&reset RESET_DEMUX_RESET_0>;
-+		reset-names = "async0", "demux", "demuxreset0";
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_EDGE_RISING>,
-+			     <GIC_SPI 19 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "demux0", "asyncfifo0";
++	clock: meson_clock {
++		compatible = "amlogic, gxbb-clock";
++		reg = <0x0 0xc883c000 0x0 0x1000>,   /* HIU BUS*/
++		          <0x0 0xc8100000 0x0 0x1000>;   //AOBUS
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		sys_max = <1536000000>;
 +	};
-+};
-+
-+&periphs {
-+	pinctrl_periphs:pinctrl@4b0 {
-+		dvb_p_ts0_pins: dvb_p_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0", "tsin_a_dp";
-+				function = "tsin_a";
-+			};
-+		};
-+		dvb_s_ts0_pins: dvb_s_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0"; 
-+				function = "tsin_a";
-+			};
-+		};
++	dvb {
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +
@@ -120,19 +92,23 @@ index 000000000000..b54188bf44a8
 +	pinctrl-names = "default";
 +};
 +
++&usb_pwr {
++		gpio = <>;
++};
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-index 0038522315de..8fa8bddf1099 100644
+index 0038522315de..63eb1a9760a4 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-@@ -8,7 +8,6 @@
+@@ -8,7 +8,7 @@
  
  #include "meson-gxbb-wetek.dtsi"
  #include <dt-bindings/input/input.h>
 -
++#include "meson-gxl-dvb.dtsi"
  / {
  	compatible = "wetek,play2", "amlogic,meson-gxbb";
  	model = "WeTek Play 2";
-@@ -39,10 +38,66 @@
+@@ -39,10 +39,24 @@
  			gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_LOW>;
  		};
  	};
@@ -145,51 +121,9 @@ index 0038522315de..8fa8bddf1099 100644
 +		sys_max = <1536000000>;
 +	};
 +	dvb {
-+		compatible = "amlogic,dvb";
-+		reg = <0x0 0xc1108c40 0x0 0x20>,
-+		      <0x0 0xc1105800 0x0 0x3c0>;
-+		reg-names = "afifo", "stbtop";
 +		dev_name = "wetek-dvb";
-+		status = "okay";
-+		fec_reset_gpio-gpios0 = <&gpio GPIOY_13 GPIO_ACTIVE_HIGH>;
-+		power_ctrl_gpio-gpios0 = <&gpio GPIOY_15 GPIO_ACTIVE_LOW>;
-+		//"parallel","serial","disable"
-+		ts0 = "parallel";
-+		ts0_control = <0>;
-+		ts0_invert = <0>;
-+		dtv_demod0_i2c_adap_id = <0>;
-+		pinctrl-0 = <&dvb_p_ts0_pins>;
-+		pinctrl-1 = <&dvb_s_ts0_pins>;
-+		pinctrl-names = "p_ts0", "s_ts0";
-+		clocks = <&clkc CLKID_DEMUX>,
-+			 <&clkc CLKID_ASYNC_FIFO>,
-+			 <&clkc CLKID_AHB_ARB0>,
-+			 <&clkc CLKID_DOS_PARSER>;
-+		clock-names = "demux", "asyncfifo", "ahbarb0", "uparsertop";
-+		resets = <&reset RESET_PERIPHS_ASYNC_0>,
-+			 <&reset RESET_DEMUX>,
-+			 <&reset RESET_DEMUX_RESET_0>;
-+		reset-names = "async0", "demux", "demuxreset0";
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_EDGE_RISING>,
-+			     <GIC_SPI 19 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "demux0", "asyncfifo0";
-+	};
-+};
-+
-+&periphs {
-+	pinctrl_periphs:pinctrl@4b0 {
-+		dvb_p_ts0_pins: dvb_p_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0", "tsin_a_dp";
-+				function = "tsin_a";
-+			};
-+		};
-+		dvb_s_ts0_pins: dvb_s_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0"; 
-+				function = "tsin_a";
-+			};
-+		};
++		fec_reset_gpio-gpios = <&gpio GPIOY_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIOY_15 GPIO_ACTIVE_LOW>;
 +	};
  };
  
@@ -199,7 +133,7 @@ index 0038522315de..8fa8bddf1099 100644
  	pinctrl-0 = <&i2c_a_pins>;
  	pinctrl-names = "default";
  };
-@@ -54,3 +109,7 @@
+@@ -54,3 +68,7 @@
  &usb1 {
  	status = "okay";
  };
@@ -207,65 +141,18 @@ index 0038522315de..8fa8bddf1099 100644
 +&usb_pwr {
 +		gpio = <>;
 +};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300-pro.dts
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-dvb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-dvb.dtsi
 new file mode 100644
-index 000000000000..c53749969305
+index 000000000000..81eeca579678
 --- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300-pro.dts
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-dvb.dtsi
+@@ -0,0 +1,54 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
 +/*
 + * Author: afl1 <afl2001@gmail.com>
 + */
 +
-+#include "meson-gxl-s905d-ki-plus.dts"
 +/ {
-+	model = "Magicsee C300 PRO DVB-T2/S2/C";
-+
-+	dvb {
-+		dev_name = "avl6762";
-+		fec_reset_gpio-gpios0 = <&gpio GPIOZ_2 GPIO_ACTIVE_HIGH>;
-+		power_ctrl_gpio-gpios0 = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+&i2c_C {
-+	status = "okay";
-+	clock-frequency = <300000>;
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts
-new file mode 100644
-index 000000000000..aeb2103dad19
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Author: afl1 <afl2001@gmail.com>
-+ */
-+
-+#include "meson-gxl-s905d-kii-pro.dts"
-+/ {
-+	model = "MeCool KI Plus";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x40000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts
-new file mode 100644
-index 000000000000..2edc2fbec9c9
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Author: afl1 <afl2001@gmail.com>
-+ */
-+
-+#include "meson-gxl-s905d-p230.dts"
-+/ {
-+	model = "MeCool KI Pro (S905D)";
 +
 +	dvb {
 +		compatible = "amlogic,dvb";
@@ -274,8 +161,6 @@ index 000000000000..2edc2fbec9c9
 +		reg-names = "afifo", "stbtop";
 +		dev_name = "avl6862";
 +		status = "okay";
-+		fec_reset_gpio-gpios0 = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
-+		power_ctrl_gpio-gpios0 = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
 +		//"parallel","serial","disable"
 +		ts0 = "parallel";
 +		ts0_control = <0>;
@@ -309,10 +194,93 @@ index 000000000000..2edc2fbec9c9
 +		};
 +		dvb_s_ts0_pins: dvb_s_ts0 {
 +			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0"; 
++				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0";
 +				function = "tsin_a";
 +			};
 +		};
++	};
++};
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300.dts
+new file mode 100644
+index 000000000000..f889cb3c4590
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-c300.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxl-s905d-p231.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "Magicsee C300 DVB-T2/S2/C";
++
++	dvb {
++		dev_name = "magicsee";
++		fec_reset_gpio-gpios = <&gpio GPIOZ_2 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;
++	};
++};
++&i2c_C {
++	status = "okay";
++	pinctrl-0 = <&i2c_c1_pins>;
++	pinctrl-names = "default";
++};
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts
+new file mode 100644
+index 000000000000..8d3be2ce3b10
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-plus.dts
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxl-s905d-p231.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "MeCool KI Plus (s905D)";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0x40000000>;
++	};
++	dvb {
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&i2c_B {
++	status = "okay";
++	clock-frequency = <300000>;
++	pinctrl-0 = <&i2c_b_pins>;
++	pinctrl-names = "default";
++};
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts
+new file mode 100644
+index 000000000000..4fb75db2bdae
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-ki-pro.dts
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxl-s905d-p230.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "MeCool KI Pro (S905D)";
++
++	dvb {
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +
@@ -325,65 +293,23 @@ index 000000000000..2edc2fbec9c9
 +
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-kii-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-kii-pro.dts
 new file mode 100644
-index 000000000000..74a19fb8f4bd
+index 000000000000..b105f2935071
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-kii-pro.dts
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
 +/*
 + * Author: afl1 <afl2001@gmail.com>
 + */
 +
 +#include "meson-gxl-s905d-p231.dts"
++#include "meson-gxl-dvb.dtsi"
 +/ {
-+	model = "MeCool KII Pro (S905D)";
++	model = "MeCool KII Pro (s905D)";
 +
 +	dvb {
-+		compatible = "amlogic,dvb";
-+		reg = <0x0 0xc1108c40 0x0 0x20>,
-+		      <0x0 0xc1105800 0x0 0x3c0>;
-+		reg-names = "afifo", "stbtop";
-+		dev_name = "avl6862";
-+		status = "okay";
-+		fec_reset_gpio-gpios0 = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
-+		power_ctrl_gpio-gpios0 = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
-+		//"parallel","serial","disable"
-+		ts0 = "parallel";
-+		ts0_control = <0>;
-+		ts0_invert = <0>;
-+		dtv_demod0_i2c_adap_id = <0>;
-+		pinctrl-0 = <&dvb_p_ts0_pins>;
-+		pinctrl-1 = <&dvb_s_ts0_pins>;
-+		pinctrl-names = "p_ts0", "s_ts0";
-+		clocks = <&clkc CLKID_DEMUX>,
-+			 <&clkc CLKID_ASYNC_FIFO>,
-+			 <&clkc CLKID_AHB_ARB0>,
-+			 <&clkc CLKID_DOS_PARSER>;
-+		clock-names = "demux", "asyncfifo", "ahbarb0", "uparsertop";
-+		resets = <&reset RESET_PERIPHS_ASYNC_0>,
-+			 <&reset RESET_DEMUX>,
-+			 <&reset RESET_DEMUX_RESET_0>;
-+		reset-names = "async0", "demux", "demuxreset0";
-+		interrupts = <GIC_SPI 23 IRQ_TYPE_EDGE_RISING>,
-+			     <GIC_SPI 19 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "demux0", "asyncfifo0";
-+	};
-+};
-+
-+&periphs {
-+	pinctrl_periphs:pinctrl@4b0 {
-+		dvb_p_ts0_pins: dvb_p_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0", "tsin_a_dp";
-+				function = "tsin_a";
-+			};
-+		};
-+		dvb_s_ts0_pins: dvb_s_ts0 {
-+			mux {
-+				groups = "tsin_a_d_valid", "tsin_a_sop", "tsin_a_clk", "tsin_a_d0"; 
-+				function = "tsin_a";
-+			};
-+		};
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +
@@ -393,27 +319,56 @@ index 000000000000..74a19fb8f4bd
 +	pinctrl-0 = <&i2c_b_pins>;
 +	pinctrl-names = "default";
 +};
++
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts
 new file mode 100644
-index 000000000000..cf0455cf6e61
+index 000000000000..5b4e71560734
 --- /dev/null
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-m8s-dvb.dts
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
 +/*
 + * Author: afl1 <afl2001@gmail.com>
 + */
 +
-+#include "meson-gxl-s905d-ki-plus.dts"
++#include "meson-gxl-s905d-p231.dts"
++#include "meson-gxl-dvb.dtsi"
 +/ {
 +	model = "MeCool M8S Plus DVB-T2/T";
 +
 +	dvb {
 +		dev_name = "avl6762";
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios0 = <&gpio GPIODV_15 GPIO_ACTIVE_LOW>;
 +	};
 +};
++
++&i2c_B {
++	status = "okay";
++	pinctrl-0 = <&i2c_b_pins>;
++	pinctrl-names = "default";
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index bfd65d1a8959..81bcd9857b66 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -478,6 +478,14 @@
+ 			};
+ 		};
+ 
++		i2c_c1_pins: i2c_c1 {
++			mux {
++				groups = "i2c_sck_c_dv19",
++				      "i2c_sda_c_dv18";
++				function = "i2c_c";
++			};
++		};
++
+ 		eth_pins: eth_c {
+ 			mux {
+ 				groups = "eth_mdio",
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 313f88f8759e..139e0fefcf7a 100644
+index 313f88f8759e..166ec11f6cee 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 @@ -196,6 +196,58 @@
@@ -434,7 +389,7 @@ index 313f88f8759e..139e0fefcf7a 100644
 +		ts0 = "serial";
 +		ts0_control = <0>;
 +		ts0_invert = <0>;
-+		dtv_demod0_i2c_adap_id = <0>;
++		dtv_demod0_i2c_adap_id = <1>;
 +		pinctrl-0 = <&dvb_s_ts0_pins>;
 +		pinctrl-1 = <&dvb_s_ts1_pins>;
 +		pinctrl-names = "s_ts0", "s_ts1";
@@ -483,3 +438,96 @@ index 313f88f8759e..139e0fefcf7a 100644
  
  	rtc: rtc@51 {
  		/* has to be enabled manually when a battery is connected: */
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c300-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c300-pro.dts
+new file mode 100644
+index 000000000000..dae85e0d33fd
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c300-pro.dts
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxm-q201.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "Magicsee C300 PRO DVB-T2/S2/C";
++
++	dvb {
++		dev_name = "magicsee";
++		fec_reset_gpio-gpios = <&gpio GPIOZ_2 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;
++	};
++};
++&i2c_C {
++	status = "okay";
++	pinctrl-0 = <&i2c_c1_pins>;
++	pinctrl-names = "default";
++};
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c400-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c400-pro.dts
+new file mode 100644
+index 000000000000..16332725445d
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-c400-pro.dts
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxm-q201.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "Magicsee C400 PRO DVB-T2/S2/C";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0xC0000000>;
++	};
++	dvb {
++		dev_name = "magicsee";
++		fec_reset_gpio-gpios = <&gpio GPIOZ_2 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio_ao GPIOAO_6 GPIO_ACTIVE_LOW>;
++	};
++};
++&i2c_C {
++	status = "okay";
++	pinctrl-0 = <&i2c_c1_pins>;
++	pinctrl-names = "default";
++};
++
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-s912-kiii-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-kiii-pro.dts
+new file mode 100644
+index 000000000000..893e7c37001d
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-s912-kiii-pro.dts
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: (GPL-3.0+ OR MIT)
++/*
++ * Author: afl1 <afl2001@gmail.com>
++ */
++
++#include "meson-gxm-q200.dts"
++#include "meson-gxl-dvb.dtsi"
++/ {
++	model = "MeCool KIII Pro";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0xC0000000>;
++	};
++	dvb {
++		fec_reset_gpio-gpios = <&gpio GPIODV_13 GPIO_ACTIVE_HIGH>;
++		power_ctrl_gpio-gpios = <&gpio GPIODV_11 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&i2c_B {
++	status = "okay";
++	clock-frequency = <300000>;
++	pinctrl-0 = <&i2c_b_pins>;
++	pinctrl-names = "default";
++};
++
