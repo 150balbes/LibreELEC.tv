@@ -50,8 +50,7 @@ case "$LINUX" in
     PKG_SHA256=""
     PKG_URL="https://github.com/torvalds/linux/archive/$PKG_VERSION.tar.gz"
     PKG_SOURCE_DIR="$PKG_NAME-$PKG_VERSION*"
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET u-boot-tools-aml:host media_tree_aml"
-    PKG_NEED_UNPACK="$PKG_NEED_UNPACK media_tree_aml"
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET u-boot-tools-aml:host"
     PKG_PATCH_DIRS="default"
     ;;
   rockchip-4.4)
@@ -75,6 +74,13 @@ case "$LINUX" in
 esac
 
 PKG_KERNEL_CFG_FILE=$(kernel_config_path)
+
+configure_package() {
+  if [ "$PROJECT" = "Amlogic" ]; then
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET media_tree_aml"
+    PKG_NEED_UNPACK="$PKG_NEED_UNPACK media_tree_aml"
+  fi
+}
 
 if [ -n "$KERNEL_LINARO_TOOLCHAIN" ]; then
   PKG_DEPENDS_HOST="$PKG_DEPENDS_HOST gcc-linaro-$KERNEL_LINARO_TOOLCHAIN:host"
