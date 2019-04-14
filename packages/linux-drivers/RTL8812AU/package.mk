@@ -3,11 +3,11 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="RTL8812AU"
-PKG_VERSION="7c257daf52d0aac298c13135bd3ff5f388edc72b"
-PKG_SHA256="88eaed2f0b394a36f806f02bd245e7bd181e2aaafc2b7ff4521f4adb2fa6dc29"
+PKG_VERSION="4c63f21cd7f585421a0f4ab16af8112b25485bae"
+PKG_SHA256="a6da88db05a8a381bc64428a950c3749ad261a90eec05f5c57dfb9358ea56ff8"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/MilhouseVH/RTL8812AU"
-PKG_URL="https://github.com/MilhouseVH/RTL8812AU/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/aircrack-ng/rtl8812au"
+PKG_URL="https://github.com/aircrack-ng/rtl8812au/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_LONGDESC="Realtek RTL8812AU Linux 3.x driver"
