@@ -30,5 +30,6 @@ unpack() {
     rm $PKG_BUILD/drivers/media/platform/qcom/venus/*.h
     echo "obj-y += dvb/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
     echo "obj-y += vdec/" >> "$PKG_BUILD/drivers/media/platform/meson/Makefile"
+    echo 'source "drivers/media/platform/meson/dvb/Kconfig"' >>  "$PKG_BUILD/drivers/media/platform/Kconfig"
   fi
 }
