@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 PKG_NAME="media_tree_aml"
-PKG_VERSION="10bbdcd4a7064037d7162609adbc59d728257994"
-PKG_SHA256="3d027b3ab59d81c2d559c86140af9bb64aba03f5327cbc7282180c0005056de8"
+PKG_VERSION="bbd47b0a4e654b4702260b7c57caab25ee42fdf1"
+PKG_SHA256="043dd59ca0e7eb936a9c2a73239cc26e7b265ecb56708f029886caabd6c44b32"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/CoreELEC"
 PKG_URL="https://github.com/CoreELEC/media_tree_aml/archive/${PKG_VERSION}.tar.gz"

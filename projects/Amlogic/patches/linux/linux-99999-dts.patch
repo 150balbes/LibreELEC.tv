@@ -14,10 +14,10 @@ index a97c0e2d7bc6..eb525e2b4b7d 100644
  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-wetek-play2.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-ki-plus.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-kii-pro.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-libretech-ac.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-hwacom-amazetv.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-khadas-vim.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-libretech-cc.dtb
-@@ -17,10 +19,19 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
+@@ -17,12 +19,21 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
@@ -26,6 +26,8 @@ index a97c0e2d7bc6..eb525e2b4b7d 100644
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-kii-pro.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-m8s-dvb.dtb
 +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-c300.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-smartlabs-sml5442tw.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
