@@ -27,6 +27,16 @@ pre_make_target() {
 make_target() {
   cp -RP $(get_build_dir media_tree_cc)/* $PKG_BUILD/linux
 
+  if [ "$PROJECT" = "Amlogic" ]; then
+    cp -rfL $(get_build_dir media_tree_aml)/drivers/media/platform/meson/dvb $PKG_BUILD/linux/drivers/media/platform/meson/
+    rm $PKG_BUILD/linux/drivers/media/platform/qcom/venus/*.c
+    rm $PKG_BUILD/linux/drivers/media/platform/qcom/venus/*.h
+
+    # compile modules
+    echo "obj-y += dvb/" >> "$PKG_BUILD/linux/drivers/media/platform/meson/Makefile"
+    echo 'source "drivers/media/platform/meson/dvb/Kconfig"' >>  "$PKG_BUILD/linux/drivers/media/platform/Kconfig"
+  fi
+
   # make config all
   kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path) allyesconfig
 
