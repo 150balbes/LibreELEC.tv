@@ -8,7 +8,7 @@ FORCE_LIBRETRO_BUMP=""
 KEEP_GIT_DIRS="yes"
 
 usage() {
-  echo "Usage: $0 [options] [<branch>]"
+  echo "Usage: $0 [options] <kodi-branch>"
   echo " -b, --bump-pkg-rev: bump PKG_REV if package was not updated"
   echo " -d, --delete-git-dirs: delete cloned git dirs after update"
   echo " -f, --force-libretro-bump: check for new libretro package"
@@ -46,16 +46,11 @@ while [ $# -ne 0 ]; do
 done
 
 
-if [ $# -gt 1 ]; then
+if [ $# -ne 1 ]; then
   usage
   exit 1
 fi
-if [ $# -eq 0 ]; then
-  KODI_BRANCH="retroplayer"
-  echo "using default branch ${KODI_BRANCH}"
-else
-  KODI_BRANCH="$1"
-fi
+KODI_BRANCH="$1"
 
 # list of packages to exclude from update
 EXCLUDED_PACKAGES="game.libretro.chailove
@@ -120,7 +115,7 @@ for addon in ${ADDONS_DIR}/*.*/ ; do
   CHECK_RETRO=""
 
   git_clone "${GAME_GIT_REPO}" "${GAME_GIT_DIR}"
-  GAME_NEW_VERSION=$(resolve_tag_in_branch "${GAME_GIT_DIR}" "${GAME_GIT_BRANCH}")
+  GAME_NEW_VERSION=$(resolve_tag_in_branch "${GAME_GIT_DIR}" "${GAME_GIT_BRANCH}" "*-${KODI_BRANCH}")
   if [ -z "${GAME_NEW_VERSION}" ]; then
     NO_TAG="yes"
     echo "========================================================================"
@@ -196,6 +191,14 @@ for addon in ${ADDONS_DIR}/*.*/ ; do
   fi
 
   cleanup_pkg_tmp
+done
+
+msg_info "Checking for orphaned addon packages in LE"
+for addon in ${ROOT}/packages/mediacenter/kodi-binary-addons/game.libretro.* ; do
+  GAME_ADDON=$(basename ${addon})
+  if [ ! -d "${ADDONS_DIR}/${GAME_ADDON}" ] ; then
+    msg_warn "ORHPANED ${GAME_ADDON}, not present in kodi game repo"
+  fi
 done
 
 rm -rf "${TMPDIR}"

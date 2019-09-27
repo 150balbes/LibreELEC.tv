@@ -2,34 +2,40 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libmediainfo"
-PKG_VERSION="18.05"
-PKG_SHA256="76759613ca71d5659818e6ed121be9f31c552931b04939b0db4c58bc57cd5221" 
+PKG_VERSION="21.03"
+PKG_SHA256="56b7e9abf80cba48032165cd7a46fd8d43dd63e3af35765f66c3f134caaca4ca"
 PKG_LICENSE="GPL"
-PKG_SITE="http://mediaarea.net/en/MediaInfo/Download/Source"
-PKG_URL="http://mediaarea.net/download/source/libmediainfo/${PKG_VERSION}/libmediainfo_${PKG_VERSION}.tar.xz"
+PKG_SITE="https://mediaarea.net/en/MediaInfo/Download/Source"
+PKG_URL="https://mediaarea.net/download/source/libmediainfo/${PKG_VERSION}/libmediainfo_${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libzen zlib"
+PKG_DEPENDS_CONFIG="libzen"
 PKG_LONGDESC="MediaInfo is a convenient unified display of the most relevant technical and tag data for video and audio files"
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="-sysroot"
 
-make_target() {
+configure_target() {
   cd Project/GNU/Library
   do_autoreconf
   ./configure \
-        --host=$TARGET_NAME \
-        --build=$HOST_NAME \
+        --host=${TARGET_NAME} \
+        --build=${HOST_NAME} \
         --enable-static \
         --disable-shared \
         --prefix=/usr \
         --enable-visibility
+}
+
+make_target() {
   make
 }
 
-post_makeinstall_target() {
-  mkdir -p $SYSROOT_PREFIX/usr/include/MediaInfo
-  cp -aP ../../../Source/MediaInfo/* $SYSROOT_PREFIX/usr/include/MediaInfo
-  for i in Archive Audio Duplicate Export Image Multiple Reader Tag Text Video ; do
-    mkdir -p $SYSROOT_PREFIX/usr/include/MediaInfo/$i/
-    cp -aP ../../../Source/MediaInfo/$i/*.h $SYSROOT_PREFIX/usr/include/MediaInfo/$i/
+makeinstall_target() {
+  mkdir -p ${INSTALL}/usr/include/MediaInfo ${INSTALL}/usr/lib/pkgconfig
+  cp -aP ../../../Source/MediaInfo/*.h ${INSTALL}/usr/include/MediaInfo
+  for i in Archive Audio Duplicate Export Image Multiple Reader Tag Text Video; do
+    mkdir -p ${INSTALL}/usr/include/MediaInfo/${i}/
+    cp -aP ../../../Source/MediaInfo/${i}/*.h ${INSTALL}/usr/include/MediaInfo/${i}/
   done
-  cp -P libmediainfo-config $TOOLCHAIN/bin
+  cp -P .libs/* ${INSTALL}/usr/lib
+  cp -P libmediainfo.pc ${INSTALL}/usr/lib/pkgconfig
 }

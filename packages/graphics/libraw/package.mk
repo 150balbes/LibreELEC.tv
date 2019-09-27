@@ -2,12 +2,12 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libraw"
-PKG_VERSION="0.19.2"
-PKG_SHA256="400d47969292291d297873a06fb0535ccce70728117463927ddd9452aa849644"
+PKG_VERSION="0.20.2"
+PKG_SHA256="dc1b486c2003435733043e4e05273477326e51c3ea554c6864a4eafaff1004a6"
 PKG_LICENSE="LGPL"
 PKG_SITE="http://www.libraw.org/"
-PKG_URL="http://www.libraw.org/data/LibRaw-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain libjpeg-turbo"
+PKG_URL="http://www.libraw.org/data/LibRaw-${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libjpeg-turbo lcms2"
 PKG_LONGDESC="A library for reading RAW files obtained from digital photo cameras (CRW/CR2, NEF, RAF, DNG, and others)"
 PKG_BUILD_FLAGS="+pic"
 
@@ -16,5 +16,5 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
                            --disable-openmp \
                            --enable-jpeg \
                            --disable-jasper \
-                           --disable-lcms \
+                           --enable-lcms \
                            --disable-examples"

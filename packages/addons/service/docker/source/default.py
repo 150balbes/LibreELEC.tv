@@ -1,23 +1,20 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Lukas Rusak (lrusak@libreelec.tv)
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import os
 import subprocess
 import sys
-import threading
 import time
 import xbmc
 import xbmcaddon
 import xbmcgui
 
-sys.path.append('/usr/share/kodi/addons/service.libreelec.settings')
-import oe
-
 __author__      = 'lrusak'
 __addon__       = xbmcaddon.Addon()
 __path__        = __addon__.getAddonInfo('path')
 
-sys.path.append(__path__ + '/lib')
+sys.path.append(__path__ + 'lib')
 import dockermon
 
 # docker events for api 1.23 (docker version 1.11.x)
@@ -184,74 +181,61 @@ docker_events = {
 
 def print_notification(json_data):
     event_string = docker_events[json_data['Type']]['event'][json_data['Action']]['string']
-    if __addon__.getSetting('notifications') is '0': # default
+    if __addon__.getSetting('notifications') == '0': # default
         if docker_events[json_data['Type']]['event'][json_data['Action']]['enabled']:
             try:
-                message = unicode(' '.join([__addon__.getLocalizedString(30010),
-                                            json_data['Actor']['Attributes']['name'],
-                                            '|',
-                                            __addon__.getLocalizedString(30012),
-                                            __addon__.getLocalizedString(event_string)]))
+                message = ' '.join([__addon__.getLocalizedString(30010),
+                                    json_data['Actor']['Attributes']['name'],
+                                    '|',
+                                    __addon__.getLocalizedString(30012),
+                                    __addon__.getLocalizedString(event_string)])
             except KeyError as e:
-                message = unicode(' '.join([__addon__.getLocalizedString(30011),
-                                            json_data['Type'],
-                                            '|',
-                                            __addon__.getLocalizedString(30012),
-                                            __addon__.getLocalizedString(event_string)]))
+                message = ' '.join([__addon__.getLocalizedString(30011),
+                                    json_data['Type'],
+                                    '|',
+                                    __addon__.getLocalizedString(30012),
+                                    __addon__.getLocalizedString(event_string)])
 
-    elif __addon__.getSetting('notifications') is '1': # all
+    elif __addon__.getSetting('notifications') == '1': # all
         try:
-            message = unicode(' '.join([__addon__.getLocalizedString(30010),
-                                        json_data['Actor']['Attributes']['name'],
-                                        '|',
-                                        __addon__.getLocalizedString(30012),
-                                        __addon__.getLocalizedString(event_string)]))
+            message = ' '.join([__addon__.getLocalizedString(30010),
+                                json_data['Actor']['Attributes']['name'],
+                                '|',
+                                __addon__.getLocalizedString(30012),
+                                __addon__.getLocalizedString(event_string)])
         except KeyError as e:
-            message = unicode(' '.join([__addon__.getLocalizedString(30011),
-                                        json_data['Type'],
-                                        '|',
-                                        __addon__.getLocalizedString(30012),
-                                        __addon__.getLocalizedString(event_string)]))
+            message = ' '.join([__addon__.getLocalizedString(30011),
+                                json_data['Type'],
+                                '|',
+                                __addon__.getLocalizedString(30012),
+                                __addon__.getLocalizedString(event_string)])
 
-    elif __addon__.getSetting('notifications') is '2': # none
+    elif __addon__.getSetting('notifications') == '2': # none
         pass
 
-    elif __addon__.getSetting('notifications') is '3': # custom
+    elif __addon__.getSetting('notifications') == '3': # custom
         if __addon__.getSetting(json_data['Action']) == 'true':
             try:
-                message = unicode(' '.join([__addon__.getLocalizedString(30010),
-                                            json_data['Actor']['Attributes']['name'],
-                                            '|',
-                                            __addon__.getLocalizedString(30012),
-                                            __addon__.getLocalizedString(event_string)]))
+                message = ' '.join([__addon__.getLocalizedString(30010),
+                                    json_data['Actor']['Attributes']['name'],
+                                    '|',
+                                    __addon__.getLocalizedString(30012),
+                                    __addon__.getLocalizedString(event_string)])
             except KeyError as e:
-                message = unicode(' '.join([__addon__.getLocalizedString(30011),
-                                            json_data['Type'],
-                                            '|',
-                                            __addon__.getLocalizedString(30012),
-                                            __addon__.getLocalizedString(event_string)]))
+                message = ' '.join([__addon__.getLocalizedString(30011),
+                                    json_data['Type'],
+                                    '|',
+                                    __addon__.getLocalizedString(30012),
+                                    __addon__.getLocalizedString(event_string)])
 
     dialog = xbmcgui.Dialog()
     try:
-        if message is not '':
+        if message != '':
             length = int(__addon__.getSetting('notification_length')) * 1000
-            dialog.notification('Docker', message, '/storage/.kodi/addons/service.system.docker/resources/icon.png', length)
-            xbmc.log('## service.system.docker ## ' + unicode(message))
+            dialog.notification('Docker', message, __path__ + 'resources/icon.png', length)
+            xbmc.log('## service.system.docker ## %s' % message)
     except NameError as e:
         pass
-
-class dockermonThread(threading.Thread):
-
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self._is_running = True
-
-    def run(self):
-        while self._is_running:
-            dockermon.watch(print_notification)
-
-    def stop(self):
-        self._is_running = False
 
 class Main(object):
 
@@ -283,8 +267,8 @@ class Main(object):
                 restart_docker = True
 
         if restart_docker:
-            oe.execute('systemctl enable  /storage/.kodi/addons/service.system.docker/system.d/service.system.docker.service')
-            oe.execute('systemctl restart /storage/.kodi/addons/service.system.docker/system.d/service.system.docker.service')
+            subprocess.run(['systemctl','enable','/storage/.kodi/addons/service.system.docker/system.d/service.system.docker.service'], close_fds=True)
+            subprocess.run(['systemctl','restart','service.system.docker.service'], close_fds=True)
 
         # end temp cleanup
         #############################
@@ -292,9 +276,11 @@ class Main(object):
         monitor = DockerMonitor(self)
 
         while not monitor.abortRequested():
-            if monitor.waitForAbort():
-                # we don't want to stop or disable docker while it's installed
-                pass
+            try:
+                dockermon.watch(print_notification, run=lambda: not monitor.abortRequested())
+            except Exception:
+                monitor.waitForAbort(1)
+        del monitor
 
 class DockerMonitor(xbmc.Monitor):
 
@@ -305,8 +291,6 @@ class DockerMonitor(xbmc.Monitor):
         pass
 
 if ( __name__ == "__main__" ):
-    dockermonThread().start()
     Main()
 
-    del DockerMonitor
-    dockermonThread().stop()
+del __addon__

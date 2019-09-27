@@ -1,10 +1,10 @@
 [Unit]
 Description=Broadcom SDIO Firmware Symlink Service
-After=kernel-overlays.service
 Before=kodi.service
 
 [Service]
 Type=oneshot
+RemainAfterExit=yes
 ExecStart=/bin/sh -c "/usr/bin/brcmfmac-firmware-setup"
 
 [Install]

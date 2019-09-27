@@ -5,7 +5,7 @@
 
 PKG_NAME="pcscd"
 PKG_VERSION="1.0"
-PKG_REV="100"
+PKG_REV="101"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
@@ -21,16 +21,11 @@ PKG_ADDON_NAME="PC/SC Smart Card Daemon"
 PKG_ADDON_TYPE="xbmc.service"
 
 addon() {
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin/
-    cp -Pa $(get_build_dir pcsc-lite)/.install_pkg/usr/sbin/pcscd $ADDON_BUILD/$PKG_ADDON_ID/bin/pcscd.bin
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
+    cp -Pa $(get_install_dir pcsc-lite)/usr/sbin/pcscd ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/pcscd.bin
 
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/drivers/serial
-    cp -Pa $(get_build_dir ccid)/.$TARGET_NAME/src/.libs/libccidtwin.so $ADDON_BUILD/$PKG_ADDON_ID/drivers/serial
+  cp -a $(get_install_dir ccid)/storage/.kodi/addons/${PKG_ADDON_ID}/drivers ${ADDON_BUILD}/${PKG_ADDON_ID}
 
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/drivers/ifd-ccid.bundle/Contents/Linux/
-    cp -Pa $(get_build_dir ccid)/.$TARGET_NAME/src/.libs/libccid.so $ADDON_BUILD/$PKG_ADDON_ID/drivers/ifd-ccid.bundle/Contents/Linux/
-    cp -Pa $(get_build_dir ccid)/.$TARGET_NAME/src/Info.plist $ADDON_BUILD/$PKG_ADDON_ID/drivers/ifd-ccid.bundle/Contents
-
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/config
-    cp -Pa $PKG_DIR/config/* $ADDON_BUILD/$PKG_ADDON_ID/config/
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/config
+    cp -Pa ${PKG_DIR}/config/* ${ADDON_BUILD}/${PKG_ADDON_ID}/config/
 }

@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+
+mkdir -p "$RELEASE_DIR/3rdparty/bootloader"
+  cp -a $(get_build_dir u-boot-script)/* $RELEASE_DIR/3rdparty/bootloader
+
+if [ "${PLATFORM}" != "AMLMX" ]; then
+
+mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/rockchip"
+cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/rockchip
+
+else
+
+mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/amlogic"
+cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/amlogic
+
+fi
+
+if [ "$PLATFORM" = "RK" ]; then
+
+INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+mkdir -p $INSTBOOT_DIR
+  if [ -n "$UBOOT_SYSTEM" ]; then
+    BOOTLOADER_DIR=$(get_build_dir $BOOTLOADER)
+    if [ -f $BOOTLOADER_DIR/idbloader.img ]; then
+      cp -a $BOOTLOADER_DIR/idbloader.img $INSTBOOT_DIR
+    fi
+    if [ -f $BOOTLOADER_DIR/uboot.img ]; then
+      cp -a $BOOTLOADER_DIR/uboot.img $INSTBOOT_DIR
+    fi
+    if [ -f $BOOTLOADER_DIR/trust.img ]; then
+      cp -a $BOOTLOADER_DIR/trust.img $INSTBOOT_DIR
+    fi
+  fi
+
+elif [ "$PLATFORM" = "AML" ]; then
+
+  if find_file_path bootloader/${UBOOT_SYSTEM}.ini; then
+    cp -av ${FOUND_PATH} $RELEASE_DIR/3rdparty/bootloader/boot.ini
+  fi
+  if find_file_path bootloader/u-boot.sd; then
+    cp -av ${FOUND_PATH} $RELEASE_DIR/3rdparty/bootloader/u-boot.sd
+  fi
+  if find_file_path bootloader/u-boot.usb; then
+    cp -av ${FOUND_PATH} $RELEASE_DIR/3rdparty/bootloader/u-boot.usb
+  fi
+
+elif [ "$PLATFORM" = "AW" ]; then
+
+INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+mkdir -p $INSTBOOT_DIR
+  if [ -n "$UBOOT_SYSTEM" ]; then
+    BOOTLOADER_DIR=$(get_build_dir $BOOTLOADER)
+    if [ -f $BOOTLOADER_DIR/u-boot-sunxi-with-spl.bin ]; then
+      cp -a $BOOTLOADER_DIR/u-boot-sunxi-with-spl.bin $INSTBOOT_DIR
+    fi
+  fi
+
+fi

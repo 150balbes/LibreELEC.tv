@@ -3,13 +3,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="audioencoder.lame"
-PKG_VERSION="v2.0.1"
-PKG_SHA256="d554c86cd05e2895b5d9619373ae0b62d4c8e978197a58cf7a1036e6ab726b88"
-PKG_REV="4"
+PKG_VERSION="3.0.2-Matrix"
+PKG_SHA256="ad47d8c4dffe6690bd1ff32bb5fd44f11b691706ff9a1e5b6152efee92976a75"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/xbmc/audioencoder.lame"
-PKG_URL="https://github.com/xbmc/audioencoder.lame/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/xbmc/audioencoder.lame/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform lame"
 PKG_SECTION=""
 PKG_SHORTDESC="audioencoder.lame: A audioencoder addon for Kodi"

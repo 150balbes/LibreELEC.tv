@@ -1,3 +1,13 @@
+110
+- Update to version 0.22.6
+
+109
+- Update to version 0.22.3
+- Enabled fifo
+
+108
+- Update to version 0.21.24
+
 107
 - Update to version 0.21.4
 

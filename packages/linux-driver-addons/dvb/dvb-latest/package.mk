@@ -2,13 +2,12 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="dvb-latest"
-PKG_VERSION="0f25e6fb13b6bc345218800ad9ac863deb2ee9c8"
-PKG_SHA256="71294995cff2bc556bcf9aa7ade595a4ccd91a1972b73d1e537d99d2ce86dbed"
+PKG_VERSION="10.0-latest"
+PKG_SHA256="50ed45ec6eeac0c8d537f8de3e7e82ef1f37b2f91552cdd99fbda05e5646f351"
 PKG_LICENSE="GPL"
 PKG_SITE="http://git.linuxtv.org/media_build.git"
-PKG_URL="https://git.linuxtv.org/media_build.git/snapshot/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain linux media_tree"
-PKG_NEED_UNPACK="$LINUX_DEPENDS $(get_pkg_directory media_tree)"
+PKG_URL="https://github.com/LibreELEC/media_build/archive/${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_UNPACK="media_tree"
 PKG_SECTION="driver.dvb"
 PKG_LONGDESC="DVB drivers from the latest kernel (media_build)"
 
@@ -21,7 +20,7 @@ PKG_ADDON_VERSION="${ADDON_VERSION}.${PKG_REV}"
 
 PKG_KERNEL_CFG_FILE=$(kernel_config_path) || die
 
-if ! grep -q ^CONFIG_USB_PCI= ${PKG_KERNEL_CFG_FILE} ; then
+if ! grep -q ^CONFIG_USB_PCI= ${PKG_KERNEL_CFG_FILE}; then
   PKG_PATCH_DIRS="disable-pci"
 fi
 
@@ -31,14 +30,14 @@ pre_make_target() {
 }
 
 make_target() {
-  cp -RP $(get_build_dir media_tree)/* $PKG_BUILD/linux
+  cp -RP $(get_build_dir media_tree)/* ${PKG_BUILD}/linux
 
   # make config all
-  kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path) allyesconfig
+  kernel_make VER=${KERNEL_VER} SRCDIR=$(kernel_path) allyesconfig
 
-  kernel_make VER=$KERNEL_VER SRCDIR=$(kernel_path)
+  kernel_make VER=${KERNEL_VER} SRCDIR=$(kernel_path)
 }
 
 makeinstall_target() {
-  install_driver_addon_files "$PKG_BUILD/v4l/"
+  install_driver_addon_files "${PKG_BUILD}/v4l/"
 }

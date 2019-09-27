@@ -2,7 +2,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="iwd"
-PKG_VERSION="0.18"
+PKG_VERSION="1.11"
+PKG_SHA256="db854f569cfa94dc32120d8cf2e7d483a16679f238e1a4794837d0e455ea7aa9"
 PKG_LICENSE="GPL"
 PKG_SITE="https://git.kernel.org/cgit/network/wireless/iwd.git/about/"
 PKG_URL="https://www.kernel.org/pub/linux/network/wireless/iwd-${PKG_VERSION}.tar.xz"
@@ -14,7 +15,7 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-client \
                            --enable-monitor \
                            --enable-systemd-service \
                            --enable-dbus-policy \
-                           --disable-docs"
+                           --disable-manual-pages"
 
 pre_configure_target() {
   export LIBS="-lncurses"
@@ -31,7 +32,8 @@ post_makeinstall_target() {
       -e 's|^\(ReadWritePaths=.*\)$|#\1|g' \
       -e 's|^\(ProtectControlGroups=.*\)$|#\1|g' \
       -e 's|^\(ProtectKernelModules=.*\)$|#\1|g' \
-      -i $INSTALL/usr/lib/systemd/system/iwd.service
+      -e 's|^\(ConfigurationDirectory=.*\)$|#\1|g' \
+      -i ${INSTALL}/usr/lib/systemd/system/iwd.service
 }
 
 post_install() {

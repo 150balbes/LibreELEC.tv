@@ -1,7 +1,7 @@
 ### Questions about LibreELEC?
 
 To get your questions answered, please ask in the LibreELEC [Forum], on IRC: 
-\#libreelec on freenode.net. 
+\#libreelec on Libera.Chat. 
 
 Do not open an issue.
 
@@ -92,8 +92,7 @@ Please follow this process; it's the best way to get your work included in the p
 
 - Commit your changes in logical chunks. or your pull request is unlikely
    be merged into the main project. Use git's
-   [interactive rebase](https://help.github.com/articles/interactive-rebase)
-   feature to tidy up your commits before making them public.
+   [interactive rebase](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase) feature to tidy up your commits before making them public.
 
 - Push your topic branch up to your fork:
 

@@ -2,11 +2,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="aixlog"
-PKG_VERSION="1.2.1"
-PKG_SHA256="3ed6f47b3658607edfd94faf98034d31906b0f04f3fe4355e87a16f8dd582384"
+PKG_VERSION="1.5.0"
+PKG_SHA256="c32b2b2e7ed2632fab53aba01f731fce1e7b150fe7d08bccdafc250e5cb836a8"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/badaix/aixlog"
-PKG_URL="https://github.com/badaix/aixlog/archive/v$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/badaix/aixlog/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Header-only C++ logging library."
-PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="-sysroot"
+
+PKG_CMAKE_OPTS_TARGET="-DBUILD_EXAMPLE=OFF"

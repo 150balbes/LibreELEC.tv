@@ -2,73 +2,53 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpegx"
-PKG_VERSION="4.1.3"
-PKG_SHA256="271405b43f4953fcf0487c66bc455cf94bb7a10ffcb27f72a402463b87b2b8c9"
+PKG_VERSION="4.4"
+PKG_SHA256="06b10a183ce5371f915c6bb15b7b1fffbe046e8275099c96affc29e17645d909"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
-PKG_URL="https://github.com/FFmpeg/FFmpeg/archive/n${PKG_VERSION}.tar.gz"
+PKG_URL="https://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain aom bzip2 gnutls libvorbis opus x264 zlib"
 PKG_LONGDESC="FFmpegx is an complete FFmpeg build to support encoding and decoding."
-PKG_BUILD_FLAGS="-gold"
+PKG_BUILD_FLAGS="-gold -sysroot"
 
 # Dependencies
 get_graphicdrivers
 
-if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
+if [ "${TARGET_ARCH}" = "x86_64" ]; then
+  PKG_DEPENDS_TARGET+=" nasm:host x265"
+
+  if listcontains "${GRAPHIC_DRIVERS}" "(iris|i915|i965)"; then
+    PKG_DEPENDS_TARGET+=" intel-vaapi-driver"
+  fi
 fi
 
-if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET+=" nasm:host intel-vaapi-driver x265"
-fi
-
-if [[ ! $TARGET_ARCH = arm ]] || target_has_feature neon; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libvpx"
+if [[ ! ${TARGET_ARCH} = arm ]] || target_has_feature neon; then
+  PKG_DEPENDS_TARGET+=" libvpx"
 fi
 
 # X11 grab for screen recording
-if [ "$DISPLAYSERVER" = "x11" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libxcb libX11"
+if [ "${DISPLAYSERVER}" = "x11" ]; then
+  PKG_DEPENDS_TARGET+=" libxcb libX11"
 fi
 
 pre_configure_target() {
-  cd $PKG_BUILD
-  rm -rf .$TARGET_NAME
-
-  if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-    CFLAGS="$CFLAGS -DRPI=1 -I$SYSROOT_PREFIX/usr/include/IL"
-    PKG_FFMPEG_LIBS="-lbcm_host -ldl -lmmal -lmmal_core -lmmal_util -lvchiq_arm -lvcos -lvcsm"
-  fi
+  cd ${PKG_BUILD}
+  rm -rf .${TARGET_NAME}
 
 # HW encoders
 
-  # RPi 0-3
-  if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-    PKG_FFMPEG_HW_ENCODERS_RPi="\
-    `#Video encoders` \
-    --enable-omx-rpi \
-    --enable-mmal \
-    --enable-encoder=h264_omx \
-    \
-    `#Video hwaccel` \
-    --enable-hwaccel=h264_mmal \
-    --enable-hwaccel=mpeg2_mmal \
-    --enable-hwaccel=mpeg4_mmal \
-    --enable-hwaccel=vc1_mmal"
-  fi
-
   # Generic
-  if [[ "$TARGET_ARCH" = "x86_64" ]]; then
+  if [[ "${TARGET_ARCH}" = "x86_64" ]]; then
     PKG_FFMPEG_HW_ENCODERS_GENERIC="\
     `#Video encoders` \
-    --enable-encoder=h264_nvenc \
     --enable-encoder=h264_vaapi \
-    --enable-encoder=hevc_nvenc \
     --enable-encoder=hevc_vaapi \
     --enable-encoder=mjpeg_vaapi \
     --enable-encoder=mpeg2_vaapi \
     --enable-encoder=vp8_vaapi \
     --enable-encoder=vp9_vaapi \
+    --disable-encoder=h264_nvenc \
+    --disable-encoder=hevc_nvenc \
     \
     `#Video hwaccel` \
     --enable-hwaccel=h263_vaapi \
@@ -109,8 +89,8 @@ pre_configure_target() {
     --enable-encoder=libvorbis"
 
 # X11 grab for screen recording
-  if [ "$DISPLAYSERVER" = "x11" ]; then
-    PKG_FFMPEG_LIBS="$PKG_FFMPEG_LIBS -lX11"
+  if [ "${DISPLAYSERVER}" = "x11" ]; then
+    PKG_FFMPEG_LIBS+=" -lX11"
     PKG_FFMPEG_X11_GRAB="\
     --enable-libxcb \
     --enable-libxcb-shm \
@@ -133,42 +113,40 @@ configure_target() {
     \
     `#Licensing options` \
     --enable-gpl \
-    --disable-nonfree \
     \
     `#Documentation options` \
     --disable-doc \
     \
     `#Hardware accelerated decoding encoding` \
-    $PKG_FFMPEG_HW_ENCODERS_RPi \
-    $PKG_FFMPEG_HW_ENCODERS_GENERIC \
+    ${PKG_FFMPEG_HW_ENCODERS_GENERIC} \
     \
     `#General options` \
     --enable-avresample \
     --disable-lzma \
     --disable-alsa \
-    $PKG_FFMPEG_X11_GRAB \
+    ${PKG_FFMPEG_X11_GRAB} \
     \
     `#Toolchain options` \
-    --arch="$TARGET_ARCH" \
-    --cpu="$TARGET_CPU" \
-    --cross-prefix="$TARGET_PREFIX" \
+    --arch="${TARGET_ARCH}" \
+    --cpu="${TARGET_CPU}" \
+    --cross-prefix="${TARGET_PREFIX}" \
     --enable-cross-compile \
-    --sysroot="$SYSROOT_PREFIX" \
-    --sysinclude="$SYSROOT_PREFIX/usr/include" \
+    --sysroot="${SYSROOT_PREFIX}" \
+    --sysinclude="${SYSROOT_PREFIX}/usr/include" \
     --target-os="linux" \
-    --nm="$NM" \
-    --ar="$AR" \
-    --as="$CC" \
-    --cc="$CC" \
-    --ld="$CC" \
-    --pkg-config="$TOOLCHAIN/bin/pkg-config" \
-    --host-cc="$HOST_CC" \
-    --host-cflags="$HOST_CFLAGS" \
-    --host-ldflags="$HOST_LDFLAGS" \
+    --nm="${NM}" \
+    --ar="${AR}" \
+    --as="${CC}" \
+    --cc="${CC}" \
+    --ld="${CC}" \
+    --pkg-config="${TOOLCHAIN}/bin/pkg-config" \
+    --host-cc="${HOST_CC}" \
+    --host-cflags="${HOST_CFLAGS}" \
+    --host-ldflags="${HOST_LDFLAGS}" \
     --host-extralibs="-lm" \
-    --extra-cflags="$CFLAGS" \
-    --extra-ldflags="$LDFLAGS" \
-    --extra-libs="$PKG_FFMPEG_LIBS" \
+    --extra-cflags="${CFLAGS}" \
+    --extra-ldflags="${LDFLAGS}" \
+    --extra-libs="${PKG_FFMPEG_LIBS}" \
     --enable-pic \
     --enable-gnutls \
     --disable-openssl \
@@ -176,8 +154,4 @@ configure_target() {
     `#Advanced options` \
     --disable-hardcoded-tables \
 
-}
-
-makeinstall_target() {
-  make install DESTDIR="$INSTALL/../.INSTALL_PKG"
 }

@@ -3,13 +3,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="audiodecoder.asap"
-PKG_VERSION="2.0.1-Leia"
-PKG_SHA256="ace72fb3ddd42f4c7e89bee1aecba14fa8404db71d6c94ca787806240d8ab908"
+PKG_VERSION="19.0.0-Matrix"
+PKG_SHA256="bebf8c962c32d2733ff17f09c43b6912668c460fd124309610501d01a856b309"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/xbmc/audiodecoder.asap"
-PKG_URL="https://github.com/xbmc/audiodecoder.asap/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/xbmc/audiodecoder.asap/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_SECTION=""
 PKG_SHORTDESC="audiodecoder.asap"

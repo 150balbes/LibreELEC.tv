@@ -3,33 +3,31 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="bcm2835-bootloader"
-PKG_VERSION="f8e05108dbb3b5640f48b6b301296e979876836b"
-PKG_SHA256="895d15967bd78a9858b95a4ddba7494a72d8c9255cbbd30b005e4ee364074397"
-PKG_ARCH="arm"
+PKG_VERSION="1df55790fb191704c0ce630d4d0713a8beb43a7d"
+PKG_SHA256="b6163311508800ac82bae28260ea774ee35d92f86987a09cf0fc7880c61e9040"
+PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.broadcom.com"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="${DISTRO_SRC}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain linux bcmstat"
 PKG_LONGDESC="bcm2835-bootloader: Tool to create a bootable kernel for RaspberryPi"
 PKG_TOOLCHAIN="manual"
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/bootloader
-    cp -PRv LICENCE* $INSTALL/usr/share/bootloader
-    cp -PRv bootcode.bin $INSTALL/usr/share/bootloader
-    if [ "$DEVICE" = "RPi4" ]; then
-      cp -PRv fixup4x.dat $INSTALL/usr/share/bootloader/fixup.dat
-      cp -PRv start4x.elf $INSTALL/usr/share/bootloader/start.elf
+  mkdir -p ${INSTALL}/usr/share/bootloader
+    cp -PRv LICENCE* ${INSTALL}/usr/share/bootloader
+    cp -PRv bootcode.bin ${INSTALL}/usr/share/bootloader
+    if [ "${DEVICE}" = "RPi4" ]; then
+      cp -PRv fixup4x.dat ${INSTALL}/usr/share/bootloader/fixup.dat
+      cp -PRv start4x.elf ${INSTALL}/usr/share/bootloader/start.elf
     else
-      cp -PRv fixup_x.dat $INSTALL/usr/share/bootloader/fixup.dat
-      cp -PRv start_x.elf $INSTALL/usr/share/bootloader/start.elf
+      cp -PRv fixup_x.dat ${INSTALL}/usr/share/bootloader/fixup.dat
+      cp -PRv start_x.elf ${INSTALL}/usr/share/bootloader/start.elf
     fi
 
-    find_file_path config/dt-blob.bin && cp -PRv $FOUND_PATH $INSTALL/usr/share/bootloader
+    find_file_path bootloader/update.sh ${PKG_DIR}/files/update.sh && cp -PRv ${FOUND_PATH} ${INSTALL}/usr/share/bootloader
+    find_file_path bootloader/canupdate.sh && cp -PRv ${FOUND_PATH} ${INSTALL}/usr/share/bootloader
 
-    find_file_path bootloader/update.sh && cp -PRv $FOUND_PATH $INSTALL/usr/share/bootloader
-    find_file_path bootloader/canupdate.sh && cp -PRv $FOUND_PATH $INSTALL/usr/share/bootloader
-
-    find_file_path config/distroconfig.txt $PKG_DIR/files/3rdparty/bootloader/distroconfig.txt && cp -PRv ${FOUND_PATH} $INSTALL/usr/share/bootloader
-    find_file_path config/config.txt $PKG_DIR/files/3rdparty/bootloader/config.txt && cp -PRv ${FOUND_PATH} $INSTALL/usr/share/bootloader
+    find_file_path config/distroconfig.txt ${PKG_DIR}/files/distroconfig.txt && cp -PRv ${FOUND_PATH} ${INSTALL}/usr/share/bootloader
+    find_file_path config/config.txt ${PKG_DIR}/files/config.txt && cp -PRv ${FOUND_PATH} ${INSTALL}/usr/share/bootloader
 }

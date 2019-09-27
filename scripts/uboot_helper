@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
-from __future__ import print_function
-import sys
+import argparse
 
 # When adding new devices to the list please keep them in alphabetical order
 # board-name should contain 'dashes' (-) not 'underscores' (_) and shouldn't contain capitals
@@ -21,286 +20,123 @@ import sys
 
 devices = \
 {
-  'Allwinner': {
-    'A64': {
-      'orangepi-win': {
-        'dtb': 'sun50i-a64-orangepi-win.dtb',
-        'config': 'orangepi_win_defconfig'
+  'ARM': {
+    'ARMv8': {
+      'rk3328': {
+        'dtb': 'rk3328-box.dtb',
+        'config': 'rock64-rk3328_defconfig'
       },
-      'pine64': {
-        'dtb': 'sun50i-a64-pine64.dtb',
-        'config': 'pine64_plus_defconfig'
-      },
-      'pine64-lts': {
-        'dtb': 'sun50i-a64-pine64-lts.dtb',
-        'config': 'pine64-lts_defconfig'
-      },
-      'pine64-plus': {
-        'dtb': 'sun50i-a64-pine64-plus.dtb',
-        'config': 'pine64_plus_defconfig'
-      },
-    },
-    'H3': {
-      'bananapi-m2p': {
-        'dtb': 'sun8i-h3-bananapi-m2-plus.dtb',
-        'config': 'bananapi_m2_plus_h3_defconfig'
-      },
-      'beelink-x2': {
-        'dtb': 'sun8i-h3-beelink-x2.dtb',
-        'config': 'beelink_x2_defconfig'
-      },
-      'libretech-h3': {
-        'dtb': 'sun8i-h3-libretech-all-h3-cc.dtb',
-        'config': 'libretech_all_h3_cc_h3_defconfig'
-      },
-      'nanopi-m1': {
-        'dtb': 'sun8i-h3-nanopi-m1.dtb',
-        'config': 'nanopi_m1_defconfig'
-      },
-      'orangepi-2': {
-        'dtb': 'sun8i-h3-orangepi-2.dtb',
-        'config': 'orangepi_2_defconfig'
-      },
-      'orangepi-pc': {
-        'dtb': 'sun8i-h3-orangepi-pc.dtb',
-        'config': 'orangepi_pc_defconfig'
-      },
-      'orangepi-pc-plus': {
-        'dtb': 'sun8i-h3-orangepi-pc-plus.dtb',
-        'config': 'orangepi_pc_plus_defconfig'
-      },
-      'orangepi-plus2e': {
-        'dtb': 'sun8i-h3-orangepi-plus2e.dtb',
-        'config': 'orangepi_plus2e_defconfig'
-      },
-      'orangepi-plus': {
-        'dtb': 'sun8i-h3-orangepi-plus.dtb',
-        'config': 'orangepi_plus_defconfig'
-      },
-    },
-    'H6': {
-      'beelink-gs1' : {
-        'dtb' : 'sun50i-h6-beelink-gs1.dtb',
-        'config' : 'beelink_gs1_defconfig'
-      },
-      'orangepi-3': {
-        'dtb': 'sun50i-h6-orangepi-3.dtb',
-        'config': 'orangepi_3_defconfig'
-      },
-      'orangepi-one-plus': {
-        'dtb': 'sun50i-h6-orangepi-one-plus.dtb',
-        'config': 'orangepi_one_plus_defconfig'
-      },
-      'pine-h64': {
-        'dtb': 'sun50i-h6-pine-h64.dtb',
-        'config': 'pine_h64_defconfig'
-      },
-      'tanix-tx6' : {
-        'dtb' : 'sun50i-h6-tanix-tx6.dtb',
-        'config' : 'eachlink_h6_mini_defconfig'
-      },
-    },
-  },
-  'Amlogic': {
-    'AMLGX': {
-      'box': {
-        'dtb': 'meson-gxl-s905x-p212.dtb',
-        'config': 'p212_defconfig'
-      },
-      'lepotato': {
-        'dtb': 'meson-gxl-s905x-libretech-cc.dtb',
-        'config': 'libretech-cc_defconfig'
-      },
-      'nanopi-k2': {
-        'dtb': 'meson-gxbb-nanopi-k2.dtb',
-        'config': 'nanopi-k2_defconfig'
-      },
-      'odroid-c2': {
-        'dtb': 'meson-gxbb-odroidc2.dtb',
-        'config': 'odroid-c2_defconfig'
-      },
-    },
-    'AMLG12': {
-      'box': {
-        'dtb': 'meson-g12a-x96max.dtb',
-        'config': 'p212_defconfig'
-      },
-      'odroid-n2': {
-        'dtb': 'meson-g12b-odroid-n2.dtb',
-        'config': 'odroid-n2_defconfig'
-      },
-    },
-  },
-  'NXP': {
-    'iMX6': {
-      'cubox-dl': {
-        'dtb': 'imx6dl-cubox-i.dtb',
-        'config': 'mx6cuboxi_defconfig'
-      },
-      'cubox-q': {
-        'dtb': 'imx6q-cubox-i.dtb',
-        'config': 'mx6cuboxi_defconfig'
-      },
-      'udoo-dl': {
-        'dtb': 'imx6dl-udoo.dtb',
-        'config': 'udoo_defconfig'
-      },
-      'udoo-q': {
-        'dtb': 'imx6q-udoo.dtb',
-        'config': 'udoo_defconfig'
-      },
-      'wandboard-dl': {
-        'dtb': 'imx6dl-wandboard.dtb',
-        'config': 'wandboard_defconfig'
-      },
-      'wandboard-q': {
-        'dtb': 'imx6q-wandboard.dtb',
-        'config': 'wandboard_defconfig'
-      },
-    },
-  },
-  'Qualcomm': {
-    'Dragonboard': {
-      '410c': {
-        'dtb': 'apq8016-sbc.dtb',
-        'config': 'dragonboard410c_defconfig'
-      },
-    },
-  },
-  'Rockchip': {
-    'MiQi': {
-      'rk3288': {
-        'dtb': 'rk3288-miqi.dtb',
-        'config': 'miqi-rk3288_config'
-      },
-    },
-    'RK3328': {
-      'box': {
+      'rk3328-old': {
         'dtb': 'rk3328-box.dtb',
         'config': 'evb-rk3328_defconfig'
       },
-      'box-trn9': {
-        'dtb': 'rk3328-box-trn9.dtb',
-        'config': 'evb-rk3328_defconfig'
+      'rk3328-roc-pc': {
+        'dtb': 'rk3328-roc-pc.dtb',
+        'config': 'rock64-rk3328_defconfig'
       },
-      'box-z28': {
-        'dtb': 'rk3328-box-z28.dtb',
-        'config': 'evb-rk3328_defconfig'
-      },
-      'roc-cc': {
+      'rk3328-roc-cc': {
         'dtb': 'rk3328-roc-cc.dtb',
-        'config': 'evb-rk3328_defconfig'
+        'config': 'roc-cc-rk3328_defconfig'
       },
-      'rock64': {
-        'dtb': 'rk3328-rock64.dtb',
-        'config': 'evb-rk3328_defconfig'
+      'rk3399-roc-pc': {
+        'dtb': 'rk3399-roc-pc-plus.dtb',
+        'config': 'roc-pc-mezzanine-rk3399_config'
       },
-      'rockbox': {
-        'dtb': 'rk3328-rockbox.dtb',
-        'config': 'evb-rk3328_defconfig'
+      'rk3399': {
+        'dtb': 'rk3399-nanopc-t4.dtb',
+        'config': 'roc-pc-mezzanine-rk3399_config'
       },
-    },
-    'RK3399': {
-      'khadas-edge': {
-        'dtb': 'rk3399-khadas-edge.dtb',
-        'config': 'evb-rk3399_config'
+      'h5': {
+        'dtb': 'sun50i-h5-orangepi-pc2.dtb',
+        'config': 'orangepi_pc2_defconfig',
+        'crust_config': 'orangepi_pc2_defconfig',
       },
-      'rock960': {
-        'dtb': 'rk3399-rock960.dtb',
-        'config': 'evb-rk3399_config'
-      },
-      'rock-pi-4': {
-        'dtb': 'rk3399-rock-pi-4.dtb',
-        'config': 'evb-rk3399_config'
-      },
-      'rockpro64': {
-        'dtb': 'rk3399-rockpro64.dtb',
-        'config': 'evb-rk3399_config'
-      },
-      'sapphire': {
-        'dtb': 'rk3399-sapphire.dtb',
-        'config': 'evb-rk3399_config'
+      'h6' : {
+        'dtb' : 'sun50i-h6-tanix-tx6.dtb',
+        'config' : 'tanix_tx6_defconfig',
+        'crust_config' : 'tanix_tx6_defconfig'
       },
     },
-    'TinkerBoard': {
+    'ARMv7': {
+      's8xx': {
+        'dtb': 'meson8m2-mxiii-plus.dtb',
+        'config': 'odroid-xu3_defconfig'
+      },
+      'rk3188': {
+        'dtb' : 'rk3188-ugoos-ut2.dtb',
+        'config' : 'rbox-rk3188_defconfig'
+       },
       'rk3288': {
-        'dtb': 'rk3288-miniarm.dtb',
-        'config': 'tinker-rk3288_config'
+        'dtb': 'rk3288-firefly-reload.dtb',
+        'config': 'miqi-rk3288_config'
       },
     },
   },
 }
 
-def usage(PROJECT=None, SOC=None, FILE=sys.stdout):
-  print('Usage: %s <project> <soc> <board-name> dtb|config' % sys.argv[0], file=FILE)
-  print('       %s <project> <soc>' % sys.argv[0], file=FILE)
-  print('       %s <project>' % sys.argv[0], file=FILE)
-  print('', file=FILE)
+class OptionsAction(argparse.Action):
 
-  if PROJECT and PROJECT not in devices:
-    PROJECT = SOC = None
-  if PROJECT and SOC and SOC not in devices[PROJECT]:
-    SOC = None
+    def __call__(self, parser, namespace, values, option_string=None):
+        message = None
 
-  print('Projects:', file=FILE)
-  print('', file=FILE)
-  for project in sorted(devices):
-    if PROJECT is None or PROJECT == project:
-      print('  %s:' % project, file=FILE)
-      for soc in sorted(devices[project]):
-        if SOC is None or SOC == soc:
-          print('    %s:' % soc, file=FILE)
-          for board in sorted(devices[project][soc]):
-            print('      %s' % board, file=FILE)
-          print('', file=FILE)
-      print('', file=FILE)
+        if self.dest == 'project':
+            if values is None:
+                print(' '.join(project for project in sorted(devices)))
+                parser.exit()
 
-def exit_error(msg, PROJECT=None, SOC=None):
-  print(msg, file=sys.stderr)
-  print('', file=sys.stderr)
-  usage(PROJECT=PROJECT, SOC=SOC, FILE=sys.stderr)
-  sys.exit(1)
+            if values not in devices.keys():
+                message = "invalid choice: {0!r} (choose from {1})".format(values, ', '.join([repr(project) for project in devices]))
 
-# Basic argument validation
-if len(sys.argv) == 2 and sys.argv[1] in ['help', 'usage']:
-  usage()
-  sys.exit(0)
+        if self.dest == 'soc':
+            project = getattr(namespace, 'project')
 
-if len(sys.argv) > 1 and sys.argv[1] not in devices:
-  exit_error('Invalid project: %s' % sys.argv[1])
+            if values is None:
+                print(' '.join(soc for soc in sorted(devices[project])))
+                parser.exit()
 
-if len(sys.argv) > 2 and sys.argv[2] not in devices[sys.argv[1]]:
-  exit_error('Invalid soc: %s' % sys.argv[2], PROJECT=sys.argv[1])
+            if values not in devices[project].keys():
+                message = "invalid choice: {0!r} (choose from {1})".format(values, ', '.join([repr(soc) for soc in devices[project]]))
 
-if len(sys.argv) > 3 and sys.argv[3] not in devices[sys.argv[1]][sys.argv[2]]:
-  exit_error('Invalid board-name: %s' % sys.argv[3], PROJECT=sys.argv[1], SOC=sys.argv[2])
+        if self.dest == 'board':
+            project = getattr(namespace, 'project')
+            soc = getattr(namespace, 'soc')
 
-if len(sys.argv) == 4:
-  exit_error('Invalid option: must specify dtb or config', PROJECT=sys.argv[1], SOC=sys.argv[2])
-elif len(sys.argv) > 4 and sys.argv[4] not in ['dtb', 'config']:
-  exit_error('Invalid option: %s' % sys.argv[4], PROJECT=sys.argv[1], SOC=sys.argv[2])
+            if values is None:
+                print(' '.join(board for board in sorted(devices[project][soc])))
+                parser.exit()
 
-if len(sys.argv) > 5:
-  exit_error('Invalid number of arguments: %s' % ' '.join(sys.argv[1:]), PROJECT=sys.argv[1], SOC=sys.argv[2])
+            if values not in devices[project][soc].keys():
+                message = "invalid choice: {0!r} (choose from {1})".format(values, ', '.join([repr(board) for board in devices[project][soc]]))
 
-# Get dtb or u-boot config for a given project, soc, and board
-# ./scripts/uboot_helper project device board-name dtb|config
-if len(sys.argv) == 5:
-  print(devices[sys.argv[1]][sys.argv[2]][sys.argv[3]][sys.argv[4]])
+        if self.dest == 'value':
+            project = getattr(namespace, 'project')
+            soc = getattr(namespace, 'soc')
+            board = getattr(namespace, 'board')
 
-# List boards supported by a given project and soc
-# ./scripts/uboot_helper project device
-elif len(sys.argv) == 3:
-  print(' '.join([board for board in sorted(devices[sys.argv[1]][sys.argv[2]])]))
+            if values is None:
+                print(' '.join(value for value in sorted(devices[project][soc][board].keys())))
+                parser.exit()
 
-# List socs supported by a given project
-# ./scripts/uboot_helper project
-elif len(sys.argv) == 2:
-  print(' '.join([soc for soc in sorted(devices[sys.argv[1]])]))
+            if values not in devices[project][soc][board].keys():
+                parser.exit()
 
-# List projects
-# ./scripts/uboot_helper
-elif len(sys.argv) == 1:
-  print(' '.join([project for project in sorted(devices)]))
+        if message is not None:
+            raise argparse.ArgumentError(self, message)
 
-sys.exit(0)
+        setattr(namespace, self.dest, values)
+
+parser = argparse.ArgumentParser(description='Script to help with u-boot configuration')
+
+parser.add_argument('project', nargs='?', action=OptionsAction)
+
+parser.add_argument('soc', nargs='?', action=OptionsAction)
+
+parser.add_argument('board', nargs='?', action=OptionsAction)
+
+parser.add_argument('value', nargs='?', action=OptionsAction)
+
+options = parser.parse_args()
+
+print(devices[options.project][options.soc][options.board][options.value])
+
+parser.exit()

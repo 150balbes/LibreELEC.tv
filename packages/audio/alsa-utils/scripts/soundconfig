@@ -119,22 +119,42 @@ else
 # Allwinner H3 Analog
   mixer $card 'Line Out' 0db on
 
+# Allwinner A20 Analog
+  mixer $card 'Power Amplifier' 0db
+  mixer $card 'Power Amplifier DAC' on
+  mixer $card 'Power Amplifier Mute' on
+
 # Allwinner A64 Analog
   mixer $card Headphone 0db on
   mixer $card 'AIF1 Slot 0 Digital DAC' on
 
-# Amlogic G12 HDMI to PCM0
-  mixer $card 'FRDDR_A SINK 1 SEL' 'OUT 1'
-  mixer $card 'FRDDR_A SRC 1 EN' on
-  mixer $card 'TDMOUT_B SRC SEL' 'IN 0'
-  mixer $card 'TOHDMITX I2S SRC' 'I2S B'
-  mixer $card 'TOHDMITX' on
+# NanoPC T4 Analog
+  mixer $card 'HPO L' on
+  mixer $card 'HPO R' on
+  mixer $card 'HPOVOL L' on
+  mixer $card 'HPOVOL R' on
+  mixer $card 'HPO MIX HPVOL' on
+  mixer $card 'OUT MIXL DAC L1' on
+  mixer $card 'OUT MIXR DAC R1' on
+  mixer $card 'Stereo DAC MIXL DAC L1' on
+  mixer $card 'Stereo DAC MIXR DAC R1' on
 
-# Amlogic G12 S/PDIF to PCM1
-  mixer $card 'FRDDR_B SINK 1 SEL' 'OUT 3'
-  mixer $card 'FRDDR_B SRC 1 EN' on
-  mixer $card 'SPDIFOUT SRC SEL' 'IN 1'
-  mixer $card 'SPDIFOUT Playback' on
+# Amlogic s8xx HDMI
+  mixer $card 'HDMI CTRL SRC' 'I2S'
+
+# ES8316 headphone jack
+  mixer $card 'Right Headphone Mixer Right DAC' on
+  mixer $card 'Left Headphone Mixer Left DAC' on
+
+# ES8388 headphone jack
+  mixer $card 'PCM' 100%
+  mixer $card 'Output 1' 80%
+  mixer $card 'Output 2' 80%
+  mixer $card 'Left Mixer Left Bypass' 80% on
+  mixer $card 'Left Mixer Right Bypass' 80% on
+  mixer $card 'Right Mixer Left Bypass' 80% on
+  mixer $card 'Right Mixer Right Bypass' 80% on
+
 fi
 
 exit 0

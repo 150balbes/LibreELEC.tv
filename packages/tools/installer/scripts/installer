@@ -180,7 +180,7 @@ do_install_quick() {
   {
     # remove all partitions
     msg_progress_install "1" "Get all partitions $INSTALL_DEVICE"
-    get_partition $INSTALL_DEVICE
+    get_partition $INSTALL_DEVICE 2>>$LOGFILE
 
     msg_progress_install "5" "Wiping disk $INSTALL_DEVICE"
     dd if=/dev/zero of=$INSTALL_DEVICE bs=4096 count=1024 2>>$LOGFILE
@@ -206,10 +206,18 @@ do_install_quick() {
     partsize_storage_end=-1024
 
     msg_progress_install "10" "Creating partition on $INSTALL_DEVICE"
-    parted -s $INSTALL_DEVICE unit s mkpart primary fat32 -- $partsize_system_start $partsize_system_end >> $LOGFILE 2>&1
+    if [ "$GPT" = "1" ]; then
+      parted -s $INSTALL_DEVICE unit s mkpart $DISKLABEL_SYSTEM fat16 -- $partsize_system_start $partsize_system_end >> $LOGFILE 2>&1
+    else
+      parted -s $INSTALL_DEVICE unit s mkpart primary fat16 -- $partsize_system_start $partsize_system_end >> $LOGFILE 2>&1
+    fi
 
     msg_progress_install "13" "Creating partition on $INSTALL_DEVICE"
-    parted -s $INSTALL_DEVICE unit s mkpart primary ext4 -- $partsize_storage_start $partsize_storage_end >> $LOGFILE 2>&1
+    if [ "$GPT" = "1" ]; then
+      parted -s $INSTALL_DEVICE unit s mkpart $DISKLABEL_STORAGE ext4 -- $partsize_storage_start $partsize_storage_end >> $LOGFILE 2>&1
+    else
+      parted -s $INSTALL_DEVICE unit s mkpart primary ext4 -- $partsize_storage_start $partsize_storage_end >> $LOGFILE 2>&1
+    fi
 
     msg_progress_install "16" "Setup bootflag on partition 1 of $INSTALL_DEVICE"
     parted -s $INSTALL_DEVICE set 1 boot on >> $LOGFILE 2>&1
@@ -222,7 +230,7 @@ do_install_quick() {
 
     # create filesystem
     msg_progress_install "23" "Creating filesystem on ${INSTALL_DEVICE}1"
-    mkfs.vfat ${INSTALL_DEVICE}${PART1} >> $LOGFILE 2>&1
+    mkfs.vfat -F 16 ${INSTALL_DEVICE}${PART1} >> $LOGFILE 2>&1
 
     msg_progress_install "25" "Set uuid and disklabel $DISKLABEL_SYSTEM on ${INSTALL_DEVICE}${PART1}"
     dosfslabel ${INSTALL_DEVICE}${PART1}  $DISKLABEL_SYSTEM >> $LOGFILE 2>&1
@@ -253,10 +261,10 @@ do_install_quick() {
 
     # install system files
     msg_progress_install "60" "Installing Kernel"
-    cp /flash/KERNEL $TMPDIR/part1 >> $LOGFILE 2>&1
+    cp "/flash/$IMAGE_KERNEL" $TMPDIR/part1/KERNEL >> $LOGFILE 2>&1
 
     msg_progress_install "65" "Installing System"
-    cp /flash/SYSTEM $TMPDIR/part1 >> $LOGFILE 2>&1
+    cp "/flash/$IMAGE_SYSTEM" $TMPDIR/part1/SYSTEM >> $LOGFILE 2>&1
     sync
 
     # configuring bootloader
@@ -453,6 +461,21 @@ LOGBACKUP="/flash/logs/$(date +%Y%m%d%H%M%S).log"
 
 export COLORTERM="1"
 export NEWT_COLORS="$WHIPTAIL_COLORS"
+
+IMAGE_KERNEL="KERNEL"
+IMAGE_SYSTEM="SYSTEM"
+for arg in $(cat /proc/cmdline); do
+  case $arg in
+    BOOT_IMAGE=*)
+      IMAGE_KERNEL="${arg#*=}"
+      [ "${IMAGE_KERNEL:0:1}" = "/" ] && IMAGE_KERNEL="${IMAGE_KERNEL:1}"
+      ;;
+    SYSTEM_IMAGE=*)
+      IMAGE_SYSTEM="${arg#*=}"
+      [ "${IMAGE_SYSTEM:0:1}" = "/" ] && IMAGE_SYSTEM="${IMAGE_SYSTEM:1}"
+      ;;
+  esac
+done
 
 # prepare temporary directory
 rm -rf $TMPDIR
