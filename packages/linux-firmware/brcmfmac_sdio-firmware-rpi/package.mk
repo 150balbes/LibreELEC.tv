@@ -3,8 +3,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="brcmfmac_sdio-firmware-rpi"
-PKG_VERSION="688531da4bcf802a814d9cb0c8b6d62e3b8a3327"
-PKG_SHA256="51a33d23127300dffd6ac088f372b83ab862053f5e4dc7130676ebaaa824e626"
+PKG_VERSION="39f45e47c480f46b334770b88a738f12cc00010c"
+PKG_SHA256="8a830d67a3758f9453b10efc9592515289df9b8743ae1a05bc1fd046bde6969f"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/LibreELEC/LibreELEC.tv"
 PKG_URL="https://github.com/LibreELEC/$PKG_NAME/archive/$PKG_VERSION.tar.gz"
@@ -20,6 +20,7 @@ post_makeinstall_target() {
   # Install rpi btuart script to bring up Bluetooth
   mkdir -p $INSTALL/usr/bin
     cp -P $PKG_DIR/scripts/rpi-btuart $INSTALL/usr/bin
+    cp -P $PKG_DIR/scripts/rpi-udev $INSTALL/usr/bin
 }
 
 post_install() {

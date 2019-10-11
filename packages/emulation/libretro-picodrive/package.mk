@@ -2,13 +2,14 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-picodrive"
-PKG_VERSION="03f663dd1a65f11cadbd51bd4389dc82581f2f23"
-PKG_SHA256="a6f5bfe5c497de56dcc4b648bbf43471caa96d8ed601ed883e9e7cd4bbd46311"
+PKG_VERSION="68329d146bff07b3e8a827ed718d86422cebb67b"
+PKG_SHA256="648ee77cdd9f96480f54e1f374c8e6bb0018d8ea95f5433a396551e3aa7d3ceb"
 PKG_LICENSE="MAME"
 PKG_SITE="https://github.com/libretro/picodrive"
 PKG_URL="https://github.com/libretro/picodrive/archive/$PKG_VERSION.tar.gz"
+PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain kodi-platform $PKG_NAME:host"
-PKG_DEPENDS_HOST="cyclone68000"
+PKG_DEPENDS_UNPACK="cyclone68000"
 PKG_LONGDESC="Fast MegaDrive/MegaCD/32X emulator"
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="-gold"

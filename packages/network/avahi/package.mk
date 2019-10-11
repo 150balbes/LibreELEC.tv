@@ -56,8 +56,6 @@ pre_configure_target() {
 }
 
 post_makeinstall_target() {
-# for some reason avai can fail to start see: http://forums.gentoo.org/viewtopic-p-7322172.html#7322172
-  sed -e "s,^.*disallow-other-stacks=.*$,disallow-other-stacks=yes,g" -i $INSTALL/etc/avahi/avahi-daemon.conf
 # disable wide-area
   sed -e "s,^.*enable-wide-area=.*$,enable-wide-area=no,g" -i $INSTALL/etc/avahi/avahi-daemon.conf
 # publish-hinfo
@@ -66,6 +64,8 @@ post_makeinstall_target() {
   sed -e "s,^.*publish-workstation=.*$,publish-workstation=no,g" -i $INSTALL/etc/avahi/avahi-daemon.conf
 # browse domains?
   sed -e "s,^.*browse-domains=.*$,# browse-domains=,g" -i $INSTALL/etc/avahi/avahi-daemon.conf
+# set root user as default
+  sed -e "s,<port>22</port>,<port>22</port>\n    <txt-record>path=/storage</txt-record>\n    <txt-record>u=root</txt-record>,g" -i $INSTALL/etc/avahi/services/sftp-ssh.service
 
   rm -rf $INSTALL/etc/avahi/avahi-dnsconfd.action
   rm -rf $INSTALL/etc/avahi/services/ssh.service

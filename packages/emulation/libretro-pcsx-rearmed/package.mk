@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-pcsx-rearmed"
-PKG_VERSION="8569f7c3abe705930306d7537cc0f7e53e63bc19"
-PKG_SHA256="c6245b92d5ab43e35cd36972175758711ab14f9d06971d9895d1b79fb9db4e53"
+PKG_VERSION="27914208797bcb529fdbe09933cd5ce2e095567a"
+PKG_SHA256="eae37ed6458bd38709209e4ff9da7cae2c29c99d2828ff01f560ff88c99f1ba7"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/pcsx_rearmed"
 PKG_URL="https://github.com/libretro/pcsx_rearmed/archive/$PKG_VERSION.tar.gz"
@@ -21,19 +21,23 @@ make_target() {
   
   if target_has_feature neon; then
     export HAVE_NEON=1
+    export BUILTIN_GPU=neon
    else
     export HAVE_NEON=0
   fi
+
+  # check if this flag is still needed when this package is updated
+  export CFLAGS="$CFLAGS -fcommon"
   
   case $TARGET_ARCH in
     aarch64)
-      make -f Makefile.libretro platform=aarch64 GIT_VERSION=$PKG_VERSION
+      make -f Makefile.libretro DYNAREC=lightrec platform=aarch64 GIT_VERSION=$PKG_VERSION
       ;;
     arm)
-      make -f Makefile.libretro USE_DYNAREC=1 GIT_VERSION=$PKG_VERSION
+      make -f Makefile.libretro DYNAREC=ari64 GIT_VERSION=$PKG_VERSION
       ;;
     x86_64)
-      make -f Makefile.libretro GIT_VERSION=$PKG_VERSION
+      make -f Makefile.libretro DYNAREC=lightrec GIT_VERSION=$PKG_VERSION
       ;;
   esac
 }

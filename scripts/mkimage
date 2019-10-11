@@ -129,15 +129,15 @@ PROMPT 1
 
 LABEL installer
   KERNEL /${KERNEL_NAME}
-  APPEND boot=UUID=${UUID_SYSTEM} installer quiet tty vga=current
+  APPEND boot=UUID=${UUID_SYSTEM} installer quiet systemd.debug_shell vga=current
 
 LABEL live
   KERNEL /${KERNEL_NAME}
-  APPEND boot=UUID=${UUID_SYSTEM} live quiet tty vga=current
+  APPEND boot=UUID=${UUID_SYSTEM} live quiet vga=current
 
 LABEL run
   KERNEL /${KERNEL_NAME}
-  APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty portable quiet
+  APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} portable quiet
 EOF
 
   cat << EOF > "${LE_TMP}/grub.cfg"
@@ -145,15 +145,15 @@ set timeout="25"
 set default="Installer"
 menuentry "Installer" {
 	search --set -f /KERNEL
-	linux /KERNEL boot=UUID=${UUID_SYSTEM} installer quiet tty vga=current
+	linux /KERNEL boot=UUID=${UUID_SYSTEM} installer quiet systemd.debug_shell vga=current
 }
 menuentry "Live" {
 	search --set -f /KERNEL
-	linux /KERNEL boot=UUID=${UUID_SYSTEM} grub_live quiet tty vga=current
+	linux /KERNEL boot=UUID=${UUID_SYSTEM} grub_live quiet vga=current
 }
 menuentry "Run" {
 	search --set -f /KERNEL
-	linux /KERNEL boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} tty grub_portable quiet
+	linux /KERNEL boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} grub_portable quiet
 }
 EOF
 
@@ -216,8 +216,8 @@ elif [ "${BOOTLOADER}" = "u-boot" -a -n "${UBOOT_SYSTEM}" ]; then
   # create bootloader configuration
   echo "image: creating bootloader configuration..."
 
-  if [ "${UBOOT_SYSTEM}" != "box" ]; then
-    DTB="$(${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb)"
+  DTB="$(${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb)"
+  if [ -n "${DTB}" -a -z "${PLATFORM}" ]; then
 
     if [ -f "${RELEASE_DIR}/3rdparty/bootloader/${DTB}" ]; then
       mcopy "${RELEASE_DIR}/3rdparty/bootloader/${DTB}" ::
@@ -319,18 +319,12 @@ if [ "${PROJECT}" = "Generic" ]; then
   echo "image: cleaning up..."
   # remove tmp ${DISK}, vmdk and ovf
   rm "${DISK_BASENAME}.tmp" "${DISK_BASENAME}.vmdk" "${DISK_BASENAME}.ovf"
-  # set owner
-  [ -n "${SUDO_USER}" ] && chown "${SUDO_USER}:" "${DISK_BASENAME}.ova"
 fi
 
 # gzip
 echo "image: compressing..."
 pigz --best --force "${DISK}"
 
-# set owner
-if [ -n "${SUDO_USER}" ]; then
-  chown "${SUDO_USER}:" "${DISK}.gz"
-fi
 # create sha256 checksum of image
 ( cd "${TARGET_IMG}"
   sha256sum $(basename "${DISK}").gz > $(basename "${DISK}").gz.sha256

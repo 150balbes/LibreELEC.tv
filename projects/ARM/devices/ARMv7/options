@@ -1,0 +1,148 @@
+################################################################################
+# setup system defaults
+################################################################################
+
+  # The TARGET_CPU variable controls which processor should be targeted for
+  # generated code.
+
+	LINUX="default"
+
+	if [ "$PLATFORM" = "RK" ]; then
+#		TARGET_CPU="cortex-a17"
+		TARGET_CPU="cortex-a9"
+		TARGET_FPU="neon-vfpv4"
+
+		# Kernel target
+		KERNEL_TARGET="zImage"
+
+	elif [ "$PLATFORM" = "AW" ]; then
+		TARGET_CPU="cortex-a53"
+		TARGET_FPU="crypto-neon-fp-armv8"
+		TARGET_CPU_FLAGS="+crc"
+	elif [ "$PLATFORM" = "AMLMX" ]; then
+		TARGET_CPU="cortex-a9"
+		TARGET_FPU="neon-fp16"
+
+		LINUX="xdarklight"
+
+		# Kernel target
+		KERNEL_TARGET="uImage"
+		SRC_LOADADDR="0x00208000"
+
+	fi
+
+  if [ "$(uname -m)" != "aarch64" ]; then
+	KERNEL_TOOLCHAIN="arm-none-linux-gnueabihf"
+  fi
+	TARGET_FLOAT=hard
+	TARGET_FEATURES="32bit"
+
+  # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
+    BOOTLOADER="u-boot"
+
+  # Start boot partition at 16MiB, same as https://github.com/rockchip-linux/build images
+    SYSTEM_PART_START=32768
+
+  # U-Boot firmware package(s) to use
+    if [ "$PLATFORM" = "RK" ]; then
+	UBOOT_FIRMWARE="rkbin"
+	EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0 systemd.debug_shell=ttyS2 coherent_pool=2M cec.debounce_ms=5000"
+	DEBUG_TTY="/dev/ttyS2"
+    elif [ "$PLATFORM" = "AMLMX" ]; then
+	UBOOT_FIRMWARE="amlogic-boot-fip"
+        EXTRA_CMDLINE="console=ttyAML0,115200n8 console=tty0 systemd.debug_shell=ttyAML0"
+        DEBUG_TTY="/dev/ttyAML0"
+    elif [ "$PLATFORM" = "AW" ]; then
+	UBOOT_FIRMWARE="atf"
+        if [ "${UBOOT_SYSTEM}" = "h5" ]; then
+		ATF_PLATFORM="sun50i_a64"
+	else
+		ATF_PLATFORM="sun50i_h6"
+	fi
+        EXTRA_CMDLINE="console=ttyS0,115200n8 console=tty1 systemd.debug_shell=ttyS0"
+	DEBUG_TTY="/dev/console"
+    fi
+
+  # Additional kernel dependencies
+    KERNEL_EXTRA_DEPENDS_TARGET="lz4:host"
+
+  # Additional kernel make parameters
+    KERNEL_MAKE_EXTRACMD="dtbs"
+
+################################################################################
+# setup build defaults
+################################################################################
+
+  # Project CFLAGS
+    PROJECT_CFLAGS=""
+
+  # SquashFS compression method (gzip / lzo / xz / zstd)
+    SQUASHFS_COMPRESSION="zstd"
+
+################################################################################
+# setup project defaults
+################################################################################
+
+  # build and install ALSA Audio support (yes / no)
+    ALSA_SUPPORT="yes"
+
+  # OpenGL(X) implementation to use (no / mesa)
+    OPENGL="no"
+
+  # Displayserver to use (x11 / no)
+    DISPLAYSERVER="no"
+
+  # Windowmanager to use (fluxbox / none)
+    WINDOWMANAGER="none"
+
+  # OpenGL-ES implementation to use
+  OPENGLES="mesa"
+
+  # Graphic drivers to use
+  GRAPHIC_DRIVERS="lima panfrost"
+
+  # KODI Player implementation to use
+    KODIPLAYER_DRIVER="$OPENGLES"
+
+  # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
+  # Space separated list is supported,
+  # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
+    FIRMWARE="brcmfmac_sdio-firmware kernel-firmware dvb-firmware misc-firmware wlan-firmware"
+
+  # build with installer (yes / no)
+    INSTALLER_SUPPORT="no"
+
+  # build debug with valgrind (yes / no)
+  # Increases image size significantly
+    VALGRIND="no"
+
+  # additional drivers to install:
+  # for a list of additional drivers see packages/linux-drivers
+  # Space separated list is supported,
+  # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
+  ADDITIONAL_DRIVERS+=" RTL88x2BU"
+  ADDITIONAL_DRIVERS+=" RTL8189FS"
+  ADDITIONAL_DRIVERS+=" RTL8821CU"
+  ADDITIONAL_DRIVERS+=" RTL8822BS"
+  ADDITIONAL_DRIVERS+=" RTL8723DS"
+  ADDITIONAL_DRIVERS+=" RTL8188FU"
+#  ADDITIONAL_DRIVERS+=" RTL8189ES"
+#  ADDITIONAL_DRIVERS=""
+
+  # build and install driver addons (yes / no)
+    DRIVER_ADDONS_SUPPORT="no"
+
+  # driver addons to install:
+  # for a list of additional drivers see packages/linux-driver-addons
+  # Space separated list is supported,
+    DRIVER_ADDONS="crazycat dvb-latest"
+
+  # additional packages to install:
+    ADDITIONAL_PACKAGES="u-boot-script dtc"
+
+  # use the kernel CEC framework for libcec (yes / no)
+    CEC_FRAMEWORK_SUPPORT="yes"
+
+    ADDON_SERVER_URL="http://balbes150.libreelec.tv/addons"
+    ADDON_PROJECT="ARMv7"
+

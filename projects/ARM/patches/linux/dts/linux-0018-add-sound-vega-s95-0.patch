@@ -1,0 +1,41 @@
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+@@ -41,6 +42,23 @@
+ 		enable-active-high;
+ 	};
+ 
++	p5v0: regulator-p5v0 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "P5V0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	hdmi_p5v0: regulator-hdmi_p5v0 {
++		compatible = "regulator-fixed";
++		regulator-name = "HDMI_P5V0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&p5v0>;
++	};
++
+ 	vddio_boot: regulator-vddio_boot {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDDIO_BOOT";
+@@ -141,11 +159,12 @@
+ 	status = "okay";
+ 	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
+ 	pinctrl-names = "default";
++	hdmi-supply = <&hdmi_p5v0>;
+ };
+ 
+ &hdmi_tx_tmds_port {
+ 	hdmi_tx_tmds_out: endpoint {
+-		remote-endpoint = <&hdmi_connector_in>;
++	remote-endpoint = <&hdmi_connector_in>;
+ 	};
+ };
+ 
+

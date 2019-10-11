@@ -24,10 +24,10 @@ PROJECT_DIR="${ROOT}/projects"
 DISTRO="${DISTRO:-LibreELEC}"
 
 # determines PROJECT, if not forced by user
-PROJECT="${PROJECT:-Generic}"
+export PROJECT="${PROJECT:-Generic}"
 
 # determines TARGET_ARCH, if not forced by user
-ARCH="${ARCH:-x86_64}"
+export ARCH="${ARCH:-x86_64}"
 TARGET_ARCH="${ARCH}"
 
 # include helper functions
@@ -56,14 +56,13 @@ KERNEL_NAME="${KERNEL_NAME:-KERNEL}"
 
 LINUX_DEPENDS="${PROJECT_DIR}/${PROJECT}/linux ${PROJECT_DIR}/${PROJECT}/patches/linux ${PROJECT_DIR}/${PROJECT}/packages/linux ${ROOT}/packages/linux"
 [ -n "${DEVICE}" ] && LINUX_DEPENDS+=" ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/linux ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/patches/linux ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/packages/linux"
-[ "${TARGET_ARCH}" = "x86_64" ] && LINUX_DEPENDS+=" ${ROOT}/packages/linux-firmware/intel-ucode ${ROOT}/packages/linux-firmware/kernel-firmware"
 
 # Need to point to your actual cc
 # If you have ccache installed, take care that LOCAL_CC does not point to it
 [ -z "${LOCAL_CC}" ] && export LOCAL_CC="$(command -v gcc)"
 
 if [ -z "${LOCAL_CC}" ]; then
-  die "***** Please install gcc *****" "127"
+  die "***** Please install gcc - run scripts/checkdeps *****" "127"
 fi
 
 # Need to point to your actual g++
@@ -77,6 +76,7 @@ VERBOSE="${VERBOSE:-yes}"
 #  Try values between 1 and number of processor cores present.
 #  default: use all cores
 [ -z "${CONCURRENCY_MAKE_LEVEL}" ] && export CONCURRENCY_MAKE_LEVEL=$(nproc)
+[ -z "${CONCURRENCY_LOAD}" ] && export CONCURRENCY_LOAD=$(python3 -c "import os; print('%.2f' % (os.cpu_count() * 1.5))")
 
 # cache size for ccache
 # Set the maximum size of the files stored in the cache. You can specify a
@@ -86,7 +86,24 @@ VERBOSE="${VERBOSE:-yes}"
 # directory.
 CCACHE_CACHE_SIZE="10G"
 
-# read options from $HOME if available
+# set addon paths
+if [ -z "$ADDON_PATH" ]; then
+  if [ -n "$ADDON_PROJECT" ]; then
+    ADDON_PATH="$ADDON_VERSION/$ADDON_PROJECT/$TARGET_ARCH"
+  else
+    ADDON_PATH="$ADDON_VERSION/$TARGET_ARCH"
+  fi
+fi
+if [ -z "$ADDON_URL" ]; then
+  ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+fi
+
+# read local persistent options from $ROOT if available
+if [ -f "${ROOT}/.libreelec/options" ]; then
+  . "${ROOT}/.libreelec/options"
+fi
+
+# read global persistent options from $HOME if available
 if [ -f "${HOME}/.libreelec/options" ]; then
   . "${HOME}/.libreelec/options"
 fi
@@ -105,6 +122,10 @@ check_config
 
 # If the package caches are unset, then populate them
 init_package_cache
+
+if [ -z "${DEFAULT_PYTHON_VERSION+set}" ]; then
+  export DEFAULT_PYTHON_VERSION="$(get_pkg_variable Python3 PKG_PYTHON_VERSION)"
+fi
 
 # set package metadata
 source_package "${1}"

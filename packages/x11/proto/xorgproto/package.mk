@@ -2,8 +2,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xorgproto"
-PKG_VERSION="2019.1"
-PKG_SHA256="a6daaa7a6cbc8e374032d83ff7f47d41be98f1e0f4475d66a4da3aa766a0d49b"
+PKG_VERSION="2020.1"
+PKG_SHA256="54a153f139035a376c075845dd058049177212da94d7a9707cf9468367b699d2"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.X.org"
 PKG_URL="https://xorg.freedesktop.org/archive/individual/proto/$PKG_NAME-$PKG_VERSION.tar.bz2"

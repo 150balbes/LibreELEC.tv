@@ -23,9 +23,6 @@
 /usr/bin/busybox mount -t proc proc /proc
 /usr/bin/busybox mount -t sysfs sysfs /sys
 
-# set needed variables
-MODULE_DIR=/usr/lib/modules
-
 UPDATE_ROOT=/storage/.update
 UPDATE_DIR="$UPDATE_ROOT"
 
@@ -203,7 +200,7 @@ mount_nfs() {
 
   [ "$NFS_OPTIONS" = "$1" ] && NFS_OPTIONS=
 
-  mount_common "$NFS_EXPORT" "$2" "$3,nolock,soft,timeo=3,retrans=2,rsize=32768,wsize=32768,$NFS_OPTIONS" "nfs"
+  mount_common "$NFS_EXPORT" "$2" "$3,nolock,rsize=32768,wsize=32768,$NFS_OPTIONS" "nfs"
 }
 
 mount_ubifs() {
@@ -316,6 +313,7 @@ update_file() {
   if [ -f "$UPDATE_DIR/$2" -a -f "$3" ]; then
     mount -o remount,rw /flash
 
+    rm -f "$3"
     StartProgress percent "Updating $1... " "$3" $(stat -t "$UPDATE_DIR/$2" | awk '{print $2}')
       # use dd here with conv=fsync so that all writes are non-buffered
       # ensuring accurate progress - take the sync hit during the
@@ -356,16 +354,6 @@ update_bootloader() {
       StopProgress "done"
     [ -n "${result}" ] && echo "${result}"
   fi
-}
-
-load_modules() {
-  progress "Loading kernel modules"
-
-  [ ! -f "/etc/modules" ] && return
-  for module in $(cat /etc/modules); do
-    progress "Loading kernel module $module"
-    insmod "$MODULE_DIR/$module.ko" || progress "... Failed to load kernel module $module, skipping"
-  done
 }
 
 set_consolefont() {
@@ -527,7 +515,9 @@ check_disks() {
         break
       fi
     done
-    sed -e '/^$/d' -e 's/^/fsck: /' </dev/fsck.latest >/dev/kmsg
+    while read line; do
+      [ -n "$line" ] && echo "fsck: ${line::160}" >/dev/kmsg
+    done </dev/fsck.latest
     rm -f /dev/fsck.latest
   fi
 }
@@ -568,10 +558,13 @@ mount_flash() {
 cleanup_flash() {
   progress "Cleaning up flash (if required)"
 
-  if [ -f /flash/pieeprom.upd ]; then
+  if [ -f /flash/pieeprom.bin -o -f /flash/pieeprom.upd -o -f /flash/vl805.bin ]; then
     mount -o remount,rw /flash
-    rm -f /flash/pieeprom.bin /flash/pieeprom.upd
+
+    rm -f /flash/pieeprom.bin /flash/pieeprom.upd /flash/pieeprom.sig
+    rm -f /flash/vl805.bin /flash/vl805.sig
     rm -f /flash/recovery.bin /flash/recovery.[0-9][0-9][0-9] /flash/RECOVERY.[0-9][0-9][0-9]
+
     mount -o remount,ro /flash
   fi
 }
@@ -670,6 +663,10 @@ check_out_of_space() {
 
 do_cleanup() {
   StartProgress spinner "Cleaning up... "
+
+  if mountpoint -q /update; then
+    umount /update
+  fi
 
   if [ -d $UPDATE_ROOT/.tmp/mnt ]; then
     if mountpoint -q $UPDATE_ROOT/.tmp/mnt ; then
@@ -932,7 +929,6 @@ check_update() {
   umount /sysroot
   update_file "System" "$UPDATE_SYSTEM" "/flash/$IMAGE_SYSTEM"
   update_bootloader
-  umount /update
   do_cleanup
   do_reboot
 }
@@ -959,15 +955,6 @@ prepare_sysroot() {
 
 # hide kernel log messages on console
 echo '1 4 1 7' > /proc/sys/kernel/printk
-
-# set ondemand up_threshold
-if [ -e /sys/devices/system/cpu/cpufreq/ondemand/up_threshold ]; then
-  echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
-else
-  for f in $(ls /sys/devices/system/cpu/cpufreq/policy*/ondemand/up_threshold 2>/dev/null) ; do
-    echo 50 > $f
-  done
-fi
 
 # run platform_init script if exists
 if [ -f "./platform_init" ]; then
@@ -1018,11 +1005,7 @@ for arg in $(cat /proc/cmdline); do
     wol_wait=*)
       wol_wait="${arg#*=}"
       ;;
-    textmode)
-      INIT_UNIT="--unit=textmode.target"
-      ;;
     installer)
-      INIT_UNIT="--unit=installer.target"
       SYSLINUX_DEFAULT="installer"
       ;;
     debugging)
@@ -1068,6 +1051,9 @@ for arg in $(cat /proc/cmdline); do
     bigfont=*)
       BIGFONT="${arg#*=}"
       ;;
+    ip=*)
+      KERNEL_IPCONFIG="yes"
+      ;;
   esac
 done
 
@@ -1090,7 +1076,6 @@ debug_msg "Unique identifier for this client: ${MACHINE_UID:-NOT AVAILABLE}"
 
 # main boot sequence
 for BOOT_STEP in \
-    load_modules \
     set_consolefont \
     check_disks \
     mount_flash \
@@ -1136,24 +1121,16 @@ if [ "$FLASH_NETBOOT" = "yes" ]; then
   echo "" > /sysroot/dev/.flash_netboot
 fi
 
+if [ "$KERNEL_IPCONFIG" = "yes" ]; then
+  echo "" > /sysroot/dev/.kernel_ipconfig
+fi
+
 # swap can not be used over nfs.(see scripts/mount-swap)
 if [ "$STORAGE_NETBOOT" = "yes" ]; then
   echo "" > /sysroot/dev/.storage_netboot
 fi
 
-BACKUP_FILE=$(ls -1 /sysroot/storage/.restore/??????????????.tar 2>/dev/null | head -n 1)
-
-if [ -f /sysroot/storage/.please_resize_me ]; then
-  INIT_UNIT="--unit=fs-resize.target"
-elif [ -f /sysroot/storage/.cache/reset_oe -o -f /sysroot/storage/.cache/reset_xbmc ]; then
-  INIT_UNIT="--unit=factory-reset.target"
-elif [ -f "$BACKUP_FILE" ]; then
-  INIT_UNIT="--unit=backup-restore.target"
-elif [ -f /sysroot/storage/.rpi_flash_firmware ]; then
-  INIT_UNIT="--unit=rpi-flash-firmware.target"
-fi
-
 # switch to new sysroot and start real init
-exec /usr/bin/busybox switch_root /sysroot /usr/lib/systemd/systemd $INIT_ARGS $INIT_UNIT
+exec /usr/bin/busybox switch_root /sysroot /usr/lib/systemd/systemd $INIT_ARGS
 
 error "switch_root" "Error in initramfs. Could not switch to new root"

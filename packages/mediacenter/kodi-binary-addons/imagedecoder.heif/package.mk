@@ -2,8 +2,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="imagedecoder.heif"
-PKG_VERSION="1.0.3-Leia"
-PKG_SHA256="f5da3b7af5874807c8ccafbde1a9584c9c1ea9cacb2ff504642220ff03306fa3"
+PKG_VERSION="1.3.0-Matrix"
+PKG_SHA256="bb75fa34382443f6320bd7ab0a623834c1bd98743464de05029eb31fb5ac6494"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

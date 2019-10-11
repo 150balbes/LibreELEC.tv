@@ -1,0 +1,155 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
+@@ -34,6 +34,12 @@
+ 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+ 	};
+ 
++	sound {
++		compatible = "audio-graph-card";
++		label = "rockchip,rk3399";
++		dais = <&i2s0_p0>;
++	};
++
+ 	vcc12v_dcin: dc-12v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc12v_dcin";
+@@ -130,6 +136,26 @@
+ 		regulator-max-microvolt = <1400000>;
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_led_gpio>, <&status_led_gpio>;
++
++		power-status {
++			label = "power";
++			gpios = <&gpio3 RK_PD4 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++			status = "disabled";
++		};
++
++		system-status {
++			label = "status";
++			gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
+ };
+ 
+ &cpu_l0 {
+@@ -428,6 +454,23 @@
+ 	i2c-scl-rising-time-ns = <300>;
+ 	i2c-scl-falling-time-ns = <15>;
+ 	status = "okay";
++
++	es8316: codec@11 {
++		compatible = "everest,es8316";
++		reg = <0x11>;
++		clocks = <&cru SCLK_I2S_8CH_OUT>;
++		clock-names = "mclk";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2s_8ch_mclk>;
++		#sound-dai-cells = <0>;
++
++		port {
++			es8316_p0_0: endpoint {
++				remote-endpoint = <&i2s0_p0_0>;
++			};
++		};
++	};
++
+ };
+ 
+ &i2c3 {
+@@ -446,6 +489,15 @@
+ 	rockchip,playback-channels = <8>;
+ 	rockchip,capture-channels = <8>;
+ 	status = "okay";
++
++	i2s0_p0: port {
++		i2s0_p0_0: endpoint {
++			dai-format = "i2s";
++			mclk-fs = <256>;
++			remote-endpoint = <&es8316_p0_0>;
++		};
++	};		
++
+ };
+ 
+ &i2s1 {
+@@ -527,6 +579,16 @@
+ 		};
+ 	};
+ 
++	leds {
++		power_led_gpio: power_led_gpio {
++			rockchip,pins = <3 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		status_led_gpio: status_led_gpio {
++			rockchip,pins = <3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int_l: pmic-int-l {
+ 			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+@@ -560,6 +622,22 @@
+ 
+ 		wifi_host_wake_l: wifi-host-wake-l {
+ 			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	i2s0 {
++		i2s0_8ch_bus: i2s0-8ch-bus {
++			rockchip,pins =
++				<3 24 RK_FUNC_1 &pcfg_pull_none>,
++				<3 25 RK_FUNC_1 &pcfg_pull_none>,
++				<3 26 RK_FUNC_1 &pcfg_pull_none>,
++				<3 27 RK_FUNC_1 &pcfg_pull_none>,
++				<3 30 RK_FUNC_1 &pcfg_pull_none>,
++				<3 31 RK_FUNC_1 &pcfg_pull_none>;
++		};
++
++		i2s_8ch_mclk: i2s-8ch-mclk {
++			rockchip,pins = <4 0 RK_FUNC_1 &pcfg_pull_none>;
+ 		};
+ 	};
+ };
+@@ -609,6 +687,9 @@
+ 	max-frequency = <150000000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdmmc_clk &sdmmc_cd &sdmmc_cmd &sdmmc_bus4>;
++	sd-uhs-sdr104;
++	vmmc-supply = <&vcc3v3_sys>;
++	vqmmc-supply = <&vcc_sdio>;
+ 	status = "okay";
+ };
+ 
+@@ -706,7 +787,7 @@
+ 
+ &usbdrd_dwc3_0 {
+ 	status = "okay";
+-	dr_mode = "otg";
++	dr_mode = "host";
+ };
+ 
+ &usbdrd3_1 {
+@@ -726,10 +807,5 @@
+ 	status = "okay";
+ };
+ 
+-&vopl {
+-	status = "okay";
+-};
+-
+-&vopl_mmu {
+-	status = "okay";
+-};
++/delete-node/ &hdmi_in_vopl;
++/delete-node/ &vopl_out_hdmi;
+

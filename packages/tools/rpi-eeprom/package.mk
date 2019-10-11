@@ -2,8 +2,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rpi-eeprom"
-PKG_VERSION="ffec4bd48ff2ab753da10bd42b2fd7b904d8dca5"
-PKG_SHA256="94eba989f3776c6d2f06cf021fffb1cb4c2f550fa325e5a08cab2fdd4a4e00bd"
+PKG_VERSION="b887a0bfa9f334a53bf1c66bbea5725b7a5f3846"
+PKG_SHA256="400d64066c5ad31cbfd6f3fc146961a930060c2b97ef89ad48cd998aead2d7a3"
 PKG_ARCH="arm"
 PKG_LICENSE="BSD-3/custom"
 PKG_SITE="https://github.com/raspberrypi/rpi-eeprom"
@@ -16,22 +16,33 @@ makeinstall_target() {
   DESTDIR=${INSTALL}/$(get_kernel_overlay_dir)/lib/firmware/raspberrypi/bootloader
 
   mkdir -p ${DESTDIR}
-    mkdir -p ${DESTDIR}/${_dir}
-      cp -PRv ${PKG_BUILD}/firmware/recovery.bin ${DESTDIR}
-
-    _dirs="critical"
+    _dirs="critical stable"
     [ "$LIBREELEC_VERSION" = "devel" ] && _dirs+=" beta"
-    for _dir in ${_dirs}; do
-      if [ -n "$(ls -1 ${PKG_BUILD}/firmware/${_dir}/pieeprom-* 2>/dev/null)" ]; then
-        mkdir -p ${DESTDIR}/${_dir}
-          cp -PRv $(ls -1 ${PKG_BUILD}/firmware/${_dir}/pieeprom-* | tail -1) ${DESTDIR}/${_dir}
-      fi
+
+    for _maindir in ${_dirs}; do
+      for _dir in ${PKG_BUILD}/firmware/${_maindir} ${PKG_BUILD}/firmware/{_maindir}-*; do
+        [ -d "${_dir}" ] || continue
+
+	_basedir="$(basename "${_dir}")"
+
+        mkdir -p ${DESTDIR}/${_basedir}
+          cp -PRv ${_dir}/recovery.bin ${DESTDIR}/${_basedir}
+
+          # Bootloader SPI
+          PKG_FW_FILE="$(ls -1 /${_dir}/pieeprom-* 2>/dev/null | tail -1)"
+          [ -n "${PKG_FW_FILE}" ] && cp -PRv "${PKG_FW_FILE}" ${DESTDIR}/${_basedir}
+
+          # VIA USB3
+          PKG_FW_FILE="$(ls -1 ${_dir}/vl805-*.bin 2>/dev/null | tail -1)"
+          [ -n "${PKG_FW_FILE}" ] && cp -PRv "${PKG_FW_FILE}" ${DESTDIR}/${_basedir}
+      done
     done
 
   mkdir -p ${INSTALL}/usr/bin
     cp -PRv ${PKG_DIR}/source/rpi-eeprom-update ${INSTALL}/usr/bin
     cp -PRv ${PKG_BUILD}/rpi-eeprom-update ${INSTALL}/usr/bin/.rpi-eeprom-update.real
     cp -PRv ${PKG_BUILD}/rpi-eeprom-config ${INSTALL}/usr/bin
+    cp -PRv ${PKG_BUILD}/firmware/vl805 ${INSTALL}/usr/bin
 
   mkdir -p ${INSTALL}/etc/default
     cp -PRv ${PKG_DIR}/config/* ${INSTALL}/etc/default

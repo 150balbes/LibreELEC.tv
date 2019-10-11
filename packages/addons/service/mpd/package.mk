@@ -3,18 +3,19 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mpd"
-PKG_VERSION="0.21.9"
-PKG_SHA256="39e25376ac2f4db26c3d074eba2ebeba10879a29c71abab33571019c1e520d3e"
-PKG_REV="107"
+PKG_VERSION="0.21.24"
+PKG_SHA256="84632a7e82e672b3a6d71651a75d05fb7acd62645c33e3f3af5a1067cfa64cd6"
+PKG_REV="108"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.musicpd.org"
-PKG_URL="http://www.musicpd.org/download/mpd/${PKG_VERSION%.*}/mpd-${PKG_VERSION}.tar.xz"
+PKG_URL="http://www.musicpd.org/download/mpd/$(get_pkg_version_maj_min)/mpd-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain alsa-lib avahi boost curl faad2 ffmpeg flac glib lame libcdio libiconv libid3tag \
                     libmad libmpdclient libsamplerate libvorbis libnfs libogg mpd-mpc opus pulseaudio samba yajl libgcrypt"
 PKG_SECTION="service.multimedia"
 PKG_SHORTDESC="Music Player Daemon (MPD): a free and open Music Player Server"
 PKG_LONGDESC="Music Player Daemon ($PKG_VERSION) is a flexible and powerful server-side application for playing music"
+PKG_BUILD_FLAGS="-sysroot"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Music Player Daemon (MPD)"
@@ -93,17 +94,13 @@ PKG_MESON_OPTS_TARGET=" \
   -Dzlib=enabled \
   -Dzzip=disabled"
 
-makeinstall_target() {
-  :
-}
-
 addon() {
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin
-  cp -P $PKG_BUILD/.$TARGET_NAME/mpd $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp -P $PKG_INSTALL/usr/bin/mpd $ADDON_BUILD/$PKG_ADDON_ID/bin
   # copy mpd cli binary
-  cp -P $(get_build_dir mpd-mpc)/.$TARGET_NAME/mpc $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp -P $(get_install_dir mpd-mpc)/usr/bin/mpc $ADDON_BUILD/$PKG_ADDON_ID/bin
 
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib
-  cp -p $(get_build_dir libmpdclient)/.install_pkg/usr/lib/libmpdclient.so $ADDON_BUILD/$PKG_ADDON_ID/lib
-  cp -p $(get_build_dir libmpdclient)/.install_pkg/usr/lib/libmpdclient.so.2 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so.2 $ADDON_BUILD/$PKG_ADDON_ID/lib
 }

@@ -1,0 +1,29 @@
+From 2169248e647beee0f19922e9f1fab08b35f03b20 Mon Sep 17 00:00:00 2001
+From: Robin Murphy <robin.murphy@arm.com>
+Date: Sat, 19 Sep 2020 18:04:15 +0000
+Subject: [PATCH 20/29] FROMGIT: drm/panfrost: Set DMA max segment size
+
+Since all we do with scatterlists is map them in the MMU, we don't have
+any hardware constraints on how they're laid out. Let the DMA layer know
+so it won't warn when DMA API debugging is enabled.
+
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_gpu.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+index f2c1ddc41a9b..9a5c85a7d341 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
++++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+@@ -343,6 +343,7 @@ int panfrost_gpu_init(struct panfrost_device *pfdev)
+ 
+ 	dma_set_mask_and_coherent(pfdev->dev,
+ 		DMA_BIT_MASK(FIELD_GET(0xff00, pfdev->features.mmu_features)));
++	dma_set_max_seg_size(pfdev->dev, UINT_MAX);
+ 
+ 	irq = platform_get_irq_byname(to_platform_device(pfdev->dev), "gpu");
+ 	if (irq <= 0)
+-- 
+2.17.1
+

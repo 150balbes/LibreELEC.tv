@@ -1,0 +1,48 @@
+--- a/arch/arm/dts/rk3328-rock64.dts
++++ b/arch/arm/dts/rk3328-rock64.dts
+@@ -59,6 +59,24 @@
+ 		regulator-name = "vcc_sys";
+ 		regulator-always-on;
+ 		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vcc5v0_otg: vcc5v0-otg-drv {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		regulator-name = "vcc5v0_otg";
++		gpio = <&gpio0 27 GPIO_ACTIVE_HIGH>;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vcc5v0_host_xhci: vcc5v0-host-xhci-drv {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		regulator-name = "vcc5v0_host_xhci";
++		gpio = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 	};
+@@ -380,6 +398,7 @@
+ };
+ 
+ &usb20_otg {
++	vbus-supply = <&vcc5v0_otg>;
+ 	dr_mode = "host";
+ 	status = "okay";
+ };
+@@ -392,6 +411,11 @@
+ 	status = "okay";
+ };
+ 
++&usb_host0_xhci {
++	vbus-supply = <&vcc5v0_host_xhci>;
++	status = "okay";
++};
++
+ &vop {
+ 	status = "okay";
+ };
+

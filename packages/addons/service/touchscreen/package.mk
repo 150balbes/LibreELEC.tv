@@ -3,7 +3,7 @@
 
 PKG_NAME="touchscreen"
 PKG_VERSION="1.0"
-PKG_REV="102"
+PKG_REV="103"
 PKG_ARCH="any"
 PKG_ADDON_PROJECTS="Generic RPi"
 PKG_LICENSE="GPL"
@@ -30,6 +30,6 @@ addon() {
   sed -e "s|@ADDON_VERSION@|$ADDON_VERSION|g" \
       -i $ADDON_BUILD/$PKG_ADDON_ID/addon.xml
 
-  cp $(get_build_dir tslib)/.install_pkg/usr/bin/* $ADDON_BUILD/$PKG_ADDON_ID/bin
-  cp $(get_build_dir evtest)/.$TARGET_NAME/evtest  $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp $(get_install_dir tslib)/usr/bin/* $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp $(get_install_dir evtest)/usr/bin/evtest $ADDON_BUILD/$PKG_ADDON_ID/bin
 }

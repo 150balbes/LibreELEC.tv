@@ -9,7 +9,7 @@ import xbmcaddon
 import subprocess
 from xml.dom.minidom import parse
 
-sys.path.append('/usr/share/kodi/addons/service.libreelec.settings')
+sys.path.append('/usr/share/kodi/addons/@DISTRO_PKG_SETTINGS_ID@')
 
 import oe
 
@@ -35,6 +35,7 @@ def startchrome(args):
     new_env['VAAPI_MODE'] = __addon__.getSetting('VAAPI_MODE')
     new_env['WINDOW_MODE'] = __addon__.getSetting('WINDOW_MODE')
     new_env['RASTER_MODE'] = __addon__.getSetting('RASTER_MODE')
+    new_env['DARK_MODE'] = __addon__.getSetting('DARK_MODE')
 
     new_env['ALSA_DEVICE'] = ''
     if __addon__.getSetting('USE_CUST_AUDIODEVICE') == 'true':
@@ -47,8 +48,8 @@ def startchrome(args):
     chrome_params = args + ' ' + \
                     __addon__.getSetting('HOMEPAGE')
     subprocess.call(__path__ + 'chrome-start ' + chrome_params, shell=True, env=new_env)
-  except Exception, e:
-    oe.dbg_log('chrome', unicode(e))
+  except Exception as e:
+    oe.dbg_log('chrome', e)
 
 def isRuning(pname):
   tmp = os.popen("ps -Af").read()

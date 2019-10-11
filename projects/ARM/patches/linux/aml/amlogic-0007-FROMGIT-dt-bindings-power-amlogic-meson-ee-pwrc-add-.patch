@@ -1,0 +1,93 @@
+From 224dd48def883cfb362c237a6497d2d559f000ac Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Thu, 17 Sep 2020 08:47:01 +0200
+Subject: [PATCH 07/29] FROMGIT: dt-bindings: power: amlogic, meson-ee-pwrc:
+ add Amlogic AXG power controller bindings
+
+This add the bindings of the Power Controller found in the Amlogic AXG SoCs.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Link: https://lore.kernel.org/r/20200917064702.1459-2-narmstrong@baylibre.com
+---
+ .../bindings/power/amlogic,meson-ee-pwrc.yaml | 23 +++++++++++++++++--
+ include/dt-bindings/power/meson-axg-power.h   | 14 +++++++++++
+ 2 files changed, 35 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/power/meson-axg-power.h
+
+diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
+index 4f524f822e84..d30f85cc395e 100644
+--- a/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
++++ b/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
+@@ -27,6 +27,7 @@ properties:
+       - amlogic,meson8b-pwrc
+       - amlogic,meson8m2-pwrc
+       - amlogic,meson-gxbb-pwrc
++      - amlogic,meson-axg-pwrc
+       - amlogic,meson-g12a-pwrc
+       - amlogic,meson-sm1-pwrc
+ 
+@@ -42,11 +43,11 @@ properties:
+       - const: vapb
+ 
+   resets:
+-    minItems: 11
++    minItems: 5
+     maxItems: 12
+ 
+   reset-names:
+-    minItems: 11
++    minItems: 5
+     maxItems: 12
+ 
+   "#power-domain-cells":
+@@ -107,6 +108,24 @@ allOf:
+         - resets
+         - reset-names
+ 
++  - if:
++      properties:
++        compatible:
++          enum:
++            - amlogic,meson-axg-pwrc
++    then:
++      properties:
++        reset-names:
++          items:
++            - const: viu
++            - const: venc
++            - const: vcbus
++            - const: vencl
++            - const: vid_lock
++      required:
++        - resets
++        - reset-names
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/power/meson-axg-power.h b/include/dt-bindings/power/meson-axg-power.h
+new file mode 100644
+index 000000000000..e5243884b249
+--- /dev/null
++++ b/include/dt-bindings/power/meson-axg-power.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
++/*
++ * Copyright (c) 2020 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#ifndef _DT_BINDINGS_MESON_AXG_POWER_H
++#define _DT_BINDINGS_MESON_AXG_POWER_H
++
++#define PWRC_AXG_VPU_ID			0
++#define PWRC_AXG_ETHERNET_MEM_ID	1
++#define PWRC_AXG_AUDIO_ID		2
++
++#endif
+-- 
+2.17.1
+

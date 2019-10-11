@@ -10,6 +10,26 @@ die() {
   exit "${2:-1}"
 }
 
+onexitcleanup() {
+  [ $? -eq 0 ] && return
+
+  local _BASH_COMMAND="${BASH_COMMAND}"
+ 
+  if [ -n "${PKG_CURRENT_CALL}" ]; then
+    print_color CLR_ERROR "FAILURE: $* during ${PKG_CURRENT_CALL} (${PKG_CURRENT_CALL_TYPE})"
+    echo
+  fi
+
+  if [ -n "${_BASH_COMMAND}" ]; then
+    if [[ ! ${_BASH_COMMAND} =~ ^exit\  ]] && [[ ! ${_BASH_COMMAND} =~ ^return\  ]]; then
+      echo "*********** FAILED COMMAND ***********"
+      echo "${_BASH_COMMAND}"
+      echo "**************************************"
+    fi
+  fi
+}
+[ "${NOONEXIT}" != "yes" ] && trap "onexitcleanup $0 $@" EXIT
+
 # return 0 if $2 in space-separated list $1, otherwise return 1
 listcontains() {
   if [ -n "$1" -a -n "$2" ]; then
@@ -94,6 +114,7 @@ print_color() {
       CLR_PATCH_DESC)   clr_actual="${boldwhite}";;
       CLR_TARGET)       clr_actual="${boldwhite}";;
       CLR_UNPACK)       clr_actual="${boldcyan}";;
+      CLR_AUTOREMOVE)   clr_actual="${boldblue}";;
 
       CLR_ENDCOLOR)     clr_actual="${endcolor}";;
 
@@ -132,45 +153,36 @@ build_msg() {
 # prints a warning if the file slated for removal doesn't exist
 # this allows us to continue instead of bailing out with just "rm"
 safe_remove() {
-  local path="$1"
+  local path
 
-  [ -z "${path}" ] && return 0
-
-  if [ -e "${path}" -o -L "${path}" ]; then
-    rm -r "${path}"
-  elif [ -n "${PKG_NAME}" ]; then
-    print_color CLR_WARNING "safe_remove: path does not exist: [${PKG_NAME}]: ${path}\n"
-  else
-    print_color CLR_WARNING "safe_remove: path does not exist: ${path}\n"
-  fi
+  for path in "$@" ; do
+    if [ -e "${path}" -o -L "${path}" ]; then
+      rm -r "${path}"
+    elif [ -n "${PKG_NAME}" ]; then
+      print_color CLR_WARNING "safe_remove: path does not exist: [${PKG_NAME}]: ${path}\n"
+    else
+      print_color CLR_WARNING "safe_remove: path does not exist: ${path}\n"
+    fi
+  done
 }
 
 ### BUILDSYSTEM HELPERS ###
 # check if a flag is enabled
 # $1: flag-name, $2: default (yes/no), $3: ingenious check (none,only-disable,only-enable)
-# set variable PKG_[FLAG]_[HOST/TARGET]_ENABLED=(yes/no)
 # return 0 if flag is enabled, otherwise 1
 flag_enabled() {
-  # make flag name upper case and replace hyphen with underscore, to use as variable name
-  local flag_name=${1^^}
-  [[ $flag_name =~ : ]] || flag_name+="_TARGET"
-  flag_name="PKG_${flag_name//[:-]/_}_ENABLED"
-
   # check flag
   if [ -n "${PKG_BUILD_FLAGS}" ] && listcontains "${PKG_BUILD_FLAGS}" "[+]?$1"; then
     if [ "${3:none}" = "only-disable" ]; then
       die "ERROR: $1 cannot enable via PKG_BUILD_FLAGS (found in $PKG_NAME)"
     fi
-    declare ${flag_name}="yes"
     return 0
   elif [ "$2" = "yes" ] && ! listcontains "${PKG_BUILD_FLAGS}" "-$1"; then
-    declare ${flag_name}="yes"
     return 0
   else
     if [ "${3:none}" = "only-enable" ]; then
       die "ERROR: $1 cannot disable via PKG_BUILD_FLAGS (found in $PKG_NAME)"
     fi
-    declare ${flag_name}="no"
     return 1
   fi
 }
@@ -179,6 +191,7 @@ setup_pkg_config_target() {
   export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
   export PKG_CONFIG_PATH=""
   export PKG_CONFIG_LIBDIR="$SYSROOT_PREFIX/usr/lib/pkgconfig:$SYSROOT_PREFIX/usr/share/pkgconfig"
+  export PKG_CONFIG_SYSROOT_BASE="$BUILD"
   export PKG_CONFIG_SYSROOT_DIR="$SYSROOT_PREFIX"
   export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
   export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
@@ -188,12 +201,14 @@ setup_pkg_config_host() {
   export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
   export PKG_CONFIG_PATH=""
   export PKG_CONFIG_LIBDIR="$TOOLCHAIN/lib/pkgconfig:$TOOLCHAIN/share/pkgconfig"
+  export PKG_CONFIG_SYSROOT_BASE=""
   export PKG_CONFIG_SYSROOT_DIR=""
   unset PKG_CONFIG_ALLOW_SYSTEM_CFLAGS
   unset PKG_CONFIG_ALLOW_SYSTEM_LIBS
 }
 
 setup_toolchain() {
+  local have_gold="no"
   if [ "$LTO_SUPPORT" = "yes" ]; then
     if flag_enabled "lto-parallel" "no"; then
       TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO_PARALLEL $FLAGS_OPTIM_LTO_NO_FAT"
@@ -219,17 +234,28 @@ setup_toolchain() {
   # gold flag
   if flag_enabled "gold" "$GOLD_SUPPORT" "only-disable"; then
     TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_GOLD"
+    have_gold="yes"
   fi
 
   # compiler optimization, descending priority: speed, size, default
-  if flag_enabled "speed" "no"; then
+  if [ "${BUILD_WITH_DEBUG}" = "yes" ]; then
+    if [ "${SPLIT_DEBUG_INFO}" = "yes" -a "${have_gold}" = "yes" ]; then
+      TARGET_CFLAGS+=" $CFLAGS_OPTIM_DEBUG_SPLIT"
+      TARGET_CXXFLAGS+=" $CXXFLAGS_OPTIM_DEBUG_SPLIT"
+      TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_DEBUG_SPLIT"
+    else
+      TARGET_CFLAGS+=" $CFLAGS_OPTIM_DEBUG"
+      TARGET_CXXFLAGS+=" $CXXFLAGS_OPTIM_DEBUG"
+      TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_DEBUG"
+    fi
+  elif flag_enabled "speed" "no"; then
     TARGET_CFLAGS+=" $CFLAGS_OPTIM_SPEED"
     TARGET_CXXFLAGS+=" $CXXFLAGS_OPTIM_SPEED"
   elif flag_enabled "size" "no"; then
     TARGET_CFLAGS+=" $CFLAGS_OPTIM_SIZE"
     TARGET_CXXFLAGS+=" $CXXFLAGS_OPTIM_SIZE"
   else
-    TARGET_CFLAGS+=" $CXXFLAGS_OPTIM_DEFAULT"
+    TARGET_CFLAGS+=" $CFLAGS_OPTIM_DEFAULT"
     TARGET_CXXFLAGS+=" $CXXFLAGS_OPTIM_DEFAULT"
   fi
 
@@ -255,18 +281,25 @@ setup_toolchain() {
 
   # parallel
   if flag_enabled "parallel" "yes"; then
-    NINJA_OPTS="$NINJA_OPTS -j$CONCURRENCY_MAKE_LEVEL"
-    export MAKEFLAGS="-j$CONCURRENCY_MAKE_LEVEL"
+    NINJA_OPTS="-j$CONCURRENCY_MAKE_LEVEL"
+    MAKEFLAGS="-j$CONCURRENCY_MAKE_LEVEL"
   else
-    NINJA_OPTS="$NINJA_OPTS -j1"
-    export MAKEFLAGS="-j1"
+    NINJA_OPTS="-j1"
+    MAKEFLAGS="-j1"
   fi
 
   # verbose flag
   if flag_enabled "verbose" "no"; then
-    NINJA_OPTS="$NINJA_OPTS -v"
-    export MAKEFLAGS="$MAKEFLAGS V=1 VERBOSE=1"
+    NINJA_OPTS+=" -v"
+    MAKEFLAGS+=" V=1 VERBOSE=1"
   fi
+
+  # average load limit
+  if [ "${CONCURRENCY_LOAD}" != "0" ]; then
+    NINJA_OPTS+=" -l${CONCURRENCY_LOAD}"
+    MAKEFLAGS+=" -l${CONCURRENCY_LOAD}"
+  fi
+  export MAKEFLAGS
 
   case "$1:$2" in
     target:meson)
@@ -421,7 +454,7 @@ cpp = '$CXX'
 ar = '$AR'
 strip = '$STRIP'
 pkgconfig = '$PKG_CONFIG'
-llvm-config = '$SYSROOT_PREFIX/usr/bin/llvm-config-host'
+llvm-config = '$TOOLCHAIN/bin/llvm-config-host'
 libgcrypt-config = '$SYSROOT_PREFIX/usr/bin/libgcrypt-config'
 
 [host_machine]
@@ -432,10 +465,10 @@ endian = 'little'
 
 [properties]
 root = '$TOOLCHAIN'
-$(python -c "import os; print('c_args = {}'.format([x for x in os.getenv('CFLAGS').split()]))")
-$(python -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
-$(python -c "import os; print('cpp_args = {}'.format([x for x in os.getenv('CXXFLAGS').split()]))")
-$(python -c "import os; print('cpp_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
+$(python3 -c "import os; print('c_args = {}'.format([x for x in os.getenv('CFLAGS').split()]))")
+$(python3 -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
+$(python3 -c "import os; print('cpp_args = {}'.format([x for x in os.getenv('CXXFLAGS').split()]))")
+$(python3 -c "import os; print('cpp_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
 ${!properties}
 EOF
 }
@@ -451,7 +484,7 @@ cpp = '$TARGET_CXX'
 ar = '$TARGET_AR'
 strip = '$TARGET_STRIP'
 pkgconfig = '$PKG_CONFIG'
-llvm-config = '$SYSROOT_PREFIX/usr/bin/llvm-config-host'
+llvm-config = '$TOOLCHAIN/bin/llvm-config-host'
 libgcrypt-config = '$SYSROOT_PREFIX/usr/bin/libgcrypt-config'
 
 [host_machine]
@@ -462,10 +495,10 @@ endian = 'little'
 
 [properties]
 root = '$SYSROOT_PREFIX/usr'
-$(python -c "import os; print('c_args = {}'.format([x for x in os.getenv('TARGET_CFLAGS').split()]))")
-$(python -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('TARGET_LDFLAGS').split()]))")
-$(python -c "import os; print('cpp_args = {}'.format([x for x in os.getenv('TARGET_CXXFLAGS').split()]))")
-$(python -c "import os; print('cpp_link_args = {}'.format([x for x in os.getenv('TARGET_LDFLAGS').split()]))")
+$(python3 -c "import os; print('c_args = {}'.format([x for x in os.getenv('TARGET_CFLAGS').split()]))")
+$(python3 -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('TARGET_LDFLAGS').split()]))")
+$(python3 -c "import os; print('cpp_args = {}'.format([x for x in os.getenv('TARGET_CXXFLAGS').split()]))")
+$(python3 -c "import os; print('cpp_link_args = {}'.format([x for x in os.getenv('TARGET_LDFLAGS').split()]))")
 ${!properties}
 EOF
 }
@@ -479,6 +512,7 @@ reset_pkg_vars() {
     if [ "${var}" = "PKG_CONFIG" ] || \
        [ "${var}" = "PKG_CONFIG_PATH" ] || \
        [ "${var}" = "PKG_CONFIG_LIBDIR" ] || \
+       [ "${var}" = "PKG_CONFIG_SYSROOT_BASE" ] || \
        [ "${var}" = "PKG_CONFIG_SYSROOT_DIR" ] || \
        [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" ] || \
        [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_LIBS" ]; then
@@ -494,7 +528,7 @@ reset_pkg_vars() {
   PKG_LICENSE="unknown"
   PKG_TOOLCHAIN="auto"
   PKG_IS_ADDON="no"
-  PKG_PYTHON_VERSION="python2.7"
+  PKG_PYTHON_VERSION="${DEFAULT_PYTHON_VERSION}"
 }
 
 set_debug_depends() {
@@ -780,6 +814,11 @@ do_autoreconf() {
   fi
 }
 
+# True if this is a sequential build, false if multithreaded
+is_sequential_build() {
+  [ "${MTWITHLOCKS}" != "yes" ] && return 0 || return 1
+}
+
 
 ### PACKAGE HELPERS ###
 # get variable ($2) for package ($1).
@@ -797,12 +836,30 @@ get_pkg_variable() {
 get_build_dir() {
   local _PKG_NAME="${1%:*}" _PKG_VERSION="$(get_pkg_version "$1")"
   if [ -n "$_PKG_NAME" -a -n "$_PKG_VERSION" ]; then
-    echo $BUILD/${_PKG_NAME}-${_PKG_VERSION}
+    echo $BUILD/build/${_PKG_NAME}-${_PKG_VERSION}
   fi
+}
+
+get_install_dir() {
+  get_pkg_variable "$1" PKG_INSTALL
 }
 
 get_pkg_version() {
   get_pkg_variable "$1" PKG_VERSION
+}
+
+get_pkg_version_maj_min() {
+  local pkg_version
+
+  [ -n "${1}" ] && pkg_version="$(get_pkg_version "${1}")" || pkg_version="${PKG_VERSION}"
+
+  if [[ ${pkg_version} =~ ^[0-9A-Za-z]*\.[0-9A-Za-z]*\.[0-9A-za-z]*$ ]]; then
+    echo "${pkg_version%.*}"
+  elif [[ ${pkg_version} =~ ^[0-9A-Za-z]*\.[0-9A-Za-z]*$ ]]; then
+    echo "${pkg_version}"
+  else
+    echo "${pkg_version}"
+  fi
 }
 
 get_pkg_directory() {
@@ -840,21 +897,67 @@ get_pkg_directory() {
   echo "$_PKG_DIR"
 }
 
+# Return a list of sorted package names for this project/device/arch
+get_all_package_names() {
+  sed -e 's#@?+?@##g; s#.*/##g' ${_CACHE_PACKAGE_GLOBAL} ${_CACHE_PACKAGE_LOCAL} | sort --ignore-case --unique
+}
+
 calculate_stamp() {
   local stamp data
 
-  stamp="$PKG_DIR $PROJECT_DIR/$PROJECT/patches/$PKG_NAME"
+  stamp="$PKG_DIR $PROJECT_DIR/$PROJECT/patches/$PKG_NAME $PROJECT_DIR/$PROJECT/packages/$PKG_NAME"
   [ -n "$DEVICE" ] && stamp+=" $PROJECT_DIR/$PROJECT/devices/$DEVICE/patches/$PKG_NAME"
   [ -n "$PKG_NEED_UNPACK" ] && stamp+=" $PKG_NEED_UNPACK"
 
-  data="$(find ${stamp} -exec sha256sum {} \; 2>/dev/null | sed "s/ ${ROOT//\//\\/}\// /")"
+  data="$(find -L ${stamp} -type f -not -name '.*' 2>/dev/null | sed "s|^${ROOT}/||" | LC_ALL=C sort -u | xargs sha256sum)"
   [ -n "${PKG_STAMP}" ] && data+=$'\n'"$(echo "${PKG_STAMP}" | sha256sum)"
 
-  echo "${data}" | sort | sha256sum | cut -d" " -f1
+  echo "${data}" | sha256sum | cut -d" " -f1
 }
 
 target_has_feature() {
   listcontains "$TARGET_FEATURES" "$1"
+}
+
+# configure variables for go
+go_configure() {
+  unset GOARCH GOARM
+  case ${TARGET_ARCH} in
+    x86_64)
+      export GOARCH=amd64
+      ;;
+    arm)
+      export GOARCH=arm
+
+      case ${TARGET_CPU} in
+        arm1176jzf-s)
+          export GOARM=6
+          ;;
+        *)
+          export GOARM=7
+          ;;
+      esac
+      ;;
+    aarch64)
+      export GOARCH=arm64
+      ;;
+  esac
+
+  export GOOS=linux
+  export GOROOT=${TOOLCHAIN}/lib/golang
+  export PATH=${PATH}:${GOROOT}/bin
+
+  go_configure_path
+
+  export CGO_ENABLED=1
+  export CGO_NO_EMULATION=1
+  export CGO_CFLAGS=$CFLAGS
+}
+
+go_configure_path() {
+  export GOLANG=${TOOLCHAIN}/lib/golang/bin/go
+  export GOPATH=${PKG_BUILD}/.gopath
+  export GOFLAGS="-modcacherw"
 }
 
 # find path for matching file or directory, searching standard directory hierarchy, using optional default
@@ -918,15 +1021,40 @@ find_dir_path() {
 # p1: name of function to test for
 # return 0 if function exists, 1 if not
 pkg_call_exists() {
-  [ "$(type -t ${1})" = "function" ] && return 0 || return 1
+  PKG_CURRENT_CALL="${1}"
+  if [ "$(type -t ${1})" = "function" ]; then
+    PKG_CURRENT_CALL_TYPE="package.mk"
+    return 0
+  else
+    PKG_CURRENT_CALL_TYPE="default"
+    return 1
+  fi
 }
 
-# p1: name of function to execute unconditionally
+# Optional variant of pkg_call_exists()
+# Clear PKG_CURRENT_CALL when function is not implemented.
+pkg_call_exists_opt() {
+  if pkg_call_exists $1; then
+    return 0
+  else
+    pkg_call_finish
+    return 1
+  fi
+}
+
+# Function to be called is set by pkg_call_exists/pkg_call_exists_opt
+# Args: whatever the called function expects
 # testing the exit code value of this function is likely to break set -e fail-on-error behaviour
 pkg_call() {
-  [ -n "${PKG_NAME}" ] || die "$(print_color CLR_ERROR "FAILURE: Cannot call ${1} package function when package is not known!")"
+  [ -n "${PKG_CURRENT_CALL}" ] || die "$(print_color CLR_ERROR "PKG_CURRENT_CALL is not set!")"
+  [ -n "${PKG_NAME}" ] || die "$(print_color CLR_ERROR "FAILURE: Cannot call ${PKG_CURRENT_CALL} package function when package is not known!")"
 
-  ${1}
+  ${PKG_CURRENT_CALL} "${@}"
+  pkg_call_finish
+}
+
+pkg_call_finish() {
+  PKG_CURRENT_CALL=""
 }
 
 unset_functions() {
@@ -946,7 +1074,7 @@ unset_functions() {
 
   unset -f pre_install post_install
 
-  unset -f addon
+  unset -f addon post_install_addon
 }
 
 # p1: name of package to be sourced
@@ -978,6 +1106,12 @@ source_package() {
     if [ "$PKG_IS_ADDON" = "yes" -o "$PKG_IS_ADDON" = "embedded" ] ; then
       [ -z $PKG_SECTION ] && PKG_ADDON_ID="$PKG_NAME" || PKG_ADDON_ID="${PKG_SECTION//\//.}.$PKG_NAME"
       [ "$PKG_ADDON_IS_STANDALONE" != "yes" ] && PKG_NEED_UNPACK="${PKG_NEED_UNPACK} $(get_pkg_directory $MEDIACENTER)"
+    fi
+
+    if [ -n "${PKG_IS_KERNEL_PKG}" -a "${PKG_NAME}" != "linux" ]; then
+      PKG_DEPENDS_TARGET="toolchain linux ${PKG_DEPENDS_TARGET}"
+      PKG_DEPENDS_UNPACK="linux ${PKG_DEPENDS_UNPACK}"
+      PKG_NEED_UNPACK="${LINUX_DEPENDS} ${PKG_NEED_UNPACK}"
     fi
 
     if [ -n "${PKG_DEPENDS_UNPACK}" ]; then
@@ -1026,7 +1160,13 @@ source_package() {
       fi
     fi
 
-    PKG_BUILD="$BUILD/${PKG_NAME}-${PKG_VERSION}"
+    PKG_BUILD="$BUILD/build/${PKG_NAME}-${PKG_VERSION}"
+
+    if [[ "${1}" =~ :target$ || "${1//:/}" = "${1}" ]]; then
+      PKG_INSTALL="$BUILD/install_pkg/${PKG_NAME}-${PKG_VERSION}"
+    elif [[ "${1}" =~ :init$ ]]; then
+      PKG_INSTALL="$BUILD/install_init/${PKG_NAME}-${PKG_VERSION}"
+    fi
   fi
 
   build_with_debug && BUILD_WITH_DEBUG="yes" || BUILD_WITH_DEBUG="no"
@@ -1035,12 +1175,42 @@ source_package() {
   # that we may have initialised after sourcing the package, typically
   # PKG_BUILD etc.
   if [ -n "${PKG_NAME}" ]; then
-    if pkg_call_exists configure_package; then
-      pkg_call configure_package
+    if pkg_call_exists_opt configure_package; then
+      pkg_call
     fi
   fi
 }
 
+# arg1: file, or directory to recursively compile.
+python_compile() {
+  local path="${1:-${INSTALL}/usr/lib/${PKG_PYTHON_VERSION}}"
+  ${TOOLCHAIN}/bin/python3 -Wi -t -B ${TOOLCHAIN}/lib/${PKG_PYTHON_VERSION}/compileall.py -f -d "${path#${INSTALL}}" "${path}"
+  python_remove_source "${path}"
+}
+
+# arg1: file, or directory from which to recursively remove all py source code
+python_remove_source() {
+  local path="${1:-${INSTALL}/usr/lib/${PKG_PYTHON_VERSION}}"
+  if [ -d "${path}" ]; then
+    find "${path}" -type f -name '*.py' -delete
+  else
+    rm -f "${path}"
+  fi
+}
+
+# arg1: directory to process recursively
+# strip incorrect build-host ABI from native Python3 modules (see PEP3149)
+python_fix_abi() {
+  local pymodule pyname
+
+  for pymodule in $(find ${1} -type f -name '*.cpython-*.so' 2>/dev/null); do
+    pyname=${pymodule##*/}
+    pyname=${pyname%.so} # strip extension
+    pyname=${pyname%.*}  # strip incorrect ABI
+    echo "python_fix_abi: Removing ABI from ${pymodule} -> ${pyname}.so"
+    mv ${pymodule} ${pymodule%/*}/${pyname}.so
+  done
+}
 
 ### KERNEL HELPERS ###
 kernel_path() {
@@ -1076,6 +1246,22 @@ kernel_config_path() {
   die "ERROR: Unable to locate kernel config for ${LINUX} - looking for ${config_name}"
 }
 
+kernel_initramfs_confs() {
+  local config_name cfg confs
+
+  config_name="initramfs.${TARGET_PATCH_ARCH:-$TARGET_ARCH}.conf"
+  confs="$(get_pkg_directory initramfs)/config/initramfs.conf"
+
+  for cfg in $PROJECT_DIR/$PROJECT/packages/initramfs/config/$config_name \
+             $PROJECT_DIR/$PROJECT/devices/$DEVICE/packages/initramfs/config/$config_name \
+             ; do
+    [[ $cfg =~ /devices//packages/ ]] && continue
+    [ -f "$cfg" ] && confs+=" $cfg"
+  done
+
+  echo "$confs"
+}
+
 kernel_make() {
   (
     setup_pkg_config_host
@@ -1097,7 +1283,7 @@ get_module_dir() {
   if [ -n "${_CACHED_KERNEL_MODULE_DIR}" ]; then
     echo "${_CACHED_KERNEL_MODULE_DIR}"
   else
-    basename $(ls -d $(get_build_dir linux)/.install_pkg/usr/lib/kernel-overlays/base/lib/modules/*)
+    basename $(ls -d $(get_install_dir linux)/usr/lib/kernel-overlays/base/lib/modules/*)
   fi
 }
 
@@ -1141,17 +1327,17 @@ install_binary_addon() {
   local addon_id="$1" addon_so
 
   mkdir -p $ADDON_BUILD/$addon_id/
-  cp -R $PKG_BUILD/.install_pkg/usr/share/$MEDIACENTER/addons/$addon_id/* $ADDON_BUILD/$addon_id/
+  cp -R $PKG_INSTALL/usr/share/$MEDIACENTER/addons/$addon_id/* $ADDON_BUILD/$addon_id/
 
   addon_so=$(xmlstarlet sel -t -v "/addon/extension/@library_linux" $ADDON_BUILD/$addon_id/addon.xml || :)
   if [ -n "$addon_so" ]; then
-    cp -L $PKG_BUILD/.install_pkg/usr/lib/$MEDIACENTER/addons/$addon_id/$addon_so $ADDON_BUILD/$addon_id/
+    cp -L $PKG_INSTALL/usr/lib/$MEDIACENTER/addons/$addon_id/$addon_so $ADDON_BUILD/$addon_id/
     chmod +x $ADDON_BUILD/$addon_id/$addon_so
   fi
 
-  if [ -d $PKG_BUILD/.install_pkg/usr/lib/kernel-overlays/$addon_id ] ; then
+  if [ -d $PKG_INSTALL/usr/lib/kernel-overlays/$addon_id ] ; then
     mkdir -p $ADDON_BUILD/$addon_id/kernel-overlay
-    cp -PR $PKG_BUILD/.install_pkg/usr/lib/kernel-overlays/$addon_id/* $ADDON_BUILD/$addon_id/kernel-overlay
+    cp -PR $PKG_INSTALL/usr/lib/kernel-overlays/$addon_id/* $ADDON_BUILD/$addon_id/kernel-overlay
   fi
 }
 
@@ -1243,6 +1429,11 @@ install_addon_files() {
   install_addon_source "$1"
   install_addon_images "$1"
   create_addon_xml "$1"
+  python_fix_abi "$1"
+
+  if pkg_call_exists_opt post_install_addon; then
+    INSTALL="$1" pkg_call
+  fi
 }
 
 install_driver_addon_files() {
@@ -1298,11 +1489,12 @@ add_group() {
 # Usage: enable_service <unit> [target]
 enable_service() {
   local unit="$1"
-  local unit_dir="/usr/lib/systemd/system"
+  local unit_dir="usr/lib/systemd/system"
   local target="$2"
   local target_dir=$INSTALL
 
-  [ -f "$target_dir/$unit_dir/$unit" ] || die
+  [ -f "$target_dir/$unit_dir/$unit" ] || die "ERROR: cannot enable non-existent service $target_dir/$unit_dir/$unit"
+
   if [ -z "$target" ] ; then
     for target in `grep '^WantedBy' $target_dir/$unit_dir/$unit | cut -f2 -d=` ; do
       if [ -n "$target" ]; then
@@ -1320,48 +1512,43 @@ enable_service() {
 
 
 ### MULTI-THREADED FUNCTION HELPERS ###
-# Test MTWITHLOCKS so that these functions are a no-op during non-multithreaded builds.
+# flocks: 94 (pkg_lock_status)
+#         95 (scripts/pkgbuild)
+#         96 (acquire_exclusive_lock)
+#         97 (acquire_update_lock)
+#         98 (pkg_lock)
+#         99 (scripts/get)
 
-# Prevent concurrent modifications to a package (unpack) or
-# package:target (install/build).
+# Test build type so that these functions are a no-op during non-multithreaded builds.
+
+# Prevent concurrent modifications to a package during certain activities.
+# With dynamic scheduling we now only need to acquire the lock
+# during unpack and reconf, all other activities do not need to acquire a
+# lock as there should be no concurrent access however the existing code path
+# potentially generates useful logging for minimal cost so keep it.
 #
 # If a package is already locked and the owner is ourselves
 # then assume we already have the required lock.
 pkg_lock() {
-  [ "${MTWITHLOCKS}" != "yes" ] && return 0
+  is_sequential_build && return 0
 
   local pkg="$1" task="$2" parent_pkg="$3"
   local this_job="${MTJOBID}"
   local lock_job lock_seq lock_task lock_pkg locked=no idwidth
-  local fail_seq
 
-  exec 98>"${THREAD_CONTROL}/locks/${pkg}.${task}"
-  while [ : ]; do
-    read -r lock_job lock_seq lock_task lock_pkg <<<$(cat "${THREAD_CONTROL}/locks/${pkg}.${task}.owner" 2>/dev/null)
-    [ -n "${lock_job}" ] && break
-    flock --wait 1 --exclusive 98 && locked=yes && break
-  done
+  if [ "${task}" = "unpack" -o "${task}" = "reconf" ]; then
+    exec 98>"${THREAD_CONTROL}/locks/${pkg}.${task}"
+    while [ : ]; do
+      read -r lock_job lock_seq lock_task lock_pkg <<<$(cat "${THREAD_CONTROL}/locks/${pkg}.${task}.owner" 2>/dev/null)
+      [ -n "${lock_job}" ] && break
+      flock --wait 1 --exclusive 98 && locked=yes && break
+    done
 
-  if [ "${locked}" = "no" -a "${lock_job}/${lock_seq}" != "${this_job}/${PARALLEL_SEQ}" ]; then
-    [ "${THREADCOUNT}" = "0" ] && idwidth=${#MTMAXJOBS} || idwidth=2
-    pkg_lock_status "STALLED" "${parent_pkg}" "${task}" "$(printf "waiting on [%0*d] %s %s" ${idwidth} ${lock_job} "${lock_task}" "${lock_pkg}")"
-    flock --exclusive 98
-  fi
-
-  # As we now have the lock, if .failed still exists then a previous process must have failed
-  if [ -f "${THREAD_CONTROL}/locks/${pkg}.${task}.failed" ]; then
-    fail_seq="$(< "${THREAD_CONTROL}/locks/${pkg}.${task}.failed")"
-    print_color CLR_ERROR "FAILURE: ${pkg}.${task}.failed exists, a previous dependency process has failed (seq: ${fail_seq})\n"
-    if [ -d "${THREAD_CONTROL}/logs" ]; then
-cat <<EOF
-
-The following logs for this failure are available:
-  stdout: ${THREAD_CONTROL}/logs/${fail_seq}/stdout
-  stderr: ${THREAD_CONTROL}/logs/${fail_seq}/stderr
-
-EOF
+    if [ "${locked}" = "no" -a "${lock_job}/${lock_seq}" != "${this_job}/${PARALLEL_SEQ}" ]; then
+      [ "${THREADCOUNT}" = "0" ] && idwidth=${#MTMAXJOBS} || idwidth=2
+      pkg_lock_status "STALLED" "${parent_pkg}" "${task}" "$(printf "waiting on [%0*d] %s %s" ${idwidth} ${lock_job} "${lock_task}" "${lock_pkg}")"
+      flock --exclusive 98
     fi
-    return 1
   fi
 
   pkg_lock_status "LOCKED" "${pkg}" "${task}"
@@ -1369,7 +1556,7 @@ EOF
 
 # Log additional information for a locked package.
 pkg_lock_status() {
-  [ "${MTWITHLOCKS}" != "yes" ] && return 0
+  is_sequential_build && return 0
 
   local status="$1" pkg="$2" task="$3" msg="$4"
   local this_job="${MTJOBID}" line idwidth
@@ -1378,6 +1565,12 @@ pkg_lock_status() {
 
   (
     flock --exclusive 94
+
+    # Write the configured number of slots to history to improve accuracy of later analysis
+    if [ ! -f "${THREAD_CONTROL}/history" ]; then
+      printf "%s: <%06d> [%0*d/%0*d] %-7s %-7s %s %s\n" \
+        "$(date +%Y-%m-%d\ %H:%M:%S.%N)" $$ ${idwidth} 0 ${#MTMAXJOBS} 0 "IDLE" "config" "info" "slots=${MTMAXSLOT};jobs=${MTMAXJOBS}" >>"${THREAD_CONTROL}/history"
+    fi
 
     printf -v line "%s: <%06d> [%0*d/%0*d] %-7s %-7s %-35s" \
       "$(date +%Y-%m-%d\ %H:%M:%S.%N)" $$ ${idwidth} ${this_job} ${#MTMAXJOBS} ${PARALLEL_SEQ:-0} "${status}" "${task}" "${pkg}"
@@ -1391,31 +1584,29 @@ pkg_lock_status() {
   ) 94>"${THREAD_CONTROL}/locks/.history"
 
   if [ "${status}" = "LOCKED" ]; then
-    echo "${PARALLEL_SEQ}" > "${THREAD_CONTROL}/locks/${pkg}.${task}.failed"
     echo "${this_job} ${PARALLEL_SEQ} ${task} ${pkg}" >"${THREAD_CONTROL}/locks/${pkg}.${task}.owner"
   elif [ "${status}" = "UNLOCK" ]; then
     rm "${THREAD_CONTROL}/locks/${pkg}.${task}.owner"
-    rm "${THREAD_CONTROL}/locks/${pkg}.${task}.failed"
   fi
 
   return 0
 }
 
 update_dashboard() {
-  [ "${MTWITHLOCKS}" != "yes" ] && return 0
+  is_sequential_build && return 0
 
   local status="$1" pkg="$2" task="$3" msg="$4"
-  local line sedline preamble num elapsed projdevarch
+  local line preamble num elapsed projdevarch
   local boldred boldgreen boldyellow endcolor idwidth
 
-  sedline=$((MTJOBID + 2))
+  [ "${THREADCOUNT}" = "0" ] && idwidth=${#MTMAXSLOT} || idwidth=2
 
-  [ "${THREADCOUNT}" = "0" ] && idwidth=${#MTMAXJOBS} || idwidth=2
-
-  num=$(< "${THREAD_CONTROL}/status.max")
-  if [ ${num} -lt ${sedline} ]; then
-    echo ${sedline} >"${THREAD_CONTROL}/status.max"
-    for i in $(seq $((num + 1)) ${sedline}); do echo "" >>"${THREAD_CONTROL}/status"; done
+  if [ ! -s ${THREAD_CONTROL}/status ]; then
+    echo "" >"${THREAD_CONTROL}/status"
+    echo "" >>"${THREAD_CONTROL}/status"
+    for i in $(seq 1 $((MTMAXSLOT))); do
+      printf "[%0*d/%0*d] %-7s\n" ${idwidth} ${i} ${#MTMAXJOBS} 0 "IDLE" >>"${THREAD_CONTROL}/status"
+    done
   fi
 
   num=$(< "${THREAD_CONTROL}/progress.prev")
@@ -1425,7 +1616,7 @@ update_dashboard() {
   [ -n "${BUILD_SUFFIX}" ] && projdevarch+=", ${BUILD_SUFFIX}"
   TZ=UTC0 printf -v elapsed "%(%H:%M:%S)T" $(($(date +%s) - MTBUILDSTART))
   printf -v preamble "%s Dashboard (%s) - %d of %d jobs completed, %s elapsed" "${DISTRONAME}" "${projdevarch}" $((num + 1)) ${MTMAXJOBS} "${elapsed}"
-  printf -v preamble "%b%-105s %s" "\e[2J\e[0;0H" "${preamble//\//\\/}" "$(date "+%Y-%m-%d %H:%M:%S")"
+  printf -v preamble "%b%-105s %s" "\e[2J\e[0;0H" "${preamble}" "$(date "+%Y-%m-%d %H:%M:%S")"
 
   if [ "${DISABLE_COLORS}" != "yes" ]; then
     boldred="\e[1;31m"
@@ -1443,16 +1634,16 @@ update_dashboard() {
     esac
   fi
 
-  printf -v line "[%0*d\/%0*d] %b%-7s%b %-7s %-35s" ${idwidth} ${MTJOBID} ${#MTMAXJOBS} ${PARALLEL_SEQ:-0} "${color}" "${status//\//\\/}" "${endcolor}" "${task}" "${pkg}"
-  [ -n "${msg}" ] && line+=" ${msg//\//\\/}"
+  printf -v line "[%0*d/%0*d] %b%-7s%b %-7s %-35s" ${idwidth} ${MTJOBID} ${#MTMAXJOBS} ${PARALLEL_SEQ:-0} "${color}" "${status}" "${endcolor}" "${task}" "${pkg}"
+  [ -n "${msg}" ] && line+=" ${msg}"
 
-  sed -e "1s/.*/${preamble}/;${sedline}s/.*/${line}/" -i "${THREAD_CONTROL}/status"
+  sed -e "1s@.*@${preamble}@;$((MTJOBID + 2))s@.*@${line}@" -i "${THREAD_CONTROL}/status"
 }
 
 # Thread concurrency helpers to avoid concurrency issues with some code,
 # eg. when Python installs directly into $TOOLCHAIN.
 acquire_exclusive_lock() {
-  [ "${MTWITHLOCKS}" != "yes" ] && return 0
+  is_sequential_build && return 0
 
   local pkg="$1" task="$2" lockfile="${3:-global}"
   local this_job="${MTJOBID}"
@@ -1477,7 +1668,7 @@ acquire_exclusive_lock() {
 }
 
 release_exclusive_lock() {
-  [ "${MTWITHLOCKS}" != "yes" ] && return 0
+  is_sequential_build && return 0
 
   local pkg="$1" task="$2" lockfile="${3:-global}"
 
@@ -1495,6 +1686,20 @@ exec_thread_safe() {
   result=$?
   release_exclusive_lock "${PKG_NAME:exec}" "execcmd"
   return ${result}
+}
+
+# A lightweight target specific lock (eg. image, sysroot)
+acquire_update_lock() {
+  is_sequential_build && return 0
+
+  exec 97>"${THREAD_CONTROL}/locks/.update.${1}"
+  flock --exclusive 97
+}
+
+release_update_lock() {
+  is_sequential_build && return 0
+
+  flock --unlock 97 2>/dev/null
 }
 
 # Use distribution functions if any

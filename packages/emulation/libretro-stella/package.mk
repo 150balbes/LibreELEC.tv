@@ -2,15 +2,15 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-stella"
-PKG_VERSION="b0b63615fc2c7a30470fc1ac31ffdc18fdf4518b"
-PKG_SHA256="b16263ff91018f9c9b06d4ed1d7c1ec083a7552d1ac0ffcfb0f22e2a2b206c0f"
+PKG_VERSION="fc87f2c78d3b177f4b9b19698557dce452ac3ce7"
+PKG_SHA256="78f03675f3834e7d307679caf02310fca7259740dc399f5f283240b9c46813b6"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/stella-libretro"
 PKG_URL="https://github.com/libretro/stella-libretro/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_LONGDESC="game.libretro.stella: Stella for Kodi"
 
-PKG_LIBNAME="stella_libretro.so"
+PKG_LIBNAME="stella2014_libretro.so"
 PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="STELLA_LIB"
 

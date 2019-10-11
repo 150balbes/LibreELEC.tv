@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.fceumm"
-PKG_VERSION="0.0.1.11-Leia"
-PKG_SHA256="066a35f27f35e4fb2e9ccd852393154faa6f656e6e3366a35f57e0e3d82fd1ff"
+PKG_VERSION="0.0.1.16-Leia"
+PKG_SHA256="4b64e74fad1171cd93e4601e1d379e5ae445484c0a7d62bddd3d8e82efee78a0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

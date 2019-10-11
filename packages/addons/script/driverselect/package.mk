@@ -2,8 +2,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="driverselect"
-PKG_VERSION="2b79180"
-PKG_SHA256="ed1e9defa185b46d4400794681f21f2bf1ddf8ccdfdb20e49ddde3edccdd6b7f"
+PKG_VERSION="8fe0e3dce8e717f00d8c0e5e4dadb7e9306be624"
+PKG_SHA256="42ca062bbb885f84472f91fa0b3354fff6ffb7ace3ae37cddca0b9923d066c8a"
 PKG_REV="100"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
@@ -20,8 +20,8 @@ PKG_ADDON_NAME="Driver Select"
 PKG_ADDON_TYPE="xbmc.python.script"
 
 unpack() {
-  mkdir -p $PKG_BUILD/addon
-  tar --strip-components=1 -xf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz -C $PKG_BUILD/addon
+  mkdir -p ${PKG_BUILD}/addon
+  tar --strip-components=1 -xf ${SOURCES}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.gz -C ${PKG_BUILD}/addon
 }
 
 make_target() {
@@ -29,6 +29,6 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/share/kodi/addons/${PKG_SECTION}.${PKG_NAME}
-  cp -rP $PKG_BUILD/addon/* $INSTALL/usr/share/kodi/addons/${PKG_SECTION}.${PKG_NAME}
+  mkdir -p ${INSTALL}/usr/share/kodi/addons/${PKG_SECTION}.${PKG_NAME}
+  cp -rP ${PKG_BUILD}/addon/* ${INSTALL}/usr/share/kodi/addons/${PKG_SECTION}.${PKG_NAME}
 }

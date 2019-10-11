@@ -8,7 +8,7 @@ BUMP_PKG_REV=""
 KEEP_GIT_DIRS="yes"
 
 usage() {
-  echo "Usage: $0 [options] <branch-name>"
+  echo "Usage: $0 [options] <kodi-branch> [<unofficial-addon-branch>]"
   echo " -b, --bump-pkg-rev: bump PKG_REV if package was not updated"
   echo " -d, --delete-git-dirs: delete cloned git dirs after update"
   echo " -h, --help: display help and exit"
@@ -40,13 +40,13 @@ while [ $# -ne 0 ]; do
   esac
 done
 
-if [ $# -ne 1 ]; then
+if [ $# -eq 0 -o $# -gt 2 ]; then
   usage
   exit 1
 fi
 
 # list of packages to exclude from update
-EXCLUDED_PACKAGES="vfs.nfs vfs.sacd"
+EXCLUDED_PACKAGES=""
 
 MY_DIR="$(dirname "$0")"
 ROOT="$(cd "${MY_DIR}"/../.. && pwd)"
@@ -60,24 +60,15 @@ mkdir -p "${TMPDIR}"
 KODI_BRANCH="$1"
 KODI_DIR="kodi.git"
 
+if [ $# -eq 1 ]; then
+  UNOFFICIAL_ADDON_BRANCH="${KODI_BRANCH}"
+else
+  UNOFFICIAL_ADDON_BRANCH="$2"
+fi
+
 . "${MY_DIR}/update_common_functions"
 
 git_clone https://github.com/xbmc/xbmc ${KODI_DIR} ${KODI_BRANCH}
-
-# kodi-platform, points to repo+githash
-REPO=$(cat $KODI_DIR/cmake/addons/depends/common/kodi-platform/kodi-platform.txt | awk '{print $2}')
-GIT_HASH=$(cat $KODI_DIR/cmake/addons/depends/common/kodi-platform/kodi-platform.txt | awk '{print $3}')
-PKG_NAME="kodi-platform"
-
-git_clone $REPO $PKG_NAME.git
-if [ -f "${ROOT}/packages/mediacenter/kodi-platform/package.mk" ] ; then
-  # update package.mk
-  RESOLVED_HASH=$(resolve_hash $PKG_NAME.git $GIT_HASH)
-  update_pkg "${ROOT}/packages/mediacenter/kodi-platform" ${PKG_NAME} ${RESOLVED_HASH} || true
-fi
-if [ "${KEEP_GIT_DIRS}" != "yes" ]; then
-  rm -rf $PKG_NAME.git
-fi
 
 # addons
 for addontxt in $KODI_DIR/cmake/addons/bootstrap/repositories/*-addons.txt ; do
@@ -165,9 +156,15 @@ for ADDON in $(ls -1 "${ROOT}/packages/mediacenter/kodi-binary-addons"); do
 
   git_clone ${GIT_REPO} ${GIT_DIR}
 
-  # update package.mk for stale github.com packages
-  RESOLVED_HASH=$(resolve_hash_in_branch ${ADDON}.git HEAD) || continue
-  echo "Resolving hash for ${ADDON}: HEAD => ${RESOLVED_HASH}"
+  if RESOLVED_HASH=$(resolve_hash_in_branch ${ADDON}.git ${UNOFFICIAL_ADDON_BRANCH}); then
+    echo "Resolved hash for ${ADDON}: ${UNOFFICIAL_ADDON_BRANCH} => ${RESOLVED_HASH}"
+  elif RESOLVED_HASH=$(resolve_hash_in_branch ${ADDON}.git HEAD); then
+    echo "Resolved hash for ${ADDON}: HEAD => ${RESOLVED_HASH}"
+  else
+    msg_warn "WARNING: Could not resolve hash for ${ADDON}"
+    continue
+  fi
+
   if update_pkg "${ADDON_PATH}" "${ADDON}" "${RESOLVED_HASH}"; then
     # always bump PKG_REV when updating untagged addons
     bump_pkg_rev "${ADDON_PATH}" "${ADDON}"

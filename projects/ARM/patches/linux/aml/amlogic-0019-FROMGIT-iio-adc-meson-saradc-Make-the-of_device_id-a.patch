@@ -1,0 +1,53 @@
+From 479a09499d246d0784ba84aac9623ccaaa853b19 Mon Sep 17 00:00:00 2001
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 20 Sep 2020 07:17:53 +0000
+Subject: [PATCH 19/29] FROMGIT: iio: adc: meson-saradc: Make the of_device_id
+ array style consistent
+
+Use only one line for the closing bracket of the last entry and the
+opening bracket for the next one to keep the style across the whole
+array consistent. Also add a "sentinel" comment to the last entry and
+remove the comma to ensure that there won't be any entry after it.
+No functional changes.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/iio/adc/meson_saradc.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 1a9189ba69ae..224cb7d5ebec 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -1153,16 +1153,13 @@ static const struct of_device_id meson_sar_adc_of_match[] = {
+ 	{
+ 		.compatible = "amlogic,meson8-saradc",
+ 		.data = &meson_sar_adc_meson8_data,
+-	},
+-	{
++	}, {
+ 		.compatible = "amlogic,meson8b-saradc",
+ 		.data = &meson_sar_adc_meson8b_data,
+-	},
+-	{
++	}, {
+ 		.compatible = "amlogic,meson8m2-saradc",
+ 		.data = &meson_sar_adc_meson8m2_data,
+-	},
+-	{
++	}, {
+ 		.compatible = "amlogic,meson-gxbb-saradc",
+ 		.data = &meson_sar_adc_gxbb_data,
+ 	}, {
+@@ -1178,7 +1175,7 @@ static const struct of_device_id meson_sar_adc_of_match[] = {
+ 		.compatible = "amlogic,meson-g12a-saradc",
+ 		.data = &meson_sar_adc_g12a_data,
+ 	},
+-	{},
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, meson_sar_adc_of_match);
+ 
+-- 
+2.17.1
+

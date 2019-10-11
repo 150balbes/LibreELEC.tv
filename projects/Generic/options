@@ -18,9 +18,6 @@
   # Bootloader to use (syslinux / u-boot)
     BOOTLOADER="syslinux"
 
-  # u-boot version to use (default)
-    UBOOT_VERSION="default"
-
   # Kernel target
     KERNEL_TARGET="bzImage"
 
@@ -74,15 +71,15 @@
   # for a list of additional drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS bcm_sta intel_nuc_led"
+    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS bcm_sta"
 
   # build and install driver addons (yes / no)
-    DRIVER_ADDONS_SUPPORT="yes"
+    DRIVER_ADDONS_SUPPORT="no"
 
   # driver addons to install:
   # for a list of additional drivers see packages/linux-driver-addons
   # Space separated list is supported,
-    DRIVER_ADDONS="crazycat digital_devices dvb-latest"
+    DRIVER_ADDONS="crazycat dvb-latest"
 
   # Default size of the ova image, in MB, eg. 4096
     OVA_SIZE="4096"

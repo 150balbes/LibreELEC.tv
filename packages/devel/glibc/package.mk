@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="glibc"
-PKG_VERSION="2.30"
-PKG_SHA256="e2c4114e569afbe7edbc29131a43be833850ab9a459d81beb2588016d2bbb8af"
+PKG_VERSION="2.31"
+PKG_SHA256="9246fe44f68feeec8c666bb87973d590ce0137cca145df014c72ec95be9ffd17"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.gnu.org/software/libc/"
 PKG_URL="http://ftp.gnu.org/pub/gnu/glibc/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="ccache:host autotools:host linux:host gcc:bootstrap pigz:host"
+PKG_DEPENDS_TARGET="ccache:host autotools:host linux:host gcc:bootstrap pigz:host Python3:host"
 PKG_DEPENDS_INIT="glibc"
 PKG_LONGDESC="The Glibc package contains the main C library."
 PKG_BUILD_FLAGS="-gold"
@@ -27,7 +27,7 @@ PKG_CONFIGURE_OPTS_TARGET="BASH_SHELL=/bin/sh \
                            --with-__thread \
                            --with-binutils=$BUILD/toolchain/bin \
                            --with-headers=$SYSROOT_PREFIX/usr/include \
-                           --enable-kernel=4.4.0 \
+                           --enable-kernel=5.4.0 \
                            --without-cvs \
                            --without-gd \
                            --disable-build-nscd \
@@ -44,6 +44,10 @@ if build_with_debug; then
 else
   PKG_CONFIGURE_OPTS_TARGET="$PKG_CONFIGURE_OPTS_TARGET --disable-debug"
 fi
+
+post_unpack() {
+  find "${PKG_BUILD}" -type f -name '*.py' -exec sed -e '1s,^#![[:space:]]*/usr/bin/python.*,#!/usr/bin/env python3,' -i {} \;
+}
 
 pre_build_target() {
   cd $PKG_BUILD
@@ -93,15 +97,20 @@ build-programs=yes
 EOF
 
   # binaries to install into target
-  GLIBC_INCLUDE_BIN="getent ldd locale"
-
-  # Generic "installer" needs localedef to define drawing chars
-  if [ "$PROJECT" = "Generic" ]; then
-    GLIBC_INCLUDE_BIN+=" localedef"
-  fi
+  GLIBC_INCLUDE_BIN="getent ldd locale localedef"
 }
 
 post_makeinstall_target() {
+  mkdir -p $INSTALL/.noinstall
+    cp -p $INSTALL/usr/bin/localedef $INSTALL/.noinstall
+    cp -a $INSTALL/usr/share/i18n/locales $INSTALL/.noinstall
+    mv $INSTALL/usr/share/i18n/charmaps $INSTALL/.noinstall
+
+  # Generic "installer" needs localedef to define drawing chars
+  if [ "$PROJECT" != "Generic" ]; then
+    rm $INSTALL/usr/bin/localedef
+  fi
+
 # we are linking against ld.so, so symlink
   ln -sf $(basename $INSTALL/usr/lib/ld-*.so) $INSTALL/usr/lib/ld.so
 
@@ -117,9 +126,6 @@ post_makeinstall_target() {
   safe_remove $INSTALL/usr/lib/*.o
   safe_remove $INSTALL/usr/lib/*.map
   safe_remove $INSTALL/var
-
-# remove locales and charmaps
-  safe_remove $INSTALL/usr/share/i18n/charmaps
 
 # add UTF-8 charmap for Generic (charmap is needed for installer)
   if [ "$PROJECT" = "Generic" ]; then

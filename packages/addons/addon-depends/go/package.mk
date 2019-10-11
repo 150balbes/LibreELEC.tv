@@ -3,21 +3,14 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="go"
-PKG_VERSION="1.12.9"
-PKG_SHA256="c31433aa0bb01856c812d40a91336e25cbce2e50800eb9fe88a7adf0305f1a5b"
+PKG_VERSION="1.14.2"
+PKG_SHA256="97b24d8992a8623eaf717cfc18a190b33f789cadd8cafdfd3c1b3616fd511d16"
 PKG_LICENSE="BSD"
 PKG_SITE="https://golang.org"
 PKG_URL="https://github.com/golang/go/archive/${PKG_NAME}${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_HOST="toolchain"
 PKG_LONGDESC="An programming language that makes it easy to build simple, reliable, and efficient software."
 PKG_TOOLCHAIN="manual"
-
-####################################################################
-# On Fedora `dnf install golang` will install go to /usr/lib/golang
-#
-# On Ubuntu you need to install golang:
-# $ sudo apt install golang-go
-####################################################################
 
 configure_host() {
   export GOOS=linux
@@ -28,6 +21,18 @@ configure_host() {
     export GOROOT_BOOTSTRAP=/usr/lib/golang
   fi
   export GOARCH=amd64
+
+  if [ ! -d $GOROOT_BOOTSTRAP ]; then
+    cat <<EOF
+####################################################################
+# On Fedora 'dnf install golang' will install go to /usr/lib/golang
+#
+# On Ubuntu you need to install golang:
+# $ sudo apt install golang-go
+####################################################################
+EOF
+    return 1
+  fi
 }
 
 make_host() {

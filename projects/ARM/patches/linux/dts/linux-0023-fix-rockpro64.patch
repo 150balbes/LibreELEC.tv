@@ -1,0 +1,15 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi
+@@ -787,11 +787,3 @@
+ &vopb_mmu {
+ 	status = "okay";
+ };
+-
+-&vopl {
+-	status = "okay";
+-};
+-
+-&vopl_mmu {
+-	status = "okay";
+-};
+

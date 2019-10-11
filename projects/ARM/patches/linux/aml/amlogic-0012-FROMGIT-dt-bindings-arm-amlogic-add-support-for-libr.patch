@@ -1,0 +1,30 @@
+From 7a6f12d44ebe7c917d087afd0f8e07b87872d26e Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 15 Sep 2020 16:19:20 +0200
+Subject: [PATCH 12/29] FROMGIT: dt-bindings: arm: amlogic: add support for
+ libretch s905x cc v2
+
+Add support for the 2nd version of the libretch aml-s905x-cc.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://lore.kernel.org/r/20200915141921.57258-2-jbrunet@baylibre.com
+---
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 12ba8d074370..0ee7c5b7b3f6 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -96,6 +96,7 @@ properties:
+               - hwacom,amazetv
+               - khadas,vim
+               - libretech,aml-s905x-cc
++              - libretech,aml-s905x-cc-v2
+               - nexbox,a95x
+           - const: amlogic,s905x
+           - const: amlogic,meson-gxl
+-- 
+2.17.1
+

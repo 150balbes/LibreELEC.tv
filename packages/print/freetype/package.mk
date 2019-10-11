@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="freetype"
-PKG_VERSION="2.10.0"
-PKG_SHA256="fccc62928c65192fff6c98847233b28eb7ce05f12d2fea3f6cc90e8b4e5fbe06"
+PKG_VERSION="2.10.2"
+PKG_SHA256="1543d61025d2e6312e0a1c563652555f17378a204a61e99928c9fcef030a2d8b"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.freetype.org"
-PKG_URL="http://download.savannah.gnu.org/releases/freetype/$PKG_NAME-$PKG_VERSION.tar.bz2"
-PKG_DEPENDS_HOST="gcc:host"
+PKG_URL="http://download.savannah.gnu.org/releases/freetype/freetype-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain zlib libpng"
 PKG_LONGDESC="The FreeType engine is a free and portable TrueType font rendering engine."
 PKG_TOOLCHAIN="configure"

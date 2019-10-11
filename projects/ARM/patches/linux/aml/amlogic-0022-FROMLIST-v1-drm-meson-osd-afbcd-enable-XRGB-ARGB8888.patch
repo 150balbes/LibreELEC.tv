@@ -1,0 +1,30 @@
+From 42fa72bfe8ace3224b817d05c26ebf69cd6862fe Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Wed, 9 Sep 2020 10:36:39 +0200
+Subject: [PATCH 22/29] FROMLIST(v1): drm/meson: osd-afbcd: enable
+ XRGB/ARGB8888 on GXM
+
+This allows XRGB/ARGB8888 on GXM following AFBC support in panfrost.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_osd_afbcd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/meson/meson_osd_afbcd.c b/drivers/gpu/drm/meson/meson_osd_afbcd.c
+index ffc6b584dbf8..c5a71129aacd 100644
+--- a/drivers/gpu/drm/meson/meson_osd_afbcd.c
++++ b/drivers/gpu/drm/meson/meson_osd_afbcd.c
+@@ -58,7 +58,9 @@
+ static int meson_gxm_afbcd_pixel_fmt(u64 modifier, uint32_t format)
+ {
+ 	switch (format) {
++	case DRM_FORMAT_XRGB8888:
+ 	case DRM_FORMAT_XBGR8888:
++	case DRM_FORMAT_ARGB8888:
+ 	case DRM_FORMAT_ABGR8888:
+ 		return OSD1_AFBCD_RGB32;
+ 	/* TOFIX support mode formats */
+-- 
+2.17.1
+

@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="intel-ucode"
-PKG_VERSION="20190918"
-PKG_SHA256="2b6b728d351764dfbf6a9763ac96ae7e04085f382a309fed3abc0118f094c943"
+PKG_VERSION="20200508"
+PKG_SHA256="f5ed22de61be346fe28918eed196d052432e2af13a3d6eb5823d528ee9bbef81"
 PKG_ARCH="x86_64"
 PKG_LICENSE="other"
 PKG_SITE="https://downloadcenter.intel.com/search?keyword=linux+microcode"

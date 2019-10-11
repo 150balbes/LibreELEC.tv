@@ -3,11 +3,11 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="connman"
-PKG_VERSION="1.37"
-PKG_SHA256="6ce29b3eb0bb16a7387bc609c39455fd13064bdcde5a4d185fab3a0c71946e16"
+PKG_VERSION="82699007fa89e26206771047d8cbb7c160fd2990" # 1.38 + HEAD 31/7/20
+PKG_SHA256="72710b2a0edd57b9ae61285bc2192bbff7317c721ff8a110360f299c35ba9175"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.connman.net"
-PKG_URL="https://www.kernel.org/pub/linux/network/connman/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="https://git.kernel.org/pub/scm/network/connman/connman.git/snapshot/connman-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain glib readline dbus iptables"
 PKG_LONGDESC="A modular network connection manager."
 PKG_TOOLCHAIN="autotools"
@@ -44,6 +44,12 @@ PKG_CONFIGURE_OPTS_TARGET="--srcdir=.. \
                            --with-systemdunitdir=/usr/lib/systemd/system \
                            --disable-silent-rules"
 
+if [ "$WIREGUARD_SUPPORT" = "yes" ]; then
+  PKG_CONFIGURE_OPTS_TARGET+=" --enable-wireguard=builtin"
+else
+  PKG_CONGIGURE_OPTS_TARGET+=" --disable-wireguard"
+fi
+
 case "$WIRELESS_DAEMON" in
   wpa_supplicant)
     PKG_DEPENDS_TARGET+=" wpa_supplicant"
@@ -59,6 +65,7 @@ case "$WIRELESS_DAEMON" in
 esac
 
 PKG_MAKE_OPTS_TARGET="storagedir=/storage/.cache/connman \
+                      vpn_storagedir=/storage/.config/wireguard \
                       statedir=/run/connman"
 
 post_makeinstall_target() {
@@ -70,12 +77,6 @@ post_makeinstall_target() {
 
   mkdir -p $INSTALL/usr/lib/connman
     cp -P $PKG_DIR/scripts/connman-setup $INSTALL/usr/lib/connman
-
-  mkdir -p $INSTALL/etc
-    ln -sf /run/connman/resolv.conf $INSTALL/etc/resolv.conf
-
-    # /etc/hosts must be writeable
-    ln -sf /run/connman/hosts $INSTALL/etc/hosts
 
   mkdir -p $INSTALL/etc/connman
     cp ../src/main.conf $INSTALL/etc/connman
@@ -90,9 +91,6 @@ post_makeinstall_target() {
         -e "s|^# PersistentTetheringMode.*|PersistentTetheringMode = true|g" \
         -e "s|^# NetworkInterfaceBlacklist = vmnet,vboxnet,virbr,ifb|NetworkInterfaceBlacklist = vmnet,vboxnet,virbr,ifb,docker,veth,zt|g"
 
-  mkdir -p $INSTALL/usr/config
-    cp $PKG_DIR/config/hosts.conf $INSTALL/usr/config
-
   mkdir -p $INSTALL/usr/share/connman/
     cp $PKG_DIR/config/settings $INSTALL/usr/share/connman/
 }
@@ -102,4 +100,7 @@ post_install() {
   add_group system 430
 
   enable_service connman.service
+  if [ "$WIREGUARD_SUPPORT" = "yes" ]; then
+    enable_service connman-vpn.service
+  fi
 }

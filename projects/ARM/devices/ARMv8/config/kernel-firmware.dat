@@ -1,0 +1,11 @@
+RTL8192E/*
+ath9k_htc
+ath10k/*
+mediatek/*
+qca/*
+rtlwifi/*
+rtl_bt/*
+rtl_nic/*
+rtw88/*
+rockchip/*
+meson

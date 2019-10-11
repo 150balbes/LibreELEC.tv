@@ -1,0 +1,182 @@
+################################################################################
+# setup device defaults
+################################################################################
+
+  # The TARGET_CPU variable controls which processor should be targeted for
+  # generated code.
+
+  # Kernel to use
+    LINUX="default"
+
+  # Kernel target
+    KERNEL_TARGET="Image"
+
+    case $TARGET_ARCH in
+      aarch64)
+	if [ "$PLATFORM" = "RK" ]; then
+	        if [ "$UBOOT_SYSTEM" = "rk3399" ]; then
+        	  TARGET_CPU="cortex-a72.cortex-a53"
+	        else
+        	  TARGET_CPU="cortex-a53"
+        	fi
+        	TARGET_CPU_FLAGS="+crc+crypto"
+	elif [ "$PLATFORM" = "AML" ]; then
+	        TARGET_CPU="cortex-a53"
+	        TARGET_CPU_FLAGS="+crc+fp+simd"
+	elif [ "$PLATFORM" = "AW" ]; then
+	        TARGET_CPU="cortex-a53"
+	        TARGET_CPU_FLAGS="+crc+crypto"
+	fi
+        TARGET_FEATURES="64bit"
+        ;;
+      arm)
+	TARGET_KERNEL_ARCH="arm64"
+	TARGET_PATCH_ARCH="aarch64"
+	if [ "$PLATFORM" = "RK" ]; then
+		if [ "$UBOOT_SYSTEM" = "rk3399" ]; then
+			TARGET_CPU="cortex-a72.cortex-a53"
+		else
+			TARGET_CPU="cortex-a53"
+		fi
+		TARGET_FPU="crypto-neon-fp-armv8"
+		TARGET_CPU_FLAGS="+crc"
+	elif [ "$PLATFORM" = "AML" ]; then
+		TARGET_CPU="cortex-a53"
+		TARGET_FPU="neon-fp-armv8"
+		TARGET_CPU_FLAGS="+crc"
+	elif [ "$PLATFORM" = "AW" ]; then
+		TARGET_CPU="cortex-a53"
+		TARGET_FPU="crypto-neon-fp-armv8"
+		TARGET_CPU_FLAGS="+crc"
+	fi
+	TARGET_FLOAT=hard
+        TARGET_FEATURES="32bit"
+        ;;
+    esac
+
+  # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
+    BOOTLOADER="u-boot"
+
+  # Start boot partition at 16MiB, same as https://github.com/rockchip-linux/build images
+    SYSTEM_PART_START=32768
+
+  # Platform to use
+    if [ "$PLATFORM" = "RK" ]; then
+
+#        LINUX="default"
+
+	UBOOT_FIRMWARE="rkbin"
+        if [ "$UBOOT_SYSTEM" = "rk3328" ]; then
+	      EXTRA_CMDLINE="console=uart8250,mmio32,0xff130000 console=tty0 systemd.debug_shell=ttyS2"
+	else
+	      EXTRA_CMDLINE="console=uart8250,mmio32,0xff1a0000 console=tty0 systemd.debug_shell=ttyS2"
+	fi
+	DEBUG_TTY="/dev/ttyS2"
+
+    elif [ "$PLATFORM" = "AML" ]; then	
+
+	UBOOT_FIRMWARE="amlogic-boot-fip"
+        EXTRA_CMDLINE="console=ttyAML0,115200n8 console=tty0 systemd.debug_shell=ttyAML0"
+        DEBUG_TTY="/dev/ttyAML0"
+
+    elif [ "$PLATFORM" = "AW" ]; then
+
+	UBOOT_FIRMWARE="atf"
+        if [ "${UBOOT_SYSTEM}" = "h5" ]; then
+		ATF_PLATFORM="sun50i_a64"
+	else
+		ATF_PLATFORM="sun50i_h6"
+	fi
+
+        EXTRA_CMDLINE="console=ttyS0,115200n8 console=tty1 systemd.debug_shell=ttyS0"
+	DEBUG_TTY="/dev/console"
+
+    fi
+
+  # Additional kernel dependencies
+    KERNEL_EXTRA_DEPENDS_TARGET="lz4:host"
+
+  # Additional kernel make parameters
+    KERNEL_MAKE_EXTRACMD="dtbs"
+
+################################################################################
+# setup build defaults
+################################################################################
+
+  # Project CFLAGS
+    PROJECT_CFLAGS=""
+
+  # SquashFS compression method (gzip / lzo / xz / zstd)
+    SQUASHFS_COMPRESSION="zstd"
+
+################################################################################
+# setup project defaults
+################################################################################
+
+  # build and install ALSA Audio support (yes / no)
+    ALSA_SUPPORT="yes"
+
+  # OpenGL(X) implementation to use (no / mesa)
+    OPENGL="no"
+
+  # Displayserver to use (x11 / no)
+    DISPLAYSERVER="no"
+
+  # Windowmanager to use (fluxbox / none)
+    WINDOWMANAGER="none"
+
+  # OpenGL-ES implementation to use
+    OPENGLES="mesa"
+
+  # Graphic drivers to use
+    GRAPHIC_DRIVERS="lima panfrost"
+
+  # KODI Player implementation to use
+    KODIPLAYER_DRIVER="$OPENGLES"
+
+  # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
+  # Space separated list is supported,
+  # e.g. FIRMWARE="dvb-firmware misc-firmware wlan-firmware"
+    FIRMWARE="brcmfmac_sdio-firmware kernel-firmware dvb-firmware misc-firmware wlan-firmware"
+
+  # build with installer (yes / no)
+    INSTALLER_SUPPORT="no"
+
+  # build debug with valgrind (yes / no)
+  # Increases image size significantly
+    VALGRIND="no"
+
+  # additional drivers to install:
+  # for a list of additional drivers see packages/linux-drivers
+  # Space separated list is supported,
+  # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
+  ADDITIONAL_DRIVERS+=" RTL88x2BU"
+  ADDITIONAL_DRIVERS+=" RTL8189FS"
+  ADDITIONAL_DRIVERS+=" RTL8821CU"
+  ADDITIONAL_DRIVERS+=" RTL8822BS"
+  ADDITIONAL_DRIVERS+=" RTL8723DS"
+  ADDITIONAL_DRIVERS+=" RTL8188FU"
+#  ADDITIONAL_DRIVERS+=" RTL8189ES"
+#  ADDITIONAL_DRIVERS=""
+
+  # build and install driver addons (yes / no)
+    DRIVER_ADDONS_SUPPORT="no"
+
+  # driver addons to install:
+  # for a list of additional drivers see packages/linux-driver-addons
+  # Space separated list is supported,
+    DRIVER_ADDONS="crazycat dvb-latest"
+
+  # additional packages to install:
+    ADDITIONAL_PACKAGES="u-boot-script dtc"
+
+  # use the kernel CEC framework for libcec (yes / no)
+    CEC_FRAMEWORK_SUPPORT="yes"
+
+  if [ "$TARGET_ARCH" = arm ]; then
+    ADDON_SERVER_URL="http://balbes150.libreelec.tv/addons"
+    ADDON_PROJECT="ARMv8"
+  else
+    ADDON_SERVER_URL="https://balbes150.libreelec.tv/addons"
+    ADDON_PROJECT="ARMv8"
+  fi

@@ -1,0 +1,91 @@
+From 8e2fd0ade87a1b2b2e19e9098dba2f6c4c0de9a2 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Sat, 19 Sep 2020 18:19:23 +0000
+Subject: [PATCH 15/29] FROMGIT: clk: meson: make shipped controller
+ configurable
+
+Add the necessary so bits so unnecessary amlogic clock controllers can be
+compiled out. This allows to save a few kB when necessary.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index dabeb435d067..034da203e8e0 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -1,4 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++menu "Clock support for Amlogic platforms"
++	depends on ARCH_MESON || COMPILE_TEST
++
+ config COMMON_CLK_MESON_REGMAP
+ 	tristate
+ 	select REGMAP
+@@ -41,8 +44,9 @@ config COMMON_CLK_MESON_CPU_DYNDIV
+ 	select COMMON_CLK_MESON_REGMAP
+ 
+ config COMMON_CLK_MESON8B
+-	bool
+-	depends on ARCH_MESON
++	bool "Meson8 SoC Clock controller support"
++	depends on ARM
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -54,8 +58,9 @@ config COMMON_CLK_MESON8B
+ 	  want peripherals and CPU frequency scaling to work.
+ 
+ config COMMON_CLK_GXBB
+-	bool
+-	depends on ARCH_MESON
++	bool "GXBB and GXL SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+@@ -69,8 +74,9 @@ config COMMON_CLK_GXBB
+ 	  Say Y if you want peripherals and CPU frequency scaling to work.
+ 
+ config COMMON_CLK_AXG
+-	bool
+-	depends on ARCH_MESON
++	bool "AXG SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -84,7 +90,7 @@ config COMMON_CLK_AXG
+ 
+ config COMMON_CLK_AXG_AUDIO
+ 	tristate "Meson AXG Audio Clock Controller Driver"
+-	depends on ARCH_MESON
++	depends on ARM64
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_PHASE
+ 	select COMMON_CLK_MESON_SCLK_DIV
+@@ -94,8 +100,9 @@ config COMMON_CLK_AXG_AUDIO
+ 	  aka axg, Say Y if you want audio subsystem to work.
+ 
+ config COMMON_CLK_G12A
+-	bool
+-	depends on ARCH_MESON
++	bool "G12 and SM1 SoC clock controllers support"
++	depends on ARM64
++	default y
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -107,3 +114,4 @@ config COMMON_CLK_G12A
+ 	help
+ 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+ 	  devices, aka g12a. Say Y if you want peripherals to work.
++endmenu
+-- 
+2.17.1
+

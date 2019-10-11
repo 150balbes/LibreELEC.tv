@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-handy"
-PKG_VERSION="08cc63376cd8886aea6e6cd38297ba7c9ea0344c"
-PKG_SHA256="e2e70fcf4d983549fa2a33791cd570958087f4dbf3664374dcc38a82d29139ce"
+PKG_VERSION="c4a13bd00bb0b37f3d5b0dfc431ad523b423ebf8"
+PKG_SHA256="dbdbd042b51be669636cd43290e696efca46d26e3cc0f4921a42f58f1b9a6d4e"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/libretro-handy"
 PKG_URL="https://github.com/libretro/libretro-handy/archive/$PKG_VERSION.tar.gz"

@@ -1,0 +1,21 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezzanine.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-mezzanine.dts
+@@ -22,7 +22,7 @@
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&sys_12v>;
+ 	};
+ 
+ 	vcc3v3_pcie: vcc3v3-pcie {
+@@ -34,7 +34,7 @@
+ 		pinctrl-0 = <&vcc3v3_pcie_en>;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&sys_12v>;
+ 	};
+ };
+ 
+

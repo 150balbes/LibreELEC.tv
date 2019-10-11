@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mame"
-PKG_VERSION="9c5b7b93e86302a24b39c3bf0bb79e11239e2248"
-PKG_SHA256="389c6626f36f8704792f9eb72db689938c555ef12d4547a143638d1522628828"
+PKG_VERSION="f0f4ea6c5bdac62fe74491dcd205c1cd77016ae0"
+PKG_SHA256="acdee7eeac28de1ab257cd2593c3d3266863875139d9a201f572d8044e3eb96e"
 PKG_ARCH="x86_64 arm"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mame"
@@ -17,21 +17,18 @@ PKG_LIBNAME="mame_libretro.so"
 PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="MAME_LIB"
 
-make_target() {
-  PTR64="0"
-  NOASM="0"
+pre_make_target() {
+  PKG_MAKE_OPTS_TARGET=" \
+    REGENIE=1 VERBOSE=1 NOWERROR=1 PYTHON_EXECUTABLE=python3 CONFIG=libretro \
+    LIBRETRO_OS="unix" ARCH="" PROJECT="" LIBRETRO_CPU="${ARCH}" DISTRO="debian-stable" \
+    CROSS_BUILD="1" OVERRIDE_CC="${CC}" OVERRIDE_CXX="${CXX}" \
+    TARGET="mame" SUBTARGET="arcade" PLATFORM="${ARCH}" RETRO=1 OSD="retro""
 
   if [ "$ARCH" = "arm" ]; then
-    NOASM="1"
+    PKG_MAKE_OPTS_TARGET+=" NOASM="1" ARCHITECTURE="""
   elif [ "$ARCH" = "x86_64" ]; then
-    PTR64="1"
+    PKG_MAKE_OPTS_TARGET+=" NOASM="0" PTR64="1""
   fi
-
-  make REGENIE=1 VERBOSE=1 NOWERROR=1 PYTHON_EXECUTABLE=python2 CONFIG=libretro \
-       LIBRETRO_OS="unix" ARCH="" PROJECT="" LIBRETRO_CPU="$ARCH" DISTRO="debian-stable" \
-       CROSS_BUILD="1" OVERRIDE_CC="$CC" OVERRIDE_CXX="$CXX" \
-       PTR64="$PTR64" TARGET="mame" \
-       SUBTARGET="arcade" PLATFORM="$ARCH" RETRO=1 OSD="retro"
 }
 
 post_make_target() {

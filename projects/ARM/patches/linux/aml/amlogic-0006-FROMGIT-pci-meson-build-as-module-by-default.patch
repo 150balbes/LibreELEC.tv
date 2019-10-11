@@ -1,0 +1,62 @@
+From 01de27fab5bbc1ac33681c31e38dec163ed56c27 Mon Sep 17 00:00:00 2001
+From: Kevin Hilman <khilman@baylibre.com>
+Date: Fri, 11 Sep 2020 15:43:40 -0700
+Subject: [PATCH 06/29] FROMGIT: pci: meson: build as module by default
+
+Enable pci-meson to build as a module whenever ARCH_MESON is enabled.
+
+Cc: Yue Wang <yue.wang@amlogic.com>
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+---
+ drivers/pci/controller/dwc/Kconfig     | 3 ++-
+ drivers/pci/controller/dwc/pci-meson.c | 8 +++++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 044a3761c44f..bc049865f8e0 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -237,8 +237,9 @@ config PCIE_HISI_STB
+ 	  Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+ 
+ config PCI_MESON
+-	bool "MESON PCIe controller"
++	tristate "MESON PCIe controller"
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	default m if ARCH_MESON
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want to enable PCI controller support on Amlogic
+diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+index 4f183b96afbb..7a1fb55ee44a 100644
+--- a/drivers/pci/controller/dwc/pci-meson.c
++++ b/drivers/pci/controller/dwc/pci-meson.c
+@@ -17,6 +17,7 @@
+ #include <linux/resource.h>
+ #include <linux/types.h>
+ #include <linux/phy/phy.h>
++#include <linux/module.h>
+ 
+ #include "pcie-designware.h"
+ 
+@@ -589,6 +590,7 @@ static const struct of_device_id meson_pcie_of_match[] = {
+ 	},
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, meson_pcie_of_match);
+ 
+ static struct platform_driver meson_pcie_driver = {
+ 	.probe = meson_pcie_probe,
+@@ -598,4 +600,8 @@ static struct platform_driver meson_pcie_driver = {
+ 	},
+ };
+ 
+-builtin_platform_driver(meson_pcie_driver);
++module_platform_driver(meson_pcie_driver);
++
++MODULE_AUTHOR("Yue Wang <yue.wang@amlogic.com>");
++MODULE_DESCRIPTION("Amlogic PCIe Controller driver");
++MODULE_LICENSE("Dual BSD/GPL");
+-- 
+2.17.1
+

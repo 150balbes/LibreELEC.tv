@@ -39,8 +39,8 @@ if [ "$MEDIACENTER" = "kodi" ]; then
   fi
 
   get_graphicdrivers
-  if listcontains "$GRAPHIC_DRIVERS" "(i915|i965)"; then
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-vaapi-driver"
+  if listcontains "$GRAPHIC_DRIVERS" "(iris|i915|i965)"; then
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-vaapi-driver media-driver"
   fi
 
 fi

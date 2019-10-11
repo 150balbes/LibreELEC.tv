@@ -14,8 +14,10 @@ clean_package() {
     return
   fi
 
-  # Use a wilcard here to remove all versions of the package
-  for i in "${BUILD}/${1}-"*; do
+  # Use a wildcard here to remove all versions of the package
+  for i in "${BUILD}/build/${1}-"* \
+           "${BUILD}/install_pkg/${1}-"* \
+           "${BUILD}/install_init/${1}-"*; do
     if [ -d "${i}" -a -f "${i}/.libreelec-unpack" ]; then
       . "${i}/.libreelec-unpack"
       if [ "${STAMP_PKG_NAME}" = "${1}" ]; then
@@ -26,7 +28,7 @@ clean_package() {
       # force clean if no stamp found (previous unpack failed)
       . "${i}/.libreelec-package"
       if [ "${INFO_PKG_NAME}" = "${1}" ]; then
-        build_msg "" "" "* Removing ${i} ..."
+        build_msg "CLR_WARNING" "*" "$(print_color "CLR_WARNING_DIM" "Removing ${i} ...")"
         rm -rf "${i}"
       fi
     fi
@@ -35,7 +37,7 @@ clean_package() {
 }
 
 if [ "${1}" = "--all" -a -n "${2}" ]; then
-  for build_dir in $(ls -1d "${ROOT}/build."*); do
+  for build_dir in $(ls -1d "${BUILD_ROOT}/${BUILD_BASE}."*); do
     load_build_config "${build_dir}" && "${SCRIPTS}/clean" "${2}"
   done
 elif [ -n "${1}" ]; then

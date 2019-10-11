@@ -4,24 +4,24 @@
 case "$ARCH" in
   "aarch64")
     PKG_NC_ARCH="arm64"
-    PKG_SHA256="48d58ac6ff958ec7155befe76f83e276aceff50c4a7d1f578444a9a40720e412"
-    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/f5e04830-50fc-435c-8bb5-fcd4629da944/8aa7cce5c3fcb6a7db180b923d3574ef/dotnet-runtime-2.2.6-linux-arm64.tar.gz"
+    PKG_SHA256="05875790fbfc487cefb04fc6ff6d9a3ade147f1ae554e859dca60ea6a3c232aa"
+    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/65291ed8-e931-4605-9d5a-265928a835d0/1a15d18655c8b260170117e9bd1a1cb7/dotnet-runtime-3.1.5-linux-arm64.tar.gz"
     ;;
   "arm")
     PKG_NC_ARCH="arm"
-    PKG_SHA256="a4f2e63471c296b7b173105a2c1d5feb95b81e0a8131f73aeecc00440fa5f544"
-    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/428aaa32-f66c-4847-b845-aa21f90504e4/1cf033db866414997140c2672bd75069/dotnet-runtime-2.2.6-linux-arm.tar.gz"
+    PKG_SHA256="5728786f517410f25c59799f443d0336129d6b1680fd40cb5b40202407949008"
+    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/15132a5c-f0f4-4373-8b8b-b7e70834d899/cad479dda52359ad43956471274ec932/dotnet-runtime-3.1.5-linux-arm.tar.gz"
     ;;
   "x86_64")
     PKG_NC_ARCH="x64"
-    PKG_SHA256="e30d4568c62d747b030e3c74f3d528ecb8d5c90e844e506bc0e3fcbce52b8cb1"
-    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/9f21e352-9d2c-4e3b-af45-915da89158db/0e8a7ea83cc08d4bcf417a927a36ed6f/dotnet-runtime-2.2.6-linux-x64.tar.gz"
+    PKG_SHA256="ae0a4e9a1e875b46d3201cdad2779572de1c12c0aae36688ae3c3978db319ff5"
+    PKG_URL="https://download.visualstudio.microsoft.com/download/pr/d00eaeea-6d7b-4e73-9d96-c0234ed3b665/0d25d9d1aeaebdeef01d15370d5cd22b/dotnet-runtime-3.1.5-linux-x64.tar.gz"
     ;;
 esac
 
 PKG_NAME="dotnet-runtime"
-PKG_VERSION="2.2.6"
-PKG_REV="107"
+PKG_VERSION="3.1.5"
+PKG_REV="110"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="https://dotnet.github.io/"
@@ -42,13 +42,13 @@ addon() {
         $ADDON_BUILD/$PKG_ADDON_ID/bin
 
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/libs
-  cp -L $(get_build_dir curl3)/.install_pkg/usr/lib/libcurl.so.? \
-        $(get_build_dir krb5)/.install_pkg/usr/lib/libcom_err.so.? \
-        $(get_build_dir krb5)/.install_pkg/usr/lib/libgssapi_krb5.so.? \
-        $(get_build_dir krb5)/.install_pkg/usr/lib/libk5crypto.so.? \
-        $(get_build_dir krb5)/.install_pkg/usr/lib/libkrb5.so.? \
-        $(get_build_dir krb5)/.install_pkg/usr/lib/libkrb5support.so.? \
-        $(get_build_dir lttng-ust)/.install_pkg/usr/lib/liblttng-ust.so.? \
-        $(get_build_dir lttng-ust)/.install_pkg/usr/lib/liblttng-ust-tracepoint.so.? \
+  cp -L $(get_install_dir curl3)/usr/lib/libcurl.so.? \
+        $(get_install_dir krb5)/usr/lib/libcom_err.so.? \
+        $(get_install_dir krb5)/usr/lib/libgssapi_krb5.so.? \
+        $(get_install_dir krb5)/usr/lib/libk5crypto.so.? \
+        $(get_install_dir krb5)/usr/lib/libkrb5.so.? \
+        $(get_install_dir krb5)/usr/lib/libkrb5support.so.? \
+        $(get_install_dir lttng-ust)/usr/lib/liblttng-ust.so.? \
+        $(get_install_dir lttng-ust)/usr/lib/liblttng-ust-tracepoint.so.? \
         $ADDON_BUILD/$PKG_ADDON_ID/libs
 }

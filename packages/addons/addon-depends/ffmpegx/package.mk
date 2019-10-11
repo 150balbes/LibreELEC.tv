@@ -2,24 +2,24 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpegx"
-PKG_VERSION="4.1.3"
-PKG_SHA256="271405b43f4953fcf0487c66bc455cf94bb7a10ffcb27f72a402463b87b2b8c9"
+PKG_VERSION="4.3"
+PKG_SHA256="1d0ad06484f44bcb97eba5e93c40bcb893890f9f64aeb43e46cd9bb4cbd6795d"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
-PKG_URL="https://github.com/FFmpeg/FFmpeg/archive/n${PKG_VERSION}.tar.gz"
+PKG_URL="https://ffmpeg.org/releases/ffmpeg-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain aom bzip2 gnutls libvorbis opus x264 zlib"
 PKG_LONGDESC="FFmpegx is an complete FFmpeg build to support encoding and decoding."
-PKG_BUILD_FLAGS="-gold"
+PKG_BUILD_FLAGS="-gold -sysroot"
 
 # Dependencies
 get_graphicdrivers
 
-if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
-fi
-
 if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET+=" nasm:host intel-vaapi-driver x265"
+  PKG_DEPENDS_TARGET+=" nasm:host x265"
+
+  if listcontains "$GRAPHIC_DRIVERS" "(iris|i915|i965)"; then
+    PKG_DEPENDS_TARGET+=" intel-vaapi-driver"
+  fi
 fi
 
 if [[ ! $TARGET_ARCH = arm ]] || target_has_feature neon; then
@@ -35,40 +35,20 @@ pre_configure_target() {
   cd $PKG_BUILD
   rm -rf .$TARGET_NAME
 
-  if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-    CFLAGS="$CFLAGS -DRPI=1 -I$SYSROOT_PREFIX/usr/include/IL"
-    PKG_FFMPEG_LIBS="-lbcm_host -ldl -lmmal -lmmal_core -lmmal_util -lvchiq_arm -lvcos -lvcsm"
-  fi
-
 # HW encoders
-
-  # RPi 0-3
-  if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
-    PKG_FFMPEG_HW_ENCODERS_RPi="\
-    `#Video encoders` \
-    --enable-omx-rpi \
-    --enable-mmal \
-    --enable-encoder=h264_omx \
-    \
-    `#Video hwaccel` \
-    --enable-hwaccel=h264_mmal \
-    --enable-hwaccel=mpeg2_mmal \
-    --enable-hwaccel=mpeg4_mmal \
-    --enable-hwaccel=vc1_mmal"
-  fi
 
   # Generic
   if [[ "$TARGET_ARCH" = "x86_64" ]]; then
     PKG_FFMPEG_HW_ENCODERS_GENERIC="\
     `#Video encoders` \
-    --enable-encoder=h264_nvenc \
     --enable-encoder=h264_vaapi \
-    --enable-encoder=hevc_nvenc \
     --enable-encoder=hevc_vaapi \
     --enable-encoder=mjpeg_vaapi \
     --enable-encoder=mpeg2_vaapi \
     --enable-encoder=vp8_vaapi \
     --enable-encoder=vp9_vaapi \
+    --disable-encoder=h264_nvenc \
+    --disable-encoder=hevc_nvenc \
     \
     `#Video hwaccel` \
     --enable-hwaccel=h263_vaapi \
@@ -133,13 +113,11 @@ configure_target() {
     \
     `#Licensing options` \
     --enable-gpl \
-    --disable-nonfree \
     \
     `#Documentation options` \
     --disable-doc \
     \
     `#Hardware accelerated decoding encoding` \
-    $PKG_FFMPEG_HW_ENCODERS_RPi \
     $PKG_FFMPEG_HW_ENCODERS_GENERIC \
     \
     `#General options` \
@@ -176,8 +154,4 @@ configure_target() {
     `#Advanced options` \
     --disable-hardcoded-tables \
 
-}
-
-makeinstall_target() {
-  make install DESTDIR="$INSTALL/../.INSTALL_PKG"
 }

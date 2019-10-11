@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
-from __future__ import print_function
 import sys, os, codecs, json, argparse, re
 
 ROOT_PKG = "__root__"
@@ -20,12 +19,16 @@ class LibreELEC_Package:
         self.wants = []
         self.wantedby = []
 
+        self.unpacks = []
+
     def __repr__(self):
         s = "%-9s: %s" % ("name", self.name)
         s = "%s\n%-9s: %s" % (s, "section", self.section)
 
         for t in self.deps:
             s = "%s\n%-9s: %s" % (s, t, self.deps[t])
+
+        s = "%s\n%-9s: %s" % (s, "UNPACKS", self.unpacks)
 
         s = "%s\n%-9s: %s" % (s, "NEEDS", self.wants)
         s = "%s\n%-9s: %s" % (s, "WANTED BY", self.wantedby)
@@ -55,6 +58,10 @@ class LibreELEC_Package:
         name = package.split(":")[0]
         if name in self.wantedby:
             self.wantedby.remove(name)
+
+    def addUnpack(self, packages):
+        if packages.strip():
+            self.unpacks = packages.strip().split()
 
     def isReferenced(self):
         return False if self.wants == [] else True
@@ -107,10 +114,11 @@ class Node:
         return self.name if self.target == "target" else "%s:%s" % (self.name, self.target)
 
     def addEdge(self, node):
-        self.edges.append(node)
+        if node not in self.edges:
+            self.edges.append(node)
 
 def eprint(*args, **kwargs):
-        print(*args, file=sys.stderr, **kwargs)
+    print(*args, file=sys.stderr, **kwargs)
 
 # Read a JSON list of all possible packages from stdin
 def loadPackages():
@@ -136,6 +144,8 @@ def initPackage(package):
 
     for target in ["bootstrap", "init", "host", "target"]:
         pkg.addDependencies(target, package[target])
+
+    pkg.addUnpack(package["unpack"])
 
     return pkg
 
@@ -179,7 +189,7 @@ def findbuildpos(node, list):
     return list.index(candidate) + 1 if candidate else -1
 
 # Resolve dependencies for a node
-def dep_resolve(node, resolved, unresolved, noreorder):
+def dep_resolve(node, resolved, unresolved):
     unresolved.append(node)
 
     for edge in node.edges:
@@ -187,19 +197,15 @@ def dep_resolve(node, resolved, unresolved, noreorder):
             if edge in unresolved:
                 raise Exception('Circular reference detected: %s -> %s\nRemove %s from %s package.mk::PKG_DEPENDS_%s' % \
                                 (node.fqname, edge.commonName(), edge.commonName(), node.name, node.target.upper()))
-            dep_resolve(edge, resolved, unresolved, noreorder)
+            dep_resolve(edge, resolved, unresolved)
 
     if node not in resolved:
-        pos = -1 if noreorder else findbuildpos(node, resolved)
-        if pos != -1:
-            resolved.insert(pos, node)
-        else:
-            resolved.append(node)
+        resolved.append(node)
 
     unresolved.remove(node)
 
 # Return a list of build steps for the trigger packages
-def get_build_steps(args, nodes, trigger_pkgs, built_pkgs):
+def get_build_steps(args, nodes):
     resolved = []
     unresolved = []
 
@@ -211,12 +217,12 @@ def get_build_steps(args, nodes, trigger_pkgs, built_pkgs):
     #
     install = True if "image" in args.build else False
 
-    for pkgname in [x for x in trigger_pkgs if x]:
+    for pkgname in [x for x in args.build if x]:
         if pkgname.find(":") == -1:
             pkgname = "%s:target" % pkgname
 
         if pkgname in nodes:
-            dep_resolve(nodes[pkgname], resolved, unresolved, args.no_reorder)
+            dep_resolve(nodes[pkgname], resolved, unresolved)
 
     # Abort if any references remain unresolved
     if unresolved != []:
@@ -227,14 +233,12 @@ def get_build_steps(args, nodes, trigger_pkgs, built_pkgs):
 
     # Output list of resolved dependencies
     for pkg in resolved:
-        if pkg.fqname not in built_pkgs:
-            built_pkgs.append(pkg.fqname)
-            task = "build" if pkg.fqname.endswith(":host") or not install else "install"
-            yield(task, pkg.fqname)
+        task = "build" if pkg.fqname.endswith(":host") or pkg.fqname.endswith(":init") or not install else "install"
+        yield(task, pkg.fqname)
 
 # Reduce the complete list of packages to a map of those packages that will
 # be needed for the build.
-def processPackages(args, packages, build):
+def processPackages(args, packages):
     # Add dummy package to ensure build/install dependencies are not culled
     pkg = {
             "name": ROOT_PKG,
@@ -242,8 +246,9 @@ def processPackages(args, packages, build):
             "hierarchy": "global",
             "bootstrap": "",
             "init": "",
-            "host": " ".join(get_packages_by_target("host", build)),
-            "target": " ".join(get_packages_by_target("target", build))
+            "host": " ".join(get_packages_by_target("host", args.build)),
+            "target": " ".join(get_packages_by_target("target", args.build)),
+            "unpack": ""
           }
 
     packages[pkg["name"]] = initPackage(pkg)
@@ -278,16 +283,17 @@ def processPackages(args, packages, build):
             needed_map[pkgname] = pkg
 
     # Validate package dependency references
-    for pkgname in needed_map:
-        pkg = needed_map[pkgname]
-        for t in pkg.deps:
-            for d in pkg.deps[t]:
-                if split_package(d)[0] not in needed_map and not args.ignore_invalid:
-                    msg = 'Invalid package reference: dependency %s in package %s::PKG_DEPENDS_%s is not valid' % (d, pkgname, t.upper())
-                    if args.warn_invalid:
-                        eprint("WARNING: %s" % msg)
-                    else:
-                        raise Exception(msg)
+    if not args.ignore_invalid:
+        for pkgname in needed_map:
+            pkg = needed_map[pkgname]
+            for t in pkg.deps:
+                for d in pkg.deps[t]:
+                    if split_package(d)[0] not in needed_map:
+                        msg = 'Invalid package reference: dependency %s in package %s::PKG_DEPENDS_%s is not valid' % (d, pkgname, t.upper())
+                        if args.warn_invalid:
+                            eprint("WARNING: %s" % msg)
+                        else:
+                            raise Exception(msg)
 
     node_map = {}
 
@@ -337,23 +343,20 @@ parser = argparse.ArgumentParser(description="Generate package dependency list f
 parser.add_argument("-b", "--build", nargs="+", metavar="PACKAGE", required=True, \
                     help="Space-separated list of build trigger packages, either for host or target. Required property - specify at least one package.")
 
-parser.add_argument("--warn-invalid", action="store_true", \
+parser.add_argument("--warn-invalid", action="store_true", default=False, \
                     help="Warn about invalid/missing dependency packages, perhaps excluded by a PKG_ARCH incompatability. Default is to abort.")
 
-parser.add_argument("--no-reorder", action="store_true", default="True", \
-                    help="Do not resequence steps based on dependencies. This is the default.")
-
-parser.add_argument("--reorder", action="store_false", dest="no_reorder", \
-                    help="Disable --no-reorder and resequence packages to try and reduce stalls etc.")
-
-parser.add_argument("--show-wants", action="store_true", \
-                    help="Output \"wants\" dependencies for each step.")
-
-parser.add_argument("--hide-wants", action="store_false", dest="show_wants", default="True", \
-                    help="Disable --show-wants.")
-
-parser.add_argument("--ignore-invalid", action="store_true", \
+parser.add_argument("--ignore-invalid", action="store_true", default=False, \
                     help="Ignore invalid packages.")
+
+group =  parser.add_mutually_exclusive_group()
+group.add_argument("--show-wants", action="store_true", \
+                    help="Output \"wants\" dependencies for each step.")
+group.add_argument("--hide-wants", action="store_false", dest="show_wants", default=True, \
+                    help="Disable --show-wants.  This is the default.")
+
+parser.add_argument("--with-json", metavar="FILE", \
+                    help="File into which JSON formatted plan will be written.")
 
 args = parser.parse_args()
 
@@ -361,27 +364,35 @@ ALL_PACKAGES = loadPackages()
 
 loaded = len(ALL_PACKAGES)
 
-REQUIRED_PKGS = processPackages(args, ALL_PACKAGES, args.build)
+REQUIRED_PKGS = processPackages(args, ALL_PACKAGES)
 
-# Output list of packages to build/install
-built_pkgs = []
-steps = []
-
-for step in get_build_steps(args, REQUIRED_PKGS, args.build, built_pkgs):
-    steps.append(step)
+# Identify list of packages to build/install
+steps = [step for step in get_build_steps(args, REQUIRED_PKGS)]
 
 eprint("Packages loaded : %d" % loaded)
 eprint("Build trigger(s): %d [%s]" % (len(args.build), " ".join(args.build)))
 eprint("Package steps   : %d" % len(steps))
 eprint("")
 
+# Write the JSON build plan (with dependencies)
+if args.with_json:
+    plan = []
+    for step in steps:
+        (pkg_name, target) = split_package(step[1])
+        plan.append({"task": step[0],
+                     "name": step[1],
+                     "section": ALL_PACKAGES[pkg_name].section,
+                     "wants": [d.fqname for d in REQUIRED_PKGS[step[1]].edges],
+                     "unpacks": ALL_PACKAGES[pkg_name].unpacks if pkg_name in ALL_PACKAGES else []})
+
+    with open(args.with_json, "w") as out:
+        print(json.dumps(plan, indent=2, sort_keys=False), file=out)
+
 # Output build/install steps
 if args.show_wants:
     for step in steps:
-        wants = []
         node = (REQUIRED_PKGS[step[1]])
-        for e in node.edges:
-            wants.append(e.fqname)
+        wants = [edge.fqname for edge in node.edges]
         print("%-7s %-25s (wants: %s)" % (step[0], step[1].replace(":target",""), ", ".join(wants).replace(":target","")))
 else:
     for step in steps:

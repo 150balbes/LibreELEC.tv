@@ -3,14 +3,14 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="visualization.shadertoy"
-PKG_VERSION="1.1.10-Leia"
-PKG_SHA256="342b89a6d9ec1175023d085f540358b5ddc427bb73e172f155d61e77e87ee56e"
-PKG_REV="3"
+PKG_VERSION="2.3.0-Matrix"
+PKG_SHA256="fbee4d8d4a41013705848eb89d4dcd55fe915a1ff997a60c800aa1bdd157530b"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/xbmc/visualization.shadertoy"
 PKG_URL="https://github.com/xbmc/visualization.shadertoy/archive/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform"
+PKG_DEPENDS_TARGET="toolchain kodi-platform glm"
 PKG_SECTION=""
 PKG_SHORTDESC="visualization.shadertoy"
 PKG_LONGDESC="visualization.shadertoy"

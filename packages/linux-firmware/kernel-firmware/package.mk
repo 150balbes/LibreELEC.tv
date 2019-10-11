@@ -2,15 +2,26 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="kernel-firmware"
-PKG_VERSION="20190717"
-PKG_SHA256="cdb28523dc6399922b8b322af034a1de536ff9ef000a6f992bbce82489fa978a"
+PKG_VERSION="20200619"
+PKG_SHA256="95e2b0f9eba189bd571294da32c81360f290b8b737790d8a14562095238d9be4"
 PKG_LICENSE="other"
 PKG_SITE="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/"
 PKG_URL="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/snapshot/$PKG_VERSION.tar.gz"
 PKG_NEED_UNPACK="${PROJECT_DIR}/${PROJECT}/packages/${PKG_NAME} ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/packages/${PKG_NAME}"
-PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="kernel-firmware: kernel related firmware"
 PKG_TOOLCHAIN="manual"
+
+configure_package() {
+  PKG_FW_SOURCE=${PKG_BUILD}/.copied-firmware
+}
+
+post_patch() {
+  (
+    cd ${PKG_BUILD}
+    mkdir -p "${PKG_FW_SOURCE}"
+      ./copy-firmware.sh --verbose "${PKG_FW_SOURCE}"
+  )
+}
 
 # Install additional miscellaneous drivers
 makeinstall_target() {
@@ -34,17 +45,19 @@ makeinstall_target() {
       [[ ${fwline} =~ ^#.* ]] && continue
       [[ ${fwline} =~ ^[[:space:]] ]] && continue
 
-      while read -r fwfile; do
-        [ -d "${PKG_BUILD}/${fwfile}" ] && continue
+      eval "(cd ${PKG_FW_SOURCE} && find "${fwline}" >/dev/null)" || die "ERROR: Firmware pattern does not exist: ${fwline}"
 
-        if [ -f "${PKG_BUILD}/${fwfile}" ]; then
+      while read -r fwfile; do
+        [ -d "${PKG_FW_SOURCE}/${fwfile}" ] && continue
+
+        if [ -f "${PKG_FW_SOURCE}/${fwfile}" ]; then
           mkdir -p "$(dirname "${FW_TARGET_DIR}/${fwfile}")"
-            cp -Lv "${PKG_BUILD}/${fwfile}" "${FW_TARGET_DIR}/${fwfile}"
+            cp -Lv "${PKG_FW_SOURCE}/${fwfile}" "${FW_TARGET_DIR}/${fwfile}"
         else
           echo "ERROR: Firmware file ${fwfile} does not exist - aborting"
           exit 1
         fi
-      done <<< "$(cd ${PKG_BUILD} && eval "find "${fwline}"")"
+      done <<< "$(cd ${PKG_FW_SOURCE} && eval "find "${fwline}"")"
     done < "${fwlist}"
   done
 

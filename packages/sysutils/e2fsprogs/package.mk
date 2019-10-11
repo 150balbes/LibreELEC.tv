@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="e2fsprogs"
-PKG_VERSION="1.45.2"
-PKG_SHA256="4952c9ae91e36d762e13cc5b9e8f7eeb5453e4aee4cd9b7402e73f2d4e65e009"
+PKG_VERSION="1.45.5"
+PKG_SHA256="f9faccc0d90f73556e797dc7cc5979b582bd50d3f8609c0f2ad48c736d44aede"
 PKG_LICENSE="GPL"
 PKG_SITE="http://e2fsprogs.sourceforge.net/"
 PKG_URL="https://www.kernel.org/pub/linux/kernel/people/tytso/$PKG_NAME/v$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_HOST="gcc:host"
+PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_DEPENDS_INIT="toolchain"
 PKG_LONGDESC="The filesystem utilities for the EXT2 filesystem, including e2fsck, mke2fs, dumpe2fs, fsck, and others."
@@ -20,6 +20,9 @@ fi
 
 PKG_CONFIGURE_OPTS_HOST="--prefix=$TOOLCHAIN/ \
                          --bindir=$TOOLCHAIN/bin \
+                         --with-udev-rules-dir=no \
+                         --with-crond-dir=no \
+                         --with-systemd-unit-dir=no \
                          --sbindir=$TOOLCHAIN/sbin \
                          --enable-verbose-makecmds \
                          --disable-symlink-install \
@@ -32,7 +35,6 @@ PKG_CONFIGURE_OPTS_HOST="--prefix=$TOOLCHAIN/ \
                          --disable-fsck \
                          --disable-e2initrd-helper \
                          --enable-tls \
-                         --disable-uuid \
                          --disable-uuidd \
                          --disable-nls \
                          --disable-rpath \
@@ -41,6 +43,9 @@ PKG_CONFIGURE_OPTS_HOST="--prefix=$TOOLCHAIN/ \
 
 pre_configure() {
   PKG_CONFIGURE_OPTS_INIT="BUILD_CC=$HOST_CC \
+                           --with-udev-rules-dir=no \
+                           --with-crond-dir=no \
+                           --with-systemd-unit-dir=no \
                            --enable-verbose-makecmds \
                            --enable-symlink-install \
                            --enable-symlink-build \

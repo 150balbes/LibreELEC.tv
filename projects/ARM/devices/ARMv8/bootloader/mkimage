@@ -1,0 +1,164 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+
+. config/options ""
+
+if [ "$PLATFORM" = "RK" ]; then
+
+    INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+    if [ -f "$INSTBOOT_DIR/idbloader.img" ]; then
+      echo "image: burn idbloader.img to image..."
+      dd if="$INSTBOOT_DIR/idbloader.img" of="$DISK" bs=32k seek=1 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+    fi
+    if [ -f "$INSTBOOT_DIR/uboot.img" ]; then
+      echo "image: burn uboot.img to image..."
+      dd if="$INSTBOOT_DIR/uboot.img" of="$DISK" bs=64k seek=128 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+    fi
+    if [ -f "$INSTBOOT_DIR/trust.img" ]; then
+      echo "image: burn trust.img to image..."
+      dd if="$INSTBOOT_DIR/trust.img" of="$DISK" bs=64k seek=192 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+    fi
+
+    #mkdir -p "$RELEASE_DIR/3rdparty/bootloader/u-boot"
+    for file_ini in $RELEASE_DIR/3rdparty/bootloader/* ; do
+      [ -e "$file_ini" ] && mcopy -s "$file_ini" ::
+    done
+
+    DTB="$(${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb)"
+
+    echo "image: creating extlinux.conf"
+    mkdir -p "${LE_TMP}/extlinux"
+    cat << EOF > "${LE_TMP}/extlinux/extlinux.conf"
+LABEL ${DISTRO}
+  LINUX /${KERNEL_NAME}
+  FDT /dtb/rockchip/${DTB}
+  APPEND boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} quiet ${EXTRA_CMDLINE}
+EOF
+    mcopy -s -o "${LE_TMP}/extlinux" ::
+
+elif [ "$PLATFORM" = "AML" -o "$PLATFORM" = "AMLMX" ]; then
+
+    DTB="$(${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb)"
+
+    echo "image: copying device tree"
+    mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/dtb ::
+
+    echo "image: creating extlinux.conf"
+    mkdir -p "${LE_TMP}/extlinux"
+    cat << EOF > "${LE_TMP}/extlinux/extlinux.conf"
+LABEL ${DISTRO}
+  LINUX /${KERNEL_NAME}
+  FDT /dtb/amlogic/${DTB}
+  APPEND boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} quiet ${EXTRA_CMDLINE}
+EOF
+    mcopy -s "${LE_TMP}/extlinux" ::
+
+    echo "image: copying instboot"
+      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/*.sh ::
+
+    mkimage_uboot(){
+      echo "image: writing u-boot to $(basename $DISK)"
+      dd if="$INSTALL/usr/share/bootloader/u-boot.bin.sd.bin" of="$DISK" conv=fsync,notrunc bs=1 count=444 >"$SAVE_ERROR" 2>&1 || show_error
+      dd if="$INSTALL/usr/share/bootloader/u-boot.bin.sd.bin" of="$DISK" conv=fsync,notrunc bs=512 skip=1 seek=1 >"$SAVE_ERROR" 2>&1 || show_error
+    }
+
+    mkimage_autoscripts(){
+      echo "image: copying autoscript files"
+      mcopy -s -o ${RELEASE_DIR}/3rdparty/bootloader/*autoscript ::
+#      mcopy -s -o ${RELEASE_DIR}/3rdparty/bootloader/*.scr ::
+      touch "$RELEASE_DIR/3rdparty/bootloader/aml_autoscript.zip"
+    }
+
+    mkimage_autoscripts-s8xx(){
+      echo "image: copying autoscript files"
+      mcopy -s -o ${RELEASE_DIR}/3rdparty/bootloader/*autoscript ::
+      touch "$RELEASE_DIR/3rdparty/bootloader/aml_autoscript.zip"
+    }
+
+#    mkimage_autoscripts-c2(){
+#      echo "image: copying autoscript files for odroid-c2"
+#      mcopy -s -o ${RELEASE_DIR}/3rdparty/bootloader/boot-c2.scr ::boot.scr
+#    }
+
+    mkimage_uboot-ext-amlg12(){
+      echo "image: copying for u-boot.ext file"
+      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot-s905x2-s922 ::u-boot.ext
+#      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot.usb ::
+    }
+
+    mkimage_uboot-ext-amlgx(){
+      echo "image: copying for u-boot.ext file"
+      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot-s905x-s912 ::u-boot.ext
+#      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot.usb ::
+    }
+
+    mkimage_uboot-ext-amlgxbb(){
+      echo "image: copying for u-boot.ext file"
+      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot-s905 ::u-boot.ext
+#      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/u-boot.usb ::
+    }
+
+
+    mkimage_boot-ini(){
+      echo "image: copying boot.ini"
+      mcopy -s ${RELEASE_DIR}/3rdparty/bootloader/boot.ini ::
+    }
+
+    case "${UBOOT_SYSTEM}" in
+      amlg12)
+        mkimage_uboot
+        mkimage_autoscripts
+        mkimage_uboot-ext-amlg12
+        mkimage_boot-ini
+        ;;
+      amlgx)
+        mkimage_uboot
+        mkimage_autoscripts
+        mkimage_uboot-ext-amlgx
+        mkimage_boot-ini
+        ;;
+      odroid-c2|nanopi-k2)
+        mkimage_uboot
+#        mkimage_autoscripts-c2
+#        mkimage_uboot-ext-amlgx
+        ;;
+      amlgxbb)
+        mkimage_uboot
+        mkimage_autoscripts
+        mkimage_uboot-ext-amlgxbb
+        ;;
+      s8xx)
+        mkimage_autoscripts-s8xx
+        ;;
+      *)
+        mkimage_uboot
+        ;;
+    esac
+
+elif [ "$PLATFORM" = "AW" ]; then
+
+    INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+    if [ -f "$INSTBOOT_DIR/u-boot-sunxi-with-spl.bin" ]; then
+      echo "Writing U-Boot to $(basename $DISK)"
+      dd if="$INSTBOOT_DIR/u-boot-sunxi-with-spl.bin" of="$DISK" bs=1k seek=8 conv=fsync,notrunc >"$SAVE_ERROR" 2>&1 || show_error
+    fi
+
+    for file_ini in $RELEASE_DIR/3rdparty/bootloader/* ; do
+      [ -e "$file_ini" ] && mcopy -s "$file_ini" ::
+    done
+
+    DTB="$(${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb)"
+
+    echo "image: creating extlinux.conf"
+    mkdir -p "${LE_TMP}/extlinux"
+    cat << EOF > "${LE_TMP}/extlinux/extlinux.conf"
+LABEL ${DISTRO}
+  LINUX /${KERNEL_NAME}
+  FDT /dtb/allwinner/${DTB}
+# APPEND boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} quiet ${EXTRA_CMDLINE} mem=2048M video=HDMI-A-1:e
+  APPEND boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} quiet ${EXTRA_CMDLINE} video=HDMI-A-1:e
+EOF
+    mcopy -s "${LE_TMP}/extlinux" ::
+
+fi
+

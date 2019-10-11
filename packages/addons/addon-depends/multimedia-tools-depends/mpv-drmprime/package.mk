@@ -2,14 +2,15 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mpv-drmprime"
-PKG_VERSION="0.29.1"
-PKG_SHA256="f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623"
+PKG_VERSION="0.30.0"
+PKG_SHA256="33a1bcb7e74ff17f070e754c15c52228cf44f2cefbfd8f34886ae81df214ca35"
 PKG_LICENSE="GPL"
 PKG_SITE="https://mpv.io/"
 PKG_URL="https://github.com/mpv-player/mpv/archive/v$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain waf:host alsa ffmpeg libass libdrm"
 PKG_LONGDESC="A media player based on MPlayer and mplayer2. It supports a wide variety of video file formats, audio and video codecs, and subtitle types."
 PKG_TOOLCHAIN="manual"
+PKG_BUILD_FLAGS="-sysroot"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --disable-libsmbclient \
@@ -26,8 +27,6 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --disable-x11 \
                            --disable-vulkan \
                            --disable-caca \
-                           --disable-crossc \
-                           --disable-libv4l2 \
                            --enable-drm \
                            --enable-drmprime \
                            --enable-gbm \

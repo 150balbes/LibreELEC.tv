@@ -19,10 +19,10 @@ PKG_MAINTAINER="Anton Voyl (awiouy)"
 
 addon() {
   mkdir -p "$ADDON_BUILD/$PKG_ADDON_ID/bin"
-  cp "$(get_build_dir snapcast)/client/snapclient" \
+  cp "$(get_install_dir snapcast)/usr/bin/snapclient" \
      "$ADDON_BUILD/$PKG_ADDON_ID/bin"
 
   mkdir -p "$ADDON_BUILD/$PKG_ADDON_ID/lib"
-  cp "$(get_build_dir alsa-plugins)/.install_pkg/usr/lib/alsa"/*.so \
+  cp "$(get_install_dir alsa-plugins)/usr/lib/alsa"/*.so \
      "$ADDON_BUILD/$PKG_ADDON_ID/lib"
 }

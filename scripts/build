@@ -12,7 +12,7 @@ fi
 
 if [ "${1}" = "--all" ]; then
   if [ -n "${2}" ]; then
-    for build_dir in $(ls -1d ${ROOT}/build.*); do
+    for build_dir in $(ls -1d ${BUILD_ROOT}/${BUILD_BASE}.*); do
       load_build_config ${build_dir} && ${SCRIPTS}/build "${2}"
     done
   fi
@@ -63,9 +63,12 @@ case "${TARGET}" in
   "init") _pkg_depends="${PKG_DEPENDS_INIT}";;
   "bootstrap") _pkg_depends="${PKG_DEPENDS_BOOTSTRAP}";;
 esac
-for p in ${_pkg_depends}; do
-  ${SCRIPTS}/build "${p}" "${PARENT_PKG}"
-done
+
+if is_sequential_build; then
+  for p in ${_pkg_depends}; do
+    ${SCRIPTS}/build "${p}" "${PARENT_PKG}"
+  done
+fi
 
 # virtual packages are not built as they only contain dependencies, so dont go further here
 if [ "${PKG_SECTION}" = "virtual" ]; then
@@ -115,13 +118,8 @@ build_msg "CLR_TOOLCHAIN" "TOOLCHAIN" "${PKG_TOOLCHAIN}${_auto_toolchain}"
 setup_toolchain ${TARGET} ${PKG_TOOLCHAIN}
 
 # configure install directory
-if [ "${TARGET}" = "target" ]; then
-  INSTALL="${PKG_BUILD}/.install_pkg"
-elif [ "${TARGET}" = "init" ]; then
-  INSTALL="${PKG_BUILD}/.install_init"
-else
-  unset INSTALL
-fi
+[ -n "${PKG_INSTALL}" ] && INSTALL="${PKG_INSTALL}" || unset INSTALL
+
 # remove previous install files
 if [ -n "${INSTALL}" -a -d "${INSTALL}" ]; then
   rm -rf "${INSTALL}"
@@ -212,7 +210,7 @@ fi
 pkg_lock_status "ACTIVE" "${PKG_NAME}:${TARGET}" "build"
 
 # include build template and build
-pkg_call_exists pre_build_${TARGET} && pkg_call pre_build_${TARGET}
+pkg_call_exists_opt pre_build_${TARGET} && pkg_call
 
 # ensure ${PKG_BUILD} is there. (installer? PKG_URL="")
 mkdir -p "${PKG_BUILD}"
@@ -233,11 +231,25 @@ if [ -f "${PKG_CONFIGURE_SCRIPT}" -o -f "${PKG_CMAKE_SCRIPT}" -o -f "${PKG_MESON
 fi
 
 # configure
-pkg_call_exists pre_configure && pkg_call pre_configure
-pkg_call_exists pre_configure_${TARGET} && pkg_call pre_configure_${TARGET}
+if [ -n "${PKG_DEPENDS_CONFIG}" -a -n "${PKG_INSTALL}" ]; then
+  for pkg in ${PKG_DEPENDS_CONFIG}; do
+    for dir in "$(get_install_dir ${pkg})"/{usr/local/,usr/,}{lib/,share/}pkgconfig; do
+      if [ -d "${dir}" ]; then
+        build_msg "CLR_TOOLCHAIN" "PKG_CONFIG_PATH" "${dir}"
+        [ -n "${PKG_CONFIG_PATH}" ] && PKG_CONFIG_PATH+=":"
+        PKG_CONFIG_PATH+="${dir}"
+      fi
+    done
+  done
+
+  export PKG_CONFIG_PATH
+fi
+
+pkg_call_exists_opt pre_configure && pkg_call
+pkg_call_exists_opt pre_configure_${TARGET} && pkg_call
 
 if pkg_call_exists configure_${TARGET}; then
-  pkg_call configure_${TARGET}
+  pkg_call
 else
   case "${PKG_TOOLCHAIN}:${TARGET}" in
     # meson builds
@@ -318,13 +330,13 @@ else
   esac
 fi
 
-pkg_call_exists post_configure_${TARGET} && pkg_call post_configure_${TARGET}
+pkg_call_exists_opt post_configure_${TARGET} && pkg_call
 
 # make
-pkg_call_exists pre_make_${TARGET} && pkg_call pre_make_${TARGET}
+pkg_call_exists_opt pre_make_${TARGET} && pkg_call
 
 if pkg_call_exists make_${TARGET}; then
-  pkg_call make_${TARGET}
+  pkg_call
 else
   case "${PKG_TOOLCHAIN}:${TARGET}" in
     # ninja based builds
@@ -365,7 +377,7 @@ else
   esac
 fi
 
-pkg_call_exists post_make_${TARGET} && pkg_call post_make_${TARGET}
+pkg_call_exists_opt post_make_${TARGET} && pkg_call
 
 # Hack around directly writing/modifying the content of a shared sysroot
 # by temporarily installing new files to a package specific sysroot
@@ -380,15 +392,18 @@ for d in /usr/lib /usr/include /usr/bin /usr/lib/pkgconfig; do
 done
 
 # make install
-pkg_call_exists pre_makeinstall_${TARGET} && pkg_call pre_makeinstall_${TARGET}
+pkg_call_exists_opt pre_makeinstall_${TARGET} && pkg_call
 
 if pkg_call_exists makeinstall_${TARGET}; then
-  pkg_call makeinstall_${TARGET}
+  pkg_call
 else
+  flag_enabled "sysroot" "yes" && INSTALL_TO_SYSROOT="yes" || INSTALL_TO_SYSROOT="no"
+
   case "${PKG_TOOLCHAIN}:${TARGET}" in
     # ninja based builds
     "meson:target"|"cmake:target")
-      DESTDIR=${SYSROOT_PREFIX} ninja install ${PKG_MAKEINSTALL_OPTS_TARGET}
+      [ "${INSTALL_TO_SYSROOT}" = "yes" ] && \
+        DESTDIR=${SYSROOT_PREFIX} ninja install ${PKG_MAKEINSTALL_OPTS_TARGET}
       DESTDIR=${INSTALL} ninja install ${PKG_MAKEINSTALL_OPTS_TARGET}
       ;;
     "meson:host"|"cmake:host")
@@ -403,7 +418,8 @@ else
 
     # make based builds
     "configure:target"|"cmake-make:target"|"autotools:target"|"make:target")
-      make install DESTDIR=${SYSROOT_PREFIX} -j1 ${PKG_MAKEINSTALL_OPTS_TARGET}
+      [ "${INSTALL_TO_SYSROOT}" = "yes" ] && \
+        make install DESTDIR=${SYSROOT_PREFIX} -j1 ${PKG_MAKEINSTALL_OPTS_TARGET}
       make install DESTDIR=${INSTALL} ${PKG_MAKEINSTALL_OPTS_TARGET}
       ;;
     "configure:host"|"cmake-make:host"|"autotools:host"|"make:host")
@@ -418,7 +434,7 @@ else
   esac
 fi
 
-pkg_call_exists post_makeinstall_${TARGET} && pkg_call post_makeinstall_${TARGET}
+pkg_call_exists_opt post_makeinstall_${TARGET} && pkg_call
 
 # Fixup temporary sysroot references to the shared sysroot
 for i in $(find "${SYSROOT_PREFIX}/usr/lib" -type f -name "*.la" 2>/dev/null); do
@@ -442,37 +458,36 @@ for i in $(find "${SYSROOT_PREFIX}" -type l 2>/dev/null); do
 done
 
 # Transfer the new sysroot content to the shared sysroot
+acquire_update_lock sysroot
+
 mkdir -p "${PKG_ORIG_SYSROOT_PREFIX}"
 cp -PRf "${SYSROOT_PREFIX}"/* "${PKG_ORIG_SYSROOT_PREFIX}"
+
+release_update_lock
+
 rm -rf "${SYSROOT_PREFIX}"
 
 export SYSROOT_PREFIX="${PKG_ORIG_SYSROOT_PREFIX}"
 
 if [ "${TARGET}" = "target" -o "${TARGET}" = "init" ]; then
   if [ -d ${INSTALL} ]; then
-    rm -rf ${INSTALL}/{usr/,}include
-    rm -rf ${INSTALL}/{usr/,}lib/cmake
-    rm -rf ${INSTALL}/{usr/,}lib/pkgconfig
-    rm -rf ${INSTALL}/{usr/,}man
-    rm -rf ${INSTALL}/{usr/,}share/aclocal
-    rm -rf ${INSTALL}/{usr/,}share/bash-completion
-    rm -rf ${INSTALL}/{usr/,}share/doc
-    rm -rf ${INSTALL}/{usr/,}share/gtk-doc
-    rm -rf ${INSTALL}/{usr/,}share/info
-    rm -rf ${INSTALL}/{usr/,}share/locale
-    rm -rf ${INSTALL}/{usr/,}share/man
-    rm -rf ${INSTALL}/{usr/,}share/pkgconfig
-    rm -rf ${INSTALL}/{usr/,}share/zsh
-    rm -rf ${INSTALL}/{usr/,}var
+    rm -rf ${INSTALL}/{usr/local/,usr/,}man
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/bash-completion
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/doc
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/gtk-doc
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/info
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/locale
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/man
+    rm -rf ${INSTALL}/{usr/local/,usr/,}share/zsh
+    rm -rf ${INSTALL}/{usr/local/,usr/,}var
     find ${INSTALL} \( -name "*.orig" \
                   -o -name "*.rej" \
-                  -o -name "*.a" \
-                  -o -name "*.la" \
-                  -o -name "*.o" \
                   -o -name "*.in" \
                   -o -name ".git*" \) \
         -exec rm -f {} \; 2>/dev/null || :
     find ${INSTALL} -type d -exec rmdir -p {} \; 2>/dev/null || :
+
+    python_fix_abi "${INSTALL}"
 
     if [ ! "${BUILD_WITH_DEBUG}" = "yes" ]; then
       ${STRIP} $(find ${INSTALL} \
@@ -489,6 +504,10 @@ if [ "${TARGET}" = "target" -o "${TARGET}" = "init" ]; then
           -type f -executable 2>/dev/null) 2>/dev/null || :
     fi
   fi
+fi
+
+if [ -n "${INSTALL}" -a -d "${INSTALL}" ]; then
+  echo "INFO_PKG_NAME=\"${PKG_NAME}\"" > "${INSTALL}/.libreelec-package"
 fi
 
 cd ${ROOT}

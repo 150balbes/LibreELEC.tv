@@ -1,0 +1,79 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc.dtsi
+@@ -99,6 +99,15 @@
+ 		 * - PDN (power down when low)
+ 		 */
+ 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
++	};
++
++	sys_12v: sys_12v {
++		compatible = "regulator-fixed";
++		regulator-name = "sys_12v";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
+ 	};
+ 
+ 	vcc_vbus_typec0: vcc-vbus-typec0 {
+@@ -141,7 +150,7 @@
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&sys_12v>;
+ 	};
+ 
+ 	vcca_0v9: vcca-0v9 {
+@@ -186,7 +195,7 @@
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+-		vin-supply = <&dc_12v>;
++		vin-supply = <&sys_12v>;
+ 	};
+ 
+ 	vdd_log: vdd-log {
+@@ -376,6 +385,7 @@
+ 
+ 			vcc_sdio: LDO_REG4 {
+ 				regulator-name = "vcc_sdio";
++				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <1800000>;
+ 				regulator-max-microvolt = <3000000>;
+@@ -506,7 +516,7 @@
+ 	status = "okay";
+ 
+ 	fusb1: usb-typec@22 {
+-		compatible = "fcs,fusb302";
++		compatible = "fairchild,fusb302";
+ 		reg = <0x22>;
+ 		interrupt-parent = <&gpio1>;
+ 		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
+@@ -523,7 +533,7 @@
+ 	status = "okay";
+ 
+ 	fusb0: usb-typec@22 {
+-		compatible = "fcs,fusb302";
++		compatible = "fairchild,fusb302";
+ 		reg = <0x22>;
+ 		interrupt-parent = <&gpio1>;
+ 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+@@ -682,6 +692,7 @@
+ 
+ &sdmmc {
+ 	bus-width = <4>;
++	cap-mmc-highspeed;
+ 	cap-sd-highspeed;
+ 	cd-gpios = <&gpio0 RK_PA7 GPIO_ACTIVE_LOW>;
+ 	disable-wp;
+@@ -696,6 +707,7 @@
+ 
+ &sdhci {
+ 	bus-width = <8>;
++	mmc-hs200-1_8v;
+ 	non-removable;
+ 	status = "okay";
+ };
+

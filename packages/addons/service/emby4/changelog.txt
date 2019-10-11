@@ -1,3 +1,14 @@
+108
+- Update to 4.4.2.0
+- Fix system.d
+- Update ImageMagick to 7.0.10-23
+
+107
+- Update ImageMagick to 7.0.10-9
+
+106
+- Update to 4.4.2.0
+
 105
 - Update to 4.2.1.0
 

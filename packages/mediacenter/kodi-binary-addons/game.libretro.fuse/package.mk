@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.fuse"
-PKG_VERSION="1.1.1.5-Leia"
-PKG_SHA256="df13fe7eae1f2710259d250c1586cae2db4b805e2205dd95cac32b06e7584299"
+PKG_VERSION="1.1.1.8-Leia"
+PKG_SHA256="862a46303015e90ecfc68053a56c8200819dd3dc13e9841685ccc2f5846f28af"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

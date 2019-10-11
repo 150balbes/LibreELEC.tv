@@ -14,7 +14,7 @@ unset _CACHE_PACKAGE_LOCAL _CACHE_PACKAGE_GLOBAL _DEBUG_DEPENDS_LIST _DEBUG_PACK
 if [ "${BOOTLOADER}" = "u-boot" -a -n "${DEVICE}" ]; then
   if [ -z "${UBOOT_SYSTEM}" ]; then
     ${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} >/dev/null
-  elif [ "${UBOOT_VERSION}" != "vendor" ]; then
+  else
     ${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} dtb >/dev/null
   fi
 fi
@@ -50,7 +50,6 @@ function do_mkimage() {
     DISTRO_BOOTLABEL="${DISTRO_BOOTLABEL}" \
     DISTRO_DISKLABEL="${DISTRO_DISKLABEL}" \
     UBOOT_SYSTEM="${UBOOT_SYSTEM}" \
-    UBOOT_VERSION="${UBOOT_VERSION}" \
     EXTRA_CMDLINE="${EXTRA_CMDLINE}" \
     SYSTEM_SIZE="${SYSTEM_SIZE}" \
     SYSTEM_PART_START="${SYSTEM_PART_START}" \
@@ -136,6 +135,7 @@ done
 # Build image contents
 MTADDONBUILD=no start_multithread_build image || die "Parallel build failure - see log for details. Time of failure: $(date)"
 
+echo
 echo "Successful build, creating image..." >&2
 
 # Create legacy sym links
@@ -208,7 +208,7 @@ MODVER=$(basename $(ls -d ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/*)
 find ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/ -name *.ko | \
   sed -e "s,${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/,," \
     > ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/modules.order
-${TOOLCHAIN}/bin/depmod -b ${INSTALL}/usr/lib/kernel-overlays/base -a -e -F "${BUILD}/linux-$(kernel_version)/System.map" ${MODVER} 2>&1
+${TOOLCHAIN}/bin/depmod -b ${INSTALL}/usr/lib/kernel-overlays/base -a -e -F "$(get_install_dir linux)/.image/System.map" ${MODVER} 2>&1
 
 # Strip kernel modules
 for MOD in $(find ${INSTALL}/usr/lib/kernel-overlays/ -type f -name *.ko); do
@@ -216,17 +216,17 @@ for MOD in $(find ${INSTALL}/usr/lib/kernel-overlays/ -type f -name *.ko); do
 done
 
 # Symlink overlayed modules to /usr/lib/modules
-ln -sT /var/lib/modules ${INSTALL}/usr/lib/modules
+ln -sT /run/kernel-overlays/modules ${INSTALL}/usr/lib/modules
 
 # Symlink overlayed firmware to /usr/lib/firmware
-ln -sT /var/lib/firmware ${INSTALL}/usr/lib/firmware
+ln -sT /run/kernel-overlays/firmware ${INSTALL}/usr/lib/firmware
 
 # Make target dir
 mkdir -p ${TARGET_IMG}
 rm -rf ${TARGET_IMG}/${IMAGE_NAME}.kernel
 
 # Copy kernel to target dir
-cp -PR ${BUILD}/linux-$(kernel_version)/arch/${TARGET_KERNEL_ARCH}/boot/${KERNEL_TARGET} ${TARGET_IMG}/${IMAGE_NAME}.kernel
+cp -PR $(get_install_dir linux)/.image/${KERNEL_TARGET} ${TARGET_IMG}/${IMAGE_NAME}.kernel
 chmod 0644 ${TARGET_IMG}/${IMAGE_NAME}.kernel
 
 # Set mksquashfs options for each compression method
@@ -236,7 +236,7 @@ if [ -z "${SQUASHFS_COMPRESSION_OPTION}" ]; then
   elif [ "${SQUASHFS_COMPRESSION}" = "lzo" ]; then
     SQUASHFS_COMPRESSION_OPTION="-Xcompression-level 9 -b 524288"
   elif [ "${SQUASHFS_COMPRESSION}" = "zstd" ]; then
-    SQUASHFS_COMPRESSION_OPTION="-Xcompression-level 22 -b 1048576"
+    SQUASHFS_COMPRESSION_OPTION="-Xcompression-level 19 -b 1048576"
   fi
 fi
 
@@ -329,7 +329,7 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
 
         # Re-install u-boot package
         rm ${STAMPS_INSTALL}/u-boot/install_target
-        UBOOT_SYSTEM="${UBOOT_SYSTEM}" ${SCRIPTS}/install u-boot
+        UBOOT_SYSTEM="${UBOOT_SYSTEM}" ${SCRIPTS}/install u-boot 2>&1
 
         # Re-run bootloader/release
         if find_file_path bootloader/release ${BOOTLOADER_DIR}/release; then

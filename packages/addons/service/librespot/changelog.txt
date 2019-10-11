@@ -1,3 +1,36 @@
+125
+- Update to 0.1.3
+- Revert to dns-sd instead of mdns
+
+124
+- Update to 9f3a02e (2020-06-22)
+- Fix switching playback with Android
+
+123
+- Handle non ascii track information
+
+122
+- Improve track information: fanart, podcast
+- Improve settings: autoplay, name, RTP port
+- Drop system.d
+
+121
+- Update to 66f8a98 (2020-02-26)
+- Gapless playback
+
+120
+- Update to 0.1.1
+
+119
+- Update to f610436 (2020-01-02)
+- Hook audiotype
+- Use vorbis, which is more responsive than lewton
+- Build alsa backend and provide sample alsa service
+- Python 3 compliance
+
+118
+- Update to 0.1.0
+
 117
 - Update to 51a634d (2019-07-23)
 - Set bit rate to 320 kpbs
