@@ -2,13 +2,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.prosystem"
-PKG_VERSION="1.3.0.9-Leia"
-PKG_SHA256="8801d88929e01ce18cab115466191fb3e810be56d721a6fbb96c4e755e40b1f0"
-PKG_REV="1"
+PKG_VERSION="1.3.0.13-Matrix"
+PKG_SHA256="2648fcfe7a1128fa3944f172e3ce8a27a05563d888b6d9cf490668d54bb1f9a6"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.prosystem"
-PKG_URL="https://github.com/kodi-game/game.libretro.prosystem/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-game/game.libretro.prosystem/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-prosystem"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.prosystem: Prosystem for Kodi"

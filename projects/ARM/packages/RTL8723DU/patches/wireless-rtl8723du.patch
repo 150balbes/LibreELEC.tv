@@ -2,16 +2,16 @@ diff --git a/drivers/net/wireless/rtl8723du/Kconfig b/drivers/net/wireless/rtl87
 new file mode 100644
 index 000000000..63bbe8e63
 --- /dev/null
-+++ b/drivers/net/wireless/rtl8723du/Kconfig
++++ b/Kconfig
 @@ -0,0 +1,4 @@
 +config RTL8723DU
 +	tristate "Realtek 8723D USB WiFi"
-+	---help---
++	help
 +	  Help message of RTL8723DU
 diff --git a/drivers/net/wireless/rtl8723du/Makefile b/drivers/net/wireless/rtl8723du/Makefile
 index 9de45eddd..172f597e1 100644
---- a/drivers/net/wireless/rtl8723du/Makefile
-+++ b/drivers/net/wireless/rtl8723du/Makefile
+--- a/Makefile
++++ b/Makefile
 @@ -25,7 +25,7 @@ CONFIG_WAKEUP_TYPE = 0x7 #bit2: deauth, bit1: unicast, bit0: magic pkt.
  
  CONFIG_DRVEXT_MODULE = n
@@ -21,3 +21,4 @@ index 9de45eddd..172f597e1 100644
  
  ########### COMMON  #################################
  HCI_NAME = usb
+

@@ -79,7 +79,7 @@ SUBSYSTEMS=="input", ATTRS{name}=="iMON Panel, Knob and Mouse(15c2:ffdc)", \
   ENV{eventlircd_enable}="true", \
   ENV{eventlircd_evmap}="default.evmap" 
 
-SUBSYSTEMS=="input", ATTRS{name}=="P218ruwido Sky Remote Keyboard", \
+SUBSYSTEMS=="input", ATTRS{name}=="*ruwido Sky Remote Keyboard", \
   ENV{eventlircd_enable}="true", \
   ENV{eventlircd_evmap}="skyqremote.evmap"
 
@@ -185,14 +185,6 @@ ENV{ID_VENDOR_ID}=="0471", ENV{ID_MODEL_ID}=="206c", \
 ENV{ID_VENDOR_ID}=="0471", ENV{ID_MODEL_ID}=="20cc", \
   ENV{eventlircd_enable}="true", \
   ENV{eventlircd_evmap}="spinelplus.evmap"
-
-ENV{ID_VENDOR_ID}=="2252", ENV{ID_MODEL_ID}=="1037", \
-  ENV{eventlircd_enable}="true", \
-  ENV{eventlircd_evmap}="osmc_rf.evmap"
-
-ENV{ID_VENDOR_ID}=="2017", ENV{ID_MODEL_ID}=="1688", \
-  ENV{eventlircd_enable}="true", \
-  ENV{eventlircd_evmap}="osmc_rf2.evmap"
 
 # Enable wake-on-usb for the USB remotes.
   RUN+="wakeup_enable"

@@ -3,13 +3,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.pctv"
-PKG_VERSION="5.0.0-Matrix"
-PKG_SHA256="346fded8842eef566bde5068f1934c24dfb528e878ecc266425bf36b56ee6979"
-PKG_REV="1"
+PKG_VERSION="6.1.0-Matrix"
+PKG_SHA256="94b8be4988cb6d8c61f6bdf237ddabb04d77fe4900f61411f5abf918eb5a078c"
+PKG_REV="3"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-pvr/pvr.pctv"
-PKG_URL="https://github.com/kodi-pvr/pvr.pctv/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-pvr/pvr.pctv/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform jsoncpp"
 PKG_SECTION=""
 PKG_SHORTDESC="pvr.pctv"

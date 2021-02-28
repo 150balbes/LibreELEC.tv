@@ -2,20 +2,20 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-pcfx"
-PKG_VERSION="af1b9e75d5df662c617c25481593c8d377f516b0"
-PKG_SHA256="357cdffc336a9dcd54f3945b58dcd12893922e488f7b62c44325e3100d1ac611"
+PKG_VERSION="b5648f60681e481b5729ebc76608a41c6c709f8f"
+PKG_SHA256="02a7b7a125ee464cedc0e63ceead17d2e40925c0378787fef2039a0c287b2b43"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-pcfx-libretro"
-PKG_URL="https://github.com/libretro/beetle-pcfx-libretro/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/libretro/beetle-pcfx-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_LONGDESC="Standalone port of Mednafen PCFX to libretro"
 
 PKG_LIBNAME="mednafen_pcfx_libretro.so"
-PKG_LIBPATH="$PKG_LIBNAME"
+PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="BEETLE-PCFX_LIB"
 
 make_target() {
-  case $TARGET_CPU in
+  case ${TARGET_CPU} in
     arm1176jzf-s)
       make platform=armv6-hardfloat
       ;;
@@ -23,7 +23,7 @@ make_target() {
       make platform=armv7-neon-hardfloat
       ;;
     cortex-a9|*cortex-a53|cortex-a17)
-      if [ "$TARGET_ARCH" = "aarch64" ]; then
+      if [ "${TARGET_ARCH}" = "aarch64" ]; then
         make platform=aarch64
       else
         make platform=armv7-cortexa9-neon-hardfloat
@@ -36,7 +36,7 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $SYSROOT_PREFIX/usr/lib/cmake/$PKG_NAME
-  cp $PKG_LIBPATH $SYSROOT_PREFIX/usr/lib/$PKG_LIBNAME
-  echo "set($PKG_LIBVAR $SYSROOT_PREFIX/usr/lib/$PKG_LIBNAME)" > $SYSROOT_PREFIX/usr/lib/cmake/$PKG_NAME/$PKG_NAME-config.cmake
+  mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
+  cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 }

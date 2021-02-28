@@ -2,11 +2,14 @@
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="RTL8822BS"
-PKG_VERSION="master"
+#PKG_VERSION="master"
+PKG_VERSION="local_rtl8822bs"
 PKG_SHA256=""
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/ChalesYu/rtl8822bs-aml"
-PKG_URL="https://github.com/ChalesYu/rtl8822bs-aml/archive/$PKG_VERSION.tar.gz"
+#PKG_SITE="https://github.com/ChalesYu/rtl8822bs-aml"
+#PKG_URL="https://github.com/ChalesYu/rtl8822bs-aml/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/150balbes/wifi"
+PKG_URL="https://github.com/150balbes/wifi/archive/$PKG_VERSION.tar.gz"
 PKG_LONGDESC="Realtek RTL8822BS Linux driver"
 PKG_IS_KERNEL_PKG="yes"
 #PKG_TOOLCHAIN="make"

@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="bluez"
-PKG_VERSION="5.54"
-PKG_SHA256="68cdab9e63e8832b130d5979dc8c96fdb087b31278f342874d992af3e56656dc"
+PKG_VERSION="5.56"
+PKG_SHA256="59c4dba9fc8aae2a6a5f8f12f19bc1b0c2dc27355c7ca3123eed3fe6bd7d0b9d"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.bluez.org/"
 PKG_URL="https://www.kernel.org/pub/linux/bluetooth/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -19,7 +19,7 @@ else
   BLUEZ_CONFIG="--disable-debug"
 fi
 
-BLUEZ_CONFIG="$BLUEZ_CONFIG --enable-monitor --enable-test"
+BLUEZ_CONFIG+=" --enable-monitor --enable-test"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-dependency-tracking \
                            --disable-silent-rules \
@@ -34,35 +34,36 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-dependency-tracking \
                            --disable-experimental \
                            --enable-sixaxis \
                            --with-gnu-ld \
-                           $BLUEZ_CONFIG \
+                           ${BLUEZ_CONFIG} \
                            storagedir=/storage/.cache/bluetooth"
 
 pre_configure_target() {
 # bluez fails to build in subdirs
-  cd $PKG_BUILD
-    rm -rf .$TARGET_NAME
+  cd ${PKG_BUILD}
+    rm -rf .${TARGET_NAME}
 
   export LIBS="-lncurses"
 }
 
 post_makeinstall_target() {
-  rm -rf $INSTALL/usr/lib/systemd
-  rm -rf $INSTALL/usr/bin/bccmd
-  rm -rf $INSTALL/usr/bin/bluemoon
-  rm -rf $INSTALL/usr/bin/ciptool
-  rm -rf $INSTALL/usr/share/dbus-1
+  rm -rf ${INSTALL}/usr/lib/systemd
+  rm -rf ${INSTALL}/usr/bin/bccmd
+  rm -rf ${INSTALL}/usr/bin/bluemoon
+  rm -rf ${INSTALL}/usr/bin/ciptool
+  rm -rf ${INSTALL}/usr/share/dbus-1
 
-  mkdir -p $INSTALL/etc/bluetooth
-    cp src/main.conf $INSTALL/etc/bluetooth
-    sed -i $INSTALL/etc/bluetooth/main.conf \
+  mkdir -p ${INSTALL}/etc/bluetooth
+    cp src/main.conf ${INSTALL}/etc/bluetooth
+    sed -i ${INSTALL}/etc/bluetooth/main.conf \
         -e "s|^#\[Policy\]|\[Policy\]|g" \
-        -e "s|^#AutoEnable.*|AutoEnable=true|g"
+        -e "s|^#AutoEnable.*|AutoEnable=true|g" \
+        -e "s|^#JustWorksRepairing.*|JustWorksRepairing=always|g"
 
-  mkdir -p $INSTALL/usr/share/services
-    cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
+  mkdir -p ${INSTALL}/usr/share/services
+    cp -P ${PKG_DIR}/default.d/*.conf ${INSTALL}/usr/share/services
 
   # bluez looks in /etc/firmware/
-    ln -sf /usr/lib/firmware $INSTALL/etc/firmware
+    ln -sf /usr/lib/firmware ${INSTALL}/etc/firmware
 }
 
 post_install() {

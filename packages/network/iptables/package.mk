@@ -3,24 +3,24 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="iptables"
-PKG_VERSION="1.8.4"
-PKG_SHA256="993a3a5490a544c2cbf2ef15cf7e7ed21af1845baf228318d5c36ef8827e157c"
+PKG_VERSION="1.8.7"
+PKG_SHA256="c109c96bb04998cd44156622d36f8e04b140701ec60531a10668cfdff5e8d8f0"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.netfilter.org/"
-PKG_URL="http://www.netfilter.org/projects/iptables/files/$PKG_NAME-$PKG_VERSION.tar.bz2"
+PKG_URL="http://www.netfilter.org/projects/iptables/files/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain linux:host libmnl libnftnl"
 PKG_LONGDESC="IP packet filter administration."
 PKG_TOOLCHAIN="autotools"
 
 post_makeinstall_target() {
-  mkdir -p $INSTALL/usr/config/iptables/
-    cp -PR $PKG_DIR/config/README $INSTALL/usr/config/iptables/
+  mkdir -p ${INSTALL}/usr/config/iptables/
+    cp -PR ${PKG_DIR}/config/README ${INSTALL}/usr/config/iptables/
 
-  mkdir -p $INSTALL/etc/iptables/
-    cp -PR $PKG_DIR/config/* $INSTALL/etc/iptables/
+  mkdir -p ${INSTALL}/etc/iptables/
+    cp -PR ${PKG_DIR}/config/* ${INSTALL}/etc/iptables/
 
-  mkdir -p $INSTALL/usr/lib/libreelec
-    cp $PKG_DIR/scripts/iptables_helper $INSTALL/usr/lib/libreelec
+  mkdir -p ${INSTALL}/usr/lib/libreelec
+    cp ${PKG_DIR}/scripts/iptables_helper ${INSTALL}/usr/lib/libreelec
 }
 
 post_install() {

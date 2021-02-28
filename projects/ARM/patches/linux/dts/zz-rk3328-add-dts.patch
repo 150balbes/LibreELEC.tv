@@ -4,7 +4,6 @@ Date: Sun, 12 May 2019 12:40:00 +0000
 Subject: [PATCH] WIP: arm64: dts: rockchip: add rk3328-box devices
 
 ---
- arch/arm64/boot/dts/rockchip/Makefile            |   3 +
  arch/arm64/boot/dts/rockchip/rk3328-box-trn9.dts | 420 +++++++++++++++++++++++
  arch/arm64/boot/dts/rockchip/rk3328-box-z28.dts  | 367 ++++++++++++++++++++
  arch/arm64/boot/dts/rockchip/rk3328-box.dts      | 400 +++++++++++++++++++++
@@ -312,7 +311,7 @@ index 000000000000..e611d12ea375
 +
 +	clk_32k {
 +		clk_32k_out: clk-32k-out {
-+			rockchip,pins = <1 RK_PD4 RK_FUNC_1 &pcfg_pull_none>;
++			rockchip,pins = <1 RK_PD4 1 &pcfg_pull_none>;
 +		};
 +	};
 +
@@ -708,7 +707,7 @@ index 000000000000..797b92924f21
 +
 +	clk_32k {
 +		clk_32k_out: clk-32k-out {
-+			rockchip,pins = <1 RK_PD4 RK_FUNC_1 &pcfg_pull_none>;
++			rockchip,pins = <1 RK_PD4 1 &pcfg_pull_none>;
 +		};
 +	};
 +
@@ -1093,7 +1092,7 @@ index 000000000000..2526147fd48b
 +
 +	clk_32k {
 +		clk_32k_out: clk-32k-out {
-+			rockchip,pins = <1 RK_PD4 RK_FUNC_1 &pcfg_pull_none>;
++			rockchip,pins = <1 RK_PD4 1 &pcfg_pull_none>;
 +		};
 +	};
 +

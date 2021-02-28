@@ -2,31 +2,19 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="glmark2"
-PKG_VERSION="7632c2e2677ef01e44af758823c2fffcced22524"
-PKG_SHA256="c0fb0fb2f62d05f229466a4c1cbb902816595b0a5ed860de46f763533c515e6c"
+PKG_VERSION="2021.02"
+PKG_SHA256="bebadb78c13aea5e88ed892e5563101ccb745b75f1dc86a8fc7229f00d78cbf1"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/glmark2/glmark2"
-PKG_URL="https://github.com/glmark2/glmark2/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/glmark2/glmark2/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="glmark2 is an OpenGL 2.0 and ES 2.0 benchmark"
-PKG_TOOLCHAIN="manual"
 
-if [ "$OPENGLES_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGLES"
-  PKG_CONFIGURE_OPTS_TARGET="--with-flavors=drm-glesv2"
-elif [ "$OPENGL_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGL"
-  PKG_CONFIGURE_OPTS_TARGET="--with-flavors=drm-gl"
+if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
+  PKG_DEPENDS_TARGET+=" ${OPENGLES}"
+  PKG_MESON_OPTS_TARGET="-Dflavors=drm-glesv2"
+elif [ "${OPENGL_SUPPORT}" = "yes" ]; then
+  PKG_DEPENDS_TARGET+=" ${OPENGL}"
+  PKG_MESON_OPTS_TARGET="-Dflavors=drm-gl"
 fi
 
-configure_target() {
-  ./waf configure $PKG_CONFIGURE_OPTS_TARGET --prefix=/usr
-}
-
-make_target() {
-  ./waf
-}
-
-makeinstall_target() {
-  ./waf install --destdir=$INSTALL
-}

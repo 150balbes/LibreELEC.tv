@@ -3,13 +3,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.argustv"
-PKG_VERSION="6.0.1-Matrix"
-PKG_SHA256="d7c2942e9f7b709aa693ae017be8972394cf5bf423d969e9dd3076bb91ae9008"
-PKG_REV="1"
+PKG_VERSION="7.1.0-Matrix"
+PKG_SHA256="d91f195c4a91af893231d03a887a340900c4e515597ea059ee6b9e6444717fc9"
+PKG_REV="3"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-pvr/pvr.argustv"
-PKG_URL="https://github.com/kodi-pvr/pvr.argustv/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-pvr/pvr.argustv/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform jsoncpp"
 PKG_SECTION=""
 PKG_SHORTDESC="pvr.argustv"
@@ -19,5 +19,5 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_TYPE="xbmc.pvrclient"
 
 pre_configure_target() {
-  CXXFLAGS="$CXXFLAGS -Wno-narrowing"
+  CXXFLAGS+=" -Wno-narrowing"
 }

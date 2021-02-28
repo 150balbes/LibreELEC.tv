@@ -20,6 +20,20 @@ case "$PKG_SOC" in
     PKG_DATAFILE="spl/u-boot-spl-nodtb.bin"
     PKG_LOADER="u-boot-dtb.bin"
     ;;
+  rk3188*)
+    PKG_DATAFILE="spl/u-boot-spl.bin"
+    PKG_LOADER="u-boot-encrypted.bin"
+    truncate -s %2048 u-boot.bin
+    cat u-boot.bin | split -b 512 \
+      --filter='openssl rc4 -K 7C4E0304550509072D2C7B38170D1711' > "$PKG_LOADER"
+    ;;
+  rk322x)
+   PKG_LOADER="$PKG_RKBIN/rk32/rk322x_miniloader_v2.56.bin"
+   PKG_DATAFILE="${PKG_RKBIN}/rk32/rk322x_ddr3_600MHz_ddr2_330MHz_v1.10.bin"
+   PKG_TOSTA="$PKG_RKBIN/rk32/rk3228_tee_ta-51.1.0-333-gc9d95d1.bin"
+   PKG_LOAD_ADDR="0x60200000"
+   PKG_TOSXX_LOAD_ADDR="0x68400000"
+   ;;
   rk3288)
     PKG_DATAFILE="$PKG_RKBIN/rk32/rk3288_ddr_400MHz_v1.08.bin"
     PKG_LOADER="$PKG_RKBIN/rk32/rk3288_miniloader_v2.58.bin"
@@ -82,6 +96,12 @@ SEC=0
 PATH=trust.img
 EOF
   $PKG_PREFIX$PKG_RKBIN/tools/trust_merger --verbose trust.ini
+  cp -av trust.img $INSTALL_UBOOT
+elif [ -n "$PKG_TOSTA" -a -n "$PKG_TOSXX_LOAD_ADDR" ]; then
+  $PKG_PREFIX$PKG_RKBIN/tools/loaderimage --pack --trustos $PKG_TOSTA trust.img $PKG_TOSXX_LOAD_ADDR
+  cp -av trust.img $INSTALL_UBOOT
+elif [ -n "$PKG_TOS" -a -n "$PKG_TOSXX_LOAD_ADDR" ]; then
+  $PKG_PREFIX$PKG_RKBIN/tools/loaderimage --pack --trustos $PKG_TOS trust.img $PKG_TOSXX_LOAD_ADDR
   cp -av trust.img $INSTALL_UBOOT
 fi
 

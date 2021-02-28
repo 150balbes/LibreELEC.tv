@@ -2,13 +2,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.dinothawr"
-PKG_VERSION="1.0.0.9-Leia"
-PKG_SHA256="4d710b008348ec7f4d6b5b438e7f75207cf08f19f233f54f3cc0c1cf46d74c11"
-PKG_REV="1"
+PKG_VERSION="1.0.0.12-Matrix"
+PKG_SHA256="1e471aa98d9bcaf07f6d1e181190a24d2acd601bf272ea086d2407fa73e1ef27"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.dinothawr"
-PKG_URL="https://github.com/kodi-game/game.libretro.dinothawr/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-game/game.libretro.dinothawr/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-dinothawr"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.dinothawr: dinothawr for Kodi"

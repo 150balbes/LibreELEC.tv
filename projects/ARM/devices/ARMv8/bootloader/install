@@ -32,6 +32,13 @@ case "$PKG_SOC" in
     PKG_BL31_ADDR="0x10000"
     PKG_LOAD_ADDR="0x200000"
     ;;
+  rk3328-roc-pc)
+    PKG_DATAFILE="$PKG_RKBIN/rk33/rk3328_ddr_933MHz_v1.16.bin"
+    PKG_LOADER="$PKG_RKBIN/rk33/rk3328_miniloader_v2.50.bin"
+    PKG_BL31="$PKG_RKBIN/rk33/rk3328_bl31_v1.42.elf"
+    PKG_BL31_ADDR="0x10000"
+    PKG_LOAD_ADDR="0x200000"
+    ;;
   rk3328-old)
     PKG_DATAFILE="$PKG_RKBIN/rk33/rk3328_ddr_786MHz_v1.16.bin"
     PKG_LOADER="$PKG_RKBIN/rk33/rk3328_miniloader_v2.50.bin"
@@ -95,80 +102,6 @@ mkdir -p $DESTDIR
 FIPDIR="$(get_build_dir amlogic-boot-fip)/$UBOOT_SYSTEM"
 
 case "${UBOOT_SYSTEM}" in
-  box|"")
-    # no-op, use vendor booloader
-    ;;
-
-  odroid-c4)
-    if [ "$UBOOT_SYSTEM" = "khadas-vim3" ]; then
-      AML_ENCRYPT_BIN="aml_encrypt_g12b"
-    else
-      AML_ENCRYPT_BIN="aml_encrypt_g12a"
-    fi
-
-    cp $FIPDIR/bl301.bin $DESTDIR/
-    cp $FIPDIR/acs.bin $DESTDIR/
-    cp $FIPDIR/aml_ddr.fw $DESTDIR/
-    cp $FIPDIR/bl2.bin $DESTDIR/
-    cp $FIPDIR/bl30.bin $DESTDIR/
-    cp $FIPDIR/bl31.img $DESTDIR/
-    cp $FIPDIR/blx_fix.sh $DESTDIR/
-    cp $FIPDIR/ddr3_1d.fw $DESTDIR/
-    cp $FIPDIR/ddr4_1d.fw $DESTDIR/
-    cp $FIPDIR/ddr4_2d.fw $DESTDIR/
-    cp $FIPDIR/diag_lpddr4.fw $DESTDIR/
-    cp $FIPDIR/lpddr3_1d.fw $DESTDIR/
-    cp $FIPDIR/lpddr4_1d.fw $DESTDIR/
-    cp $FIPDIR/lpddr4_2d.fw $DESTDIR/
-    cp $FIPDIR/piei.fw $DESTDIR/
-    cp $(get_build_dir $BOOTLOADER)/u-boot.bin $DESTDIR/bl33.bin
-
-    $FIPDIR/blx_fix.sh $DESTDIR/bl30.bin \
-                       $DESTDIR/zero_tmp \
-                       $DESTDIR/bl30_zero.bin \
-                       $DESTDIR/bl301.bin \
-                       $DESTDIR/bl301_zero.bin \
-                       $DESTDIR/bl30_new.bin bl30
-
-    $FIPDIR/blx_fix.sh $DESTDIR/bl2.bin \
-                       $DESTDIR/zero_tmp \
-                       $DESTDIR/bl2_zero.bin \
-                       $DESTDIR/acs.bin \
-                       $DESTDIR/bl21_zero.bin \
-                       $DESTDIR/bl2_new.bin bl2
-
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bl30sig --input $DESTDIR/bl30_new.bin \
-                                       --output $DESTDIR/bl30_new.bin.g12a.enc \
-                                       --level v3
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bl3sig  --input $DESTDIR/bl30_new.bin.g12a.enc \
-                                       --output $DESTDIR/bl30_new.bin.enc \
-                                       --level v3 --type bl30
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bl3sig  --input $DESTDIR/bl31.img \
-                                       --output $DESTDIR/bl31.img.enc \
-                                       --level v3 --type bl31
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bl3sig  --input $DESTDIR/bl33.bin --compress lz4 \
-                                       --output $DESTDIR/bl33.bin.enc \
-                                       --level v3 --type bl33 --compress lz4
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bl2sig  --input $DESTDIR/bl2_new.bin \
-                                       --output $DESTDIR/bl2.n.bin.sig
-    $PKG_PREFIX$FIPDIR/$AML_ENCRYPT_BIN --bootmk \
-                             --output $DESTDIR/u-boot.bin \
-                             --bl2 $DESTDIR/bl2.n.bin.sig \
-                             --bl30 $DESTDIR/bl30_new.bin.enc \
-                             --bl31 $DESTDIR/bl31.img.enc \
-                             --bl33 $DESTDIR/bl33.bin.enc \
-                             --ddrfw1 $DESTDIR/ddr4_1d.fw \
-                             --ddrfw2 $DESTDIR/ddr4_2d.fw \
-                             --ddrfw3 $DESTDIR/ddr3_1d.fw \
-                             --ddrfw4 $DESTDIR/piei.fw \
-                             --ddrfw5 $DESTDIR/lpddr4_1d.fw \
-                             --ddrfw6 $DESTDIR/lpddr4_2d.fw \
-                             --ddrfw7 $DESTDIR/diag_lpddr4.fw \
-                             --ddrfw8 $DESTDIR/aml_ddr.fw \
-                             --ddrfw9 $DESTDIR/lpddr3_1d.fw \
-                             --level v3
-    ;;
-
   odroid-c2)
     $PKG_PREFIX$FIPDIR/fip_create --bl30 $FIPDIR/bl30.bin \
                        --bl301 $FIPDIR/bl301.bin \
@@ -186,8 +119,7 @@ case "${UBOOT_SYSTEM}" in
     dd if=$DESTDIR/u-boot.gxbb of=$DESTDIR/u-boot.bin.sd.bin conv=fsync,notrunc bs=512 seek=97
     ;;
 
-  amlg12)
-    FIPDIR="$(get_build_dir amlogic-boot-fip)/odroid-n2"
+  odroid-n2)
     cp $FIPDIR/bl301.bin $DESTDIR/
     cp $FIPDIR/acs.bin $DESTDIR/
     cp $FIPDIR/aml_ddr.fw $DESTDIR/
@@ -233,6 +165,70 @@ case "${UBOOT_SYSTEM}" in
     $PKG_PREFIX$FIPDIR/aml_encrypt_g12b --bl2sig  --input $DESTDIR/bl2_new.bin \
                                        --output $DESTDIR/bl2.n.bin.sig
     $PKG_PREFIX$FIPDIR/aml_encrypt_g12b --bootmk \
+                             --output $DESTDIR/u-boot.bin \
+                             --bl2 $DESTDIR/bl2.n.bin.sig \
+                             --bl30 $DESTDIR/bl30_new.bin.enc \
+                             --bl31 $DESTDIR/bl31.img.enc \
+                             --bl33 $DESTDIR/bl33.bin.enc \
+                             --ddrfw1 $DESTDIR/ddr4_1d.fw \
+                             --ddrfw2 $DESTDIR/ddr4_2d.fw \
+                             --ddrfw3 $DESTDIR/ddr3_1d.fw \
+                             --ddrfw4 $DESTDIR/piei.fw \
+                             --ddrfw5 $DESTDIR/lpddr4_1d.fw \
+                             --ddrfw6 $DESTDIR/lpddr4_2d.fw \
+                             --ddrfw7 $DESTDIR/diag_lpddr4.fw \
+                             --ddrfw8 $DESTDIR/aml_ddr.fw \
+                             --level v3
+    ;;
+
+
+  amlg12)
+    FIPDIR="$(get_build_dir amlogic-boot-fip)/u200"
+    cp $FIPDIR/bl301.bin $DESTDIR/
+    cp $FIPDIR/acs.bin $DESTDIR/
+    cp $FIPDIR/aml_ddr.fw $DESTDIR/
+    cp $FIPDIR/bl2.bin $DESTDIR/
+    cp $FIPDIR/bl30.bin $DESTDIR/
+    cp $FIPDIR/bl31.img $DESTDIR/
+    cp $FIPDIR/blx_fix.sh $DESTDIR/
+    cp $FIPDIR/ddr3_1d.fw $DESTDIR/
+    cp $FIPDIR/ddr4_1d.fw $DESTDIR/
+    cp $FIPDIR/ddr4_2d.fw $DESTDIR/
+    cp $FIPDIR/diag_lpddr4.fw $DESTDIR/
+    cp $FIPDIR/lpddr4_1d.fw $DESTDIR/
+    cp $FIPDIR/lpddr4_2d.fw $DESTDIR/
+    cp $FIPDIR/piei.fw $DESTDIR/
+    cp $(get_build_dir $BOOTLOADER)/u-boot.bin $DESTDIR/bl33.bin
+
+    $FIPDIR/blx_fix.sh $DESTDIR/bl30.bin \
+                       $DESTDIR/zero_tmp \
+                       $DESTDIR/bl30_zero.bin \
+                       $DESTDIR/bl301.bin \
+                       $DESTDIR/bl301_zero.bin \
+                       $DESTDIR/bl30_new.bin bl30
+
+    $FIPDIR/blx_fix.sh $DESTDIR/bl2.bin \
+                       $DESTDIR/zero_tmp \
+                       $DESTDIR/bl2_zero.bin \
+                       $DESTDIR/acs.bin \
+                       $DESTDIR/bl21_zero.bin \
+                       $DESTDIR/bl2_new.bin bl2
+
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bl30sig --input $DESTDIR/bl30_new.bin \
+                                       --output $DESTDIR/bl30_new.bin.g12a.enc \
+                                       --level v3
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bl3sig  --input $DESTDIR/bl30_new.bin.g12a.enc \
+                                       --output $DESTDIR/bl30_new.bin.enc \
+                                       --level v3 --type bl30
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bl3sig  --input $DESTDIR/bl31.img \
+                                       --output $DESTDIR/bl31.img.enc \
+                                       --level v3 --type bl31
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bl3sig  --input $DESTDIR/bl33.bin --compress lz4 \
+                                       --output $DESTDIR/bl33.bin.enc \
+                                       --level v3 --type bl33 --compress lz4
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bl2sig  --input $DESTDIR/bl2_new.bin \
+                                       --output $DESTDIR/bl2.n.bin.sig
+    $PKG_PREFIX$FIPDIR/aml_encrypt_g12a --bootmk \
                              --output $DESTDIR/u-boot.bin \
                              --bl2 $DESTDIR/bl2.n.bin.sig \
                              --bl30 $DESTDIR/bl30_new.bin.enc \
@@ -385,7 +381,7 @@ if find_file_path bootloader/${UBOOT_SYSTEM}.ini; then
 fi
 
 elif [ "$PLATFORM" = "AW" ]; then
-INSTALL_UBOOT="$INSTALL/usr/share/bootloader/u-boot"
-mkdir -p $INSTALL_UBOOT
-cp -av u-boot-sunxi-with-spl.bin $INSTALL_UBOOT
+	INSTALL_UBOOT="$INSTALL/usr/share/bootloader/u-boot"
+	mkdir -p $INSTALL_UBOOT
+	cp -av u-boot-sunxi-with-spl.bin $INSTALL_UBOOT
 fi

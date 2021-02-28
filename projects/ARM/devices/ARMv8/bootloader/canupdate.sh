@@ -4,8 +4,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 # detect legacy kernel installs and abort to prevent upgrades
-if [ "$(uname -r)" = "3.14.29" ]; then
-  echo "Update from 3.14 is not supported!"
+if [ "$(uname -r)" = "3.14.29" ] || [ "$(uname -r)" = "4.9.190" ]; then
+  echo "Update from legacy kernel is not supported!"
   sleep 10
   exit 1
 fi

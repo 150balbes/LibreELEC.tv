@@ -7,11 +7,9 @@ Subject: [PATCH] prevent kodi switching to windowed mode
  xbmc/windowing/X11/WinSystemX11.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/xbmc/windowing/X11/WinSystemX11.h b/xbmc/windowing/X11/WinSystemX11.h
-index 3f207d3ffa..3b3ff9b62c 100644
 --- a/xbmc/windowing/X11/WinSystemX11.h
 +++ b/xbmc/windowing/X11/WinSystemX11.h
-@@ -38,6 +38,7 @@ public:
+@@ -48,6 +48,7 @@ public:
    void FinishWindowResize(int newWidth, int newHeight) override;
    bool SetFullScreen(bool fullScreen, RESOLUTION_INFO& res, bool blankOtherDisplays) override;
    void UpdateResolutions() override;
@@ -19,6 +17,3 @@ index 3f207d3ffa..3b3ff9b62c 100644
    void ShowOSMouse(bool show) override;
  
    void NotifyAppActiveChange(bool bActivated) override;
--- 
-2.14.1
-

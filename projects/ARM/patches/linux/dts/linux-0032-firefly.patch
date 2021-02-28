@@ -7,7 +7,7 @@
 +	soundcard-hdmi {
 +		compatible = "simple-audio-card";
 +		simple-audio-card,format = "i2s";
-+		simple-audio-card,name = "DW-I2S-HDMI";
++		simple-audio-card,name = "HDMI";
 +		simple-audio-card,mclk-fs = <512>;
 +
 +		simple-audio-card,codec {

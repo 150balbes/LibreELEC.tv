@@ -2,13 +2,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.beetle-pcfx"
-PKG_VERSION="0.9.36.8-Leia"
-PKG_SHA256="ba7404f4d739e01ce3f6adf7a1967987b578499034117b15762c97711eef8063"
-PKG_REV="1"
+PKG_VERSION="0.9.36.15-Matrix"
+PKG_SHA256="07d8ff80c4c0cd0565b8a794ad056162ec157ac8887e6401cce484fadc48d7c7"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.beetle-pcfx"
-PKG_URL="https://github.com/kodi-game/game.libretro.beetle-pcfx/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-game/game.libretro.beetle-pcfx/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-beetle-pcfx"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.beetle-pcfx: Beetle pcfx for Kodi"

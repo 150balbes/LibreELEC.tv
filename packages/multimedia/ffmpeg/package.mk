@@ -3,8 +3,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpeg"
-PKG_VERSION="4.3.1-Matrix-Alpha1-2"
-PKG_SHA256="a28ec40eb2457a4c3607757ec1e912c0f0f9a804f9cbef76a4b36ba57b5ecae3"
+PKG_VERSION="4.3.1-Matrix-Beta1"
+PKG_SHA256="0b209a9b15f2335e516bf2ad1249fffc6b55425145f17c9674dc430abf6a67ad"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="https://github.com/xbmc/FFmpeg/archive/${PKG_VERSION}.tar.gz"
@@ -19,8 +19,8 @@ PKG_FFMPEG_HWACCEL="--enable-hwaccels"
 
 PKG_FFMPEG_RPI="--disable-mmal"
 
-if [ "${PROJECT}" = "RPi" -a "${DEVICE}" = "RPi4" ]; then
-  PKG_PATCH_DIRS="rpi v4l2-drmprime"
+if [ "${PROJECT}" = "RPi" ]; then
+  PKG_PATCH_DIRS="rpi"
   PKG_FFMPEG_RPI+=" --disable-rpi --enable-sand"
 else
   PKG_PATCH_DIRS="v4l2-request v4l2-drmprime"

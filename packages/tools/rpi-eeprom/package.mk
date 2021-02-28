@@ -2,13 +2,13 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rpi-eeprom"
-PKG_VERSION="b887a0bfa9f334a53bf1c66bbea5725b7a5f3846"
-PKG_SHA256="400d64066c5ad31cbfd6f3fc146961a930060c2b97ef89ad48cd998aead2d7a3"
+PKG_VERSION="1b937edc4b9523f4d7f902b3e77ac787bcede597"
+PKG_SHA256="3596e56a30a6b53b211db54e6287f6dc90c10edf74cb7783d29492631d09c607"
 PKG_ARCH="arm"
 PKG_LICENSE="BSD-3/custom"
 PKG_SITE="https://github.com/raspberrypi/rpi-eeprom"
 PKG_URL="https://github.com/raspberrypi/rpi-eeprom/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="flashrom"
+PKG_DEPENDS_TARGET="pciutils"
 PKG_LONGDESC="rpi-eeprom: firmware, config and scripts to update RPi4 SPI bootloader"
 PKG_TOOLCHAIN="manual"
 
@@ -17,13 +17,13 @@ makeinstall_target() {
 
   mkdir -p ${DESTDIR}
     _dirs="critical stable"
-    [ "$LIBREELEC_VERSION" = "devel" ] && _dirs+=" beta"
+    [ "${LIBREELEC_VERSION}" = "devel" ] && _dirs+=" beta"
 
     for _maindir in ${_dirs}; do
       for _dir in ${PKG_BUILD}/firmware/${_maindir} ${PKG_BUILD}/firmware/{_maindir}-*; do
         [ -d "${_dir}" ] || continue
 
-	_basedir="$(basename "${_dir}")"
+        _basedir="$(basename "${_dir}")"
 
         mkdir -p ${DESTDIR}/${_basedir}
           cp -PRv ${_dir}/recovery.bin ${DESTDIR}/${_basedir}
@@ -38,11 +38,13 @@ makeinstall_target() {
       done
     done
 
+    # also copy default and latest symlinks
+    cp -Prv ${PKG_BUILD}/firmware/{default,latest} ${DESTDIR}
+
   mkdir -p ${INSTALL}/usr/bin
     cp -PRv ${PKG_DIR}/source/rpi-eeprom-update ${INSTALL}/usr/bin
     cp -PRv ${PKG_BUILD}/rpi-eeprom-update ${INSTALL}/usr/bin/.rpi-eeprom-update.real
     cp -PRv ${PKG_BUILD}/rpi-eeprom-config ${INSTALL}/usr/bin
-    cp -PRv ${PKG_BUILD}/firmware/vl805 ${INSTALL}/usr/bin
 
   mkdir -p ${INSTALL}/etc/default
     cp -PRv ${PKG_DIR}/config/* ${INSTALL}/etc/default

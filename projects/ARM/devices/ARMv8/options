@@ -14,7 +14,7 @@
     case $TARGET_ARCH in
       aarch64)
 	if [ "$PLATFORM" = "RK" ]; then
-	        if [ "$UBOOT_SYSTEM" = "rk3399" ]; then
+	        if [ "$UBOOT_SYSTEM" = "rk3399*" ]; then
         	  TARGET_CPU="cortex-a72.cortex-a53"
 	        else
         	  TARGET_CPU="cortex-a53"
@@ -33,7 +33,7 @@
 	TARGET_KERNEL_ARCH="arm64"
 	TARGET_PATCH_ARCH="aarch64"
 	if [ "$PLATFORM" = "RK" ]; then
-		if [ "$UBOOT_SYSTEM" = "rk3399" ]; then
+		if [ "$UBOOT_SYSTEM" = "rk3399*" ]; then
 			TARGET_CPU="cortex-a72.cortex-a53"
 		else
 			TARGET_CPU="cortex-a53"
@@ -63,10 +63,8 @@
   # Platform to use
     if [ "$PLATFORM" = "RK" ]; then
 
-#        LINUX="default"
-
 	UBOOT_FIRMWARE="rkbin"
-        if [ "$UBOOT_SYSTEM" = "rk3328" ]; then
+        if [ "$UBOOT_SYSTEM" = "rk3328*" ]; then
 	      EXTRA_CMDLINE="console=uart8250,mmio32,0xff130000 console=tty0 systemd.debug_shell=ttyS2"
 	else
 	      EXTRA_CMDLINE="console=uart8250,mmio32,0xff1a0000 console=tty0 systemd.debug_shell=ttyS2"
@@ -81,7 +79,7 @@
 
     elif [ "$PLATFORM" = "AW" ]; then
 
-	UBOOT_FIRMWARE="atf"
+	UBOOT_FIRMWARE="atf crust"
         if [ "${UBOOT_SYSTEM}" = "h5" ]; then
 		ATF_PLATFORM="sun50i_a64"
 	else
@@ -150,13 +148,21 @@
   # for a list of additional drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
+  ADDITIONAL_DRIVERS=""
+  ADDITIONAL_DRIVERS+=" RTL8192CU"
+  ADDITIONAL_DRIVERS+=" RTL8192DU"
+  ADDITIONAL_DRIVERS+=" RTL8192EU"
+  ADDITIONAL_DRIVERS+=" RTL8188EU"
+  ADDITIONAL_DRIVERS+=" RTL8812AU"
+
   ADDITIONAL_DRIVERS+=" RTL88x2BU"
   ADDITIONAL_DRIVERS+=" RTL8189FS"
-  ADDITIONAL_DRIVERS+=" RTL8821CU"
+#  ADDITIONAL_DRIVERS+=" RTL8821CU"
   ADDITIONAL_DRIVERS+=" RTL8822BS"
   ADDITIONAL_DRIVERS+=" RTL8723DS"
+  ADDITIONAL_DRIVERS+=" RTL8723DU"
   ADDITIONAL_DRIVERS+=" RTL8188FU"
-#  ADDITIONAL_DRIVERS+=" RTL8189ES"
+  ADDITIONAL_DRIVERS+=" RTL8189ES"
 #  ADDITIONAL_DRIVERS=""
 
   # build and install driver addons (yes / no)
@@ -174,7 +180,6 @@
     CEC_FRAMEWORK_SUPPORT="yes"
 
   if [ "$TARGET_ARCH" = arm ]; then
-    ADDON_SERVER_URL="http://balbes150.libreelec.tv/addons"
     ADDON_PROJECT="ARMv8"
   else
     ADDON_SERVER_URL="https://balbes150.libreelec.tv/addons"

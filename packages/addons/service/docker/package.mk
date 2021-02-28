@@ -3,9 +3,9 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="docker"
-PKG_VERSION="19.03.2"
-PKG_SHA256="46b52f92cb258e038e3f29624e75a52e4d2f91502f56edeac0f0b2661b3b9c3d"
-PKG_REV="128"
+PKG_VERSION="19.03.15"
+PKG_SHA256="f2f31dd4137eaa735a26e590c9718fb06867afff4d8415cc80feb6cdc9e4a8cd"
+PKG_REV="133"
 PKG_ARCH="any"
 PKG_LICENSE="ASL"
 PKG_SITE="http://www.docker.com/"
@@ -17,7 +17,7 @@ PKG_LONGDESC="Docker containers can encapsulate any payload, and will run consis
 PKG_TOOLCHAIN="manual"
 
 # Git commit of the matching release https://github.com/docker/docker-ce/releases
-export PKG_GIT_COMMIT="6a30dfca03664a0b6bf0646a7d389ee7d0318e6e"
+export PKG_GIT_COMMIT="99e3ed89195c4e551e87aad1e7453b65456b03ad"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Docker"
@@ -37,7 +37,7 @@ configure_target() {
   PKG_GOPATH_CLI=${GOPATH}_cli
   export GOPATH=${PKG_GOPATH_CLI}:${PKG_GOPATH_ENGINE}
 
-  export LDFLAGS="-w -linkmode external -extldflags -Wl,--unresolved-symbols=ignore-in-shared-libs -extld $CC"
+  export LDFLAGS="-w -linkmode external -extldflags -Wl,--unresolved-symbols=ignore-in-shared-libs -extld ${CC}"
 
   mkdir -p ${PKG_GOPATH_ENGINE}
   mkdir -p ${PKG_GOPATH_CLI}
@@ -60,7 +60,7 @@ configure_target() {
   cp -rf ${PKG_GOPATH_ENGINE}/src/github.com/moby/buildkit/util/progress/*          ${PKG_GOPATH_CLI}/src/github.com/moby/buildkit/util/progress
   cp -rf ${PKG_GOPATH_ENGINE}/src/github.com/docker/swarmkit/manager/*              ${PKG_GOPATH_CLI}/src/github.com/docker/swarmkit/manager
   cp -rf ${PKG_GOPATH_ENGINE}/src/github.com/coreos/etcd/raft/*                     ${PKG_GOPATH_CLI}/src/github.com/coreos/etcd/raft
-  cp -rf ${PKG_GOPATH_ENGINE}/src/golang.org/x/*                                    ${PKG_GOPATH_CLI}/src/golang.org/x
+  cp -rf ${PKG_GOPATH_ENGINE}/src/golang.org/x/crypto/*                             ${PKG_GOPATH_CLI}/src/golang.org/x/crypto
   cp -rf ${PKG_GOPATH_ENGINE}/src/github.com/opencontainers/runtime-spec/specs-go/* ${PKG_GOPATH_CLI}/src/github.com/opencontainers/runtime-spec/specs-go
 
   rm -rf   ${PKG_GOPATH_CLI}/src/github.com/containerd/containerd
@@ -74,11 +74,14 @@ configure_target() {
   mkdir -p ${PKG_GOPATH_CLI}/src/github.com/docker/docker/builder
   cp -rf   ${PKG_ENGINE_PATH}/builder/* ${PKG_GOPATH_CLI}/src/github.com/docker/docker/builder
 
-  if [ ! -L ${PKG_GOPATH_ENGINE}/src/github.com/docker/docker ];then
+  mkdir -p ${PKG_GOPATH_CLI}/src/github.com/docker/docker/pkg/idtools
+  cp -rf   ${PKG_ENGINE_PATH}/pkg/idtools/* ${PKG_GOPATH_CLI}/src/github.com/docker/docker/pkg/idtools
+
+  if [ ! -L ${PKG_GOPATH_ENGINE}/src/github.com/docker/docker ]; then
     ln -fs  ${PKG_ENGINE_PATH} ${PKG_GOPATH_ENGINE}/src/github.com/docker/docker
   fi
 
-  if [ ! -L ${PKG_GOPATH_CLI}/src/github.com/docker/cli ];then
+  if [ ! -L ${PKG_GOPATH_CLI}/src/github.com/docker/cli ]; then
     ln -fs ${PKG_CLI_PATH} ${PKG_GOPATH_CLI}/src/github.com/docker/cli
   fi
 
@@ -95,8 +98,8 @@ configure_target() {
 make_target() {
   mkdir -p bin
   PKG_CLI_FLAGS="-X 'github.com/docker/cli/cli/version.Version=${VERSION}'"
-  PKG_CLI_FLAGS="${PKG_CLI_FLAGS} -X 'github.com/docker/cli/cli/version.GitCommit=${GITCOMMIT}'"
-  PKG_CLI_FLAGS="${PKG_CLI_FLAGS} -X 'github.com/docker/cli/cli/version.BuildTime=${BUILDTIME}'"
+  PKG_CLI_FLAGS+=" -X 'github.com/docker/cli/cli/version.GitCommit=${GITCOMMIT}'"
+  PKG_CLI_FLAGS+=" -X 'github.com/docker/cli/cli/version.BuildTime=${BUILDTIME}'"
   ${GOLANG} build -v -o bin/docker -a -tags "${PKG_DOCKER_BUILDTAGS}" -ldflags "${LDFLAGS} ${PKG_CLI_FLAGS}" ./components/cli/cmd/docker
   ${GOLANG} build -v -o bin/dockerd -a -tags "${PKG_DOCKER_BUILDTAGS}" -ldflags "${LDFLAGS}" ./components/engine/cmd/dockerd
 }

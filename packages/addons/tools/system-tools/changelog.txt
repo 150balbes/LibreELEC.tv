@@ -1,3 +1,46 @@
+121
+- remove strace
+
+120
+- htop: update to 3.0.5
+- i2c-tools: fix runtime libraries
+- strace: fix compile on Generic due to mpers
+- stress-ng: update to 0.12.02
+
+119
+- dstat: update to 2020-06-19
+- efibootmgr: update version details
+- efivar: update to 2020-10-16
+- hddtemp: add patch to support nvme drives
+- nmon: update to 16m
+
+118
+- i2c-tools: update to 4.2
+- lm_sensors: update to 3.6.0
+
+117
+- fdupes: update to 2.1.2
+- htop: update to 3.0.4
+- i2c-tools: update to 3.1.2+patches
+- inotify-tools: update to 3.20.11.0
+- libmtp: update to 1.1.18
+- libssh2: update to 1.9.0
+- oniguruma: update to 6.9.6
+- smartmontools: update to 7.2
+- strace: update to 5.10
+- stress-ng: update to 0.12.01
+- usb-modeswitch: update to 2.6.1
+- vim: update to 8.2.2293
+
+116
+- added st (Generic only)
+- updated unrar to 6.0.3
+- updated mc to 4.8.25
+- removed ytop
+
+115
+- updated strace to 5.9
+
 114
 - added ytop
 - fixed 7z

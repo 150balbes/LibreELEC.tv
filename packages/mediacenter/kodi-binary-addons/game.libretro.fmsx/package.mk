@@ -2,13 +2,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.fmsx"
-PKG_VERSION="4.9.0.8-Leia"
-PKG_SHA256="567b0707440c8bf81afd332bea29ab959b03cd633eb574db565d3576e563421e"
-PKG_REV="1"
+PKG_VERSION="4.9.0.12-Matrix"
+PKG_SHA256="cb8fbda9d28bee0c1957a99e25fe703a4ac0abc5358fdfa814b7702ad03d03b6"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.fmsx"
-PKG_URL="https://github.com/kodi-game/game.libretro.fmsx/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-game/game.libretro.fmsx/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-fmsx"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.fmsx: fmsx for Kodi"

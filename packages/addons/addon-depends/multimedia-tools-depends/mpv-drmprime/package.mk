@@ -2,19 +2,17 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mpv-drmprime"
-PKG_VERSION="0.30.0"
-PKG_SHA256="33a1bcb7e74ff17f070e754c15c52228cf44f2cefbfd8f34886ae81df214ca35"
+PKG_VERSION="0.33.0"
+PKG_SHA256="f1b9baf5dc2eeaf376597c28a6281facf6ed98ff3d567e3955c95bf2459520b4"
 PKG_LICENSE="GPL"
 PKG_SITE="https://mpv.io/"
-PKG_URL="https://github.com/mpv-player/mpv/archive/v$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/mpv-player/mpv/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain waf:host alsa ffmpeg libass libdrm"
 PKG_LONGDESC="A media player based on MPlayer and mplayer2. It supports a wide variety of video file formats, audio and video codecs, and subtitle types."
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="-sysroot"
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
-                           --disable-libsmbclient \
-                           --disable-apple-remote \
                            --disable-libarchive \
                            --disable-lua \
                            --disable-javascript \
@@ -28,33 +26,32 @@ PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
                            --disable-vulkan \
                            --disable-caca \
                            --enable-drm \
-                           --enable-drmprime \
                            --enable-gbm \
                            --enable-egl-drm"
 
-if [ "$OPENGLES_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGLES"
+if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
+  PKG_DEPENDS_TARGET+=" ${OPENGLES}"
 fi
 
-if [ "$OPENGL_SUPPORT" = "yes" ]; then
-  PKG_DEPENDS_TARGET+=" $OPENGL"
+if [ "${OPENGL_SUPPORT}" = "yes" ]; then
+  PKG_DEPENDS_TARGET+=" ${OPENGL}"
 fi
 
-if [ "$VAAPI_SUPPORT" = "yes" ]; then
+if [ "${VAAPI_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" libva"
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-vaapi --enable-vaapi-drm"
 else
   PKG_CONFIGURE_OPTS_TARGET+=" --disable-vaapi"
 fi
 
-if [ "$PULSEAUDIO_SUPPORT" = "yes" ]; then
+if [ "${PULSEAUDIO_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" pulseaudio"
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-pulse"
 else
   PKG_CONFIGURE_OPTS_TARGET+=" --disable-pulse"
 fi
 
-if [ "$KODI_BLURAY_SUPPORT" = "yes" ]; then
+if [ "${KODI_BLURAY_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" libbluray"
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-libbluray"
 else
@@ -62,7 +59,7 @@ else
 fi
 
 configure_target() {
-  waf configure $PKG_CONFIGURE_OPTS_TARGET
+  waf configure ${PKG_CONFIGURE_OPTS_TARGET}
 }
 
 make_target() {
@@ -70,6 +67,6 @@ make_target() {
 }
 
 makeinstall_target() {
-  waf install --destdir=$INSTALL
-  rm -r $INSTALL/usr/share
+  waf install --destdir=${INSTALL}
+  rm -r ${INSTALL}/usr/share
 }

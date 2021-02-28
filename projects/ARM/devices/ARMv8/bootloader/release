@@ -2,30 +2,15 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 mkdir -p "$RELEASE_DIR/3rdparty/bootloader"
-  cp -a $(get_build_dir u-boot-script)/* $RELEASE_DIR/3rdparty/bootloader
-
-if [ "${PLATFORM}" != "AMLMX" ]; then
-
-mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/rockchip"
-cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/rockchip/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/rockchip
-
-mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/amlogic"
-cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/amlogic
-
-mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/allwinner"
-cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/allwinner/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/allwinner
-
-else
-
-mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/amlogic"
-cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/amlogic
-
-fi
+cp -a $(get_build_dir u-boot-script)/* $RELEASE_DIR/3rdparty/bootloader
 
 if [ "$PLATFORM" = "RK" ]; then
 
-INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
-mkdir -p $INSTBOOT_DIR
+  mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/rockchip"
+  cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/rockchip/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/rockchip
+
+  INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+  mkdir -p $INSTBOOT_DIR
   if [ -n "$UBOOT_SYSTEM" ]; then
     BOOTLOADER_DIR=$(get_build_dir $BOOTLOADER)
     if [ -f $BOOTLOADER_DIR/idbloader.img ]; then
@@ -41,20 +26,28 @@ mkdir -p $INSTBOOT_DIR
 
 elif [ "$PLATFORM" = "AML" ]; then
 
+  mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/amlogic"
+  cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/amlogic
+
   if find_file_path bootloader/${UBOOT_SYSTEM}.ini; then
     cp -av ${FOUND_PATH} $RELEASE_DIR/3rdparty/bootloader/boot.ini
   fi
-#  find_file_path bootloader/u-boot*
-#  cp -av $BOOTLOADER_DIR/u-boot* $RELEASE_DIR/3rdparty/bootloader
-#  fi
   if find_file_path bootloader/u-boot.ext; then
     cp -av ${FOUND_PATH} $RELEASE_DIR/3rdparty/bootloader/u-boot.ext
   fi
 
+elif [ "${PLATFORM}" = "AMLMX" ]; then
+
+  mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/amlogic"
+  cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/amlogic
+
 elif [ "$PLATFORM" = "AW" ]; then
 
-INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
-mkdir -p $INSTBOOT_DIR
+  mkdir -p "$RELEASE_DIR/3rdparty/bootloader/dtb/allwinner"
+  cp -a $(get_build_dir linux)/arch/$TARGET_KERNEL_ARCH/boot/dts/allwinner/*.dtb $RELEASE_DIR/3rdparty/bootloader/dtb/allwinner
+
+  INSTBOOT_DIR=$RELEASE_DIR/3rdparty/bootloader/u-boot
+  mkdir -p $INSTBOOT_DIR
   if [ -n "$UBOOT_SYSTEM" ]; then
     BOOTLOADER_DIR=$(get_build_dir $BOOTLOADER)
     if [ -f $BOOTLOADER_DIR/u-boot-sunxi-with-spl.bin ]; then

@@ -3,9 +3,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mpd"
-PKG_VERSION="0.21.24"
-PKG_SHA256="84632a7e82e672b3a6d71651a75d05fb7acd62645c33e3f3af5a1067cfa64cd6"
-PKG_REV="108"
+PKG_VERSION="0.22.3"
+PKG_SHA256="338012037b5e67730529187c555a54cc567a85b15a7e8ddb3a807b1971566ccf"
+PKG_REV="109"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.musicpd.org"
@@ -14,7 +14,7 @@ PKG_DEPENDS_TARGET="toolchain alsa-lib avahi boost curl faad2 ffmpeg flac glib l
                     libmad libmpdclient libsamplerate libvorbis libnfs libogg mpd-mpc opus pulseaudio samba yajl libgcrypt"
 PKG_SECTION="service.multimedia"
 PKG_SHORTDESC="Music Player Daemon (MPD): a free and open Music Player Server"
-PKG_LONGDESC="Music Player Daemon ($PKG_VERSION) is a flexible and powerful server-side application for playing music"
+PKG_LONGDESC="Music Player Daemon (${PKG_VERSION}) is a flexible and powerful server-side application for playing music"
 PKG_BUILD_FLAGS="-sysroot"
 
 PKG_IS_ADDON="yes"
@@ -32,16 +32,18 @@ PKG_MESON_OPTS_TARGET=" \
   -Dcue=true \
   -Dcurl=enabled \
   -Ddatabase=true \
-  -Ddocumentation=false \
+  -Ddocumentation=disabled \
   -Ddsd=true \
   -Dexpat=enabled \
   -Dfaad=enabled \
   -Dffmpeg=enabled \
-  -Dfifo=false \
+  -Dfifo=true \
   -Dflac=enabled \
   -Dfluidsynth=disabled \
+  -Dfuzzer=false \
   -Dgme=disabled \
   -Dhttpd=true \
+  -Dhtml_manual=false \
   -Diconv=disabled \
   -Dicu=disabled \
   -Did3tag=enabled \
@@ -53,6 +55,7 @@ PKG_MESON_OPTS_TARGET=" \
   -Dlibsamplerate=enabled \
   -Dlocal_socket=false \
   -Dmad=enabled \
+  -Dmanpages=false \
   -Dmikmod=disabled \
   -Dmms=disabled \
   -Dmodplug=disabled \
@@ -95,12 +98,12 @@ PKG_MESON_OPTS_TARGET=" \
   -Dzzip=disabled"
 
 addon() {
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin
-  cp -P $PKG_INSTALL/usr/bin/mpd $ADDON_BUILD/$PKG_ADDON_ID/bin
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+  cp -P ${PKG_INSTALL}/usr/bin/mpd ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
   # copy mpd cli binary
-  cp -P $(get_install_dir mpd-mpc)/usr/bin/mpc $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp -P $(get_install_dir mpd-mpc)/usr/bin/mpc ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib
-  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so $ADDON_BUILD/$PKG_ADDON_ID/lib
-  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so.2 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
 }

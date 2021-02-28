@@ -147,8 +147,6 @@ for file in $KODI_ROOT/userdata/Database/*.db; do
   fi
 done
 
-export PAN_MESA_DEBUG=bifrost
-
 /usr/lib/kodi/kodi.bin $SAVED_ARGS
 RET=$?
 

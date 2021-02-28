@@ -3,7 +3,7 @@
 
 PKG_NAME="game-tools"
 PKG_VERSION=""
-PKG_REV="101"
+PKG_REV="103"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE=""
@@ -24,19 +24,19 @@ PKG_DEPENDS_TARGET="toolchain \
                     linuxconsoletools"
 
 addon() {
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin/
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
     # bchunk
-    cp -P $(get_install_dir bchunk)/usr/bin/bchunk $ADDON_BUILD/$PKG_ADDON_ID/bin
+    cp -P $(get_install_dir bchunk)/usr/bin/bchunk ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
     # ecm-tools
-    cp -P $(get_install_dir ecm-tools)/usr/bin/bin2ecm $ADDON_BUILD/$PKG_ADDON_ID/bin
-    ln -s bin2ecm $ADDON_BUILD/$PKG_ADDON_ID/bin/ecm2bin
+    cp -P $(get_install_dir ecm-tools)/usr/bin/bin2ecm ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    ln -s bin2ecm ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/ecm2bin
 
     # iat
-    cp -P $(get_install_dir iat)/usr/bin/iat $ADDON_BUILD/$PKG_ADDON_ID/bin
+    cp -P $(get_install_dir iat)/usr/bin/iat ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
     # linuxconsoletools
-    cp -P $(get_install_dir linuxconsoletools)/usr/bin/fftest $ADDON_BUILD/$PKG_ADDON_ID/bin
-    cp -P $(get_install_dir linuxconsoletools)/usr/bin/jscal $ADDON_BUILD/$PKG_ADDON_ID/bin
-    cp -P $(get_install_dir linuxconsoletools)/usr/bin/jstest $ADDON_BUILD/$PKG_ADDON_ID/bin
+    cp -P $(get_install_dir linuxconsoletools)/usr/bin/fftest ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -P $(get_install_dir linuxconsoletools)/usr/bin/jscal ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -P $(get_install_dir linuxconsoletools)/usr/bin/jstest ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 }

@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
-PKG_NAME="RTL8723DS"
+PKG_NAME="RTL8723DU"
 PKG_VERSION="master"
 PKG_SHA256=""
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/igorpecovnik/rtl8723ds"
-PKG_URL="https://github.com/igorpecovnik/rtl8723ds/archive/$PKG_VERSION.tar.gz"
-PKG_LONGDESC="Realtek RTL8723DS Linux driver"
+PKG_SITE="https://github.com/lwfinger/rtl8723du"
+PKG_URL="https://github.com/lwfinger/rtl8723du/archive/$PKG_VERSION.tar.gz"
+PKG_LONGDESC="Realtek RTL8723DU Linux driver"
 PKG_IS_KERNEL_PKG="yes"
 #PKG_TOOLCHAIN="make"
 

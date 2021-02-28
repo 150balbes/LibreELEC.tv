@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-intel"
-PKG_VERSION="e628d22673dfa494230e6f79ceff7d178137c71a"
-PKG_SHA256="b2a8d6dca0b4da44032d3715ecc04ef89a227eb878c21d2012f3d4a797f294ce"
+PKG_VERSION="a511f22cdec56504913b457a2e60dafee8e2b570"
+PKG_SHA256="ea41bbab7d2720a4bcd3b083800b8226f217c6af3e8bace4310063a7c5b56c25"
 PKG_ARCH="x86_64"
 PKG_LICENSE="OSS"
 PKG_SITE="http://intellinuxgraphics.org/"
-PKG_URL="https://cgit.freedesktop.org/xorg/driver/xf86-video-intel/snapshot/$PKG_VERSION.tar.xz"
+PKG_URL="https://gitlab.freedesktop.org/xorg/driver/${PKG_NAME}/-/archive/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libXcomposite libXxf86vm libXdamage libdrm util-macros systemd xorg-server"
 PKG_LONGDESC="The Xorg driver for Intel i810, i815, 830M, 845G, 852GM, 855GM, 865G, 915G, 915GM and 965G."
 PKG_TOOLCHAIN="autotools"
@@ -34,8 +34,8 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-backlight \
                            --disable-create2 \
                            --disable-async-swap \
                            --with-default-dri=2 \
-                           --with-xorg-module-dir=$XORG_PATH_MODULES"
+                           --with-xorg-module-dir=${XORG_PATH_MODULES}"
 
 post_makeinstall_target() {
-  rm -rf $INSTALL/usr/share/polkit-1
+  rm -rf ${INSTALL}/usr/share/polkit-1
 }

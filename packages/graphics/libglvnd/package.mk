@@ -2,17 +2,17 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libglvnd"
-PKG_VERSION="1.3.0"
-PKG_SHA256="fabf98e72e172a1402617f5daade4dd79c752a77ab1688e0c1a0ffc49605040f"
+PKG_VERSION="1.3.2"
+PKG_SHA256="6f41ace909302e6a063fd9dc04760b391a25a670ba5f4b6edf9e30f21410b673"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/NVIDIA/libglvnd"
 PKG_URL="https://github.com/NVIDIA/libglvnd/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libX11 libXext xorgproto"
 PKG_LONGDESC="libglvnd is a vendor-neutral dispatch layer for arbitrating OpenGL API calls between multiple vendors."
-PKG_TOOLCHAIN="autotools"
 
-if [ "$OPENGLES_SUPPORT" = "no" ]; then
-  PKG_CONFIGURE_OPTS_TARGET+=" --disable-gles"
+if [ "${OPENGLES_SUPPORT}" = "no" ]; then
+  PKG_MESON_OPTS_TARGET="-Dgles1=false \
+                         -Dgles2=false"
 fi
 
 post_makeinstall_target() {

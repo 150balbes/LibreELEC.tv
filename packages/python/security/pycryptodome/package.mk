@@ -2,8 +2,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pycryptodome"
-PKG_VERSION="3.9.8"
-PKG_SHA256="d20cf8a4355a21e8dfd33372e7fab22af91d81cbcb48f413b4052820a631e2dd"
+PKG_VERSION="3.9.9"
+PKG_SHA256="abb476e10b4266472d709697a9ec96eb4bdcaaa8708badcfec64daadbacbcef0"
 PKG_LICENSE="BSD"
 PKG_SITE="https://pypi.org/project/pycryptodome"
 PKG_URL="https://github.com/Legrandin/${PKG_NAME}/archive/v${PKG_VERSION}.tar.gz"
@@ -12,11 +12,11 @@ PKG_LONGDESC="PyCryptodome is a self-contained Python package of low-level crypt
 PKG_TOOLCHAIN="manual"
 
 pre_configure_target() {
-  cd $PKG_BUILD
-  rm -rf .$TARGET_NAME
+  cd ${PKG_BUILD}
+  rm -rf .${TARGET_NAME}
 
-  export PYTHONXCPREFIX="$SYSROOT_PREFIX/usr"
-  export LDSHARED="$CC -shared"
+  export PYTHONXCPREFIX="${SYSROOT_PREFIX}/usr"
+  export LDSHARED="${CC} -shared"
 }
 
 make_target() {
@@ -24,14 +24,14 @@ make_target() {
 }
 
 makeinstall_target() {
-  python3 setup.py install --root=$INSTALL --prefix=/usr
+  python3 setup.py install --root=${INSTALL} --prefix=/usr
 
   # Remove SelfTest bloat
-  find $INSTALL -type d -name SelfTest -exec rm -fr "{}" \; 2>/dev/null || true
-  find $INSTALL -name SOURCES.txt -exec sed -i "/\/SelfTest\//d;" "{}" \;
+  find ${INSTALL} -type d -name SelfTest -exec rm -fr "{}" \; 2>/dev/null || true
+  find ${INSTALL} -name SOURCES.txt -exec sed -i "/\/SelfTest\//d;" "{}" \;
 
   # Create Cryptodome as an alternative namespace to Crypto (Kodi addons may use either)
-  ln -sf /usr/lib/$PKG_PYTHON_VERSION/site-packages/Crypto $INSTALL/usr/lib/$PKG_PYTHON_VERSION/site-packages/Cryptodome
+  ln -sf /usr/lib/${PKG_PYTHON_VERSION}/site-packages/Crypto ${INSTALL}/usr/lib/${PKG_PYTHON_VERSION}/site-packages/Cryptodome
 }
 
 post_makeinstall_target() {

@@ -2,13 +2,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.vecx"
-PKG_VERSION="1.2.0.10-Leia"
-PKG_SHA256="43b2c00691721b7111efe969d94b1ca38f9a5fa2e64c34bfa78ccebf0bf4675a"
-PKG_REV="1"
+PKG_VERSION="1.2.0.14-Matrix"
+PKG_SHA256="fc4c82efcb8bdfe1ac31d691fc38bb4b0c7afc1cced62347b84771170eef3755"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.vecx"
-PKG_URL="https://github.com/kodi-game/game.libretro.vecx/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/kodi-game/game.libretro.vecx/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-vecx"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.vecx: vecx for Kodi"

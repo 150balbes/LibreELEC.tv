@@ -198,10 +198,6 @@ EOF
   mcopy "${RELEASE_DIR}/3rdparty/bootloader/config.txt" ::
   mcopy "${RELEASE_DIR}/3rdparty/bootloader/distroconfig.txt" ::
 
-  if [ -f "${RELEASE_DIR}/3rdparty/bootloader/dt-blob.bin" ]; then
-    mcopy "${RELEASE_DIR}/3rdparty/bootloader/dt-blob.bin" ::
-  fi
-
   for dtb in "${RELEASE_DIR}/3rdparty/bootloader/"*.dtb ; do
     if [ -f "${dtb}" ]; then
       mcopy "${dtb}" ::/$(basename "${dtb}")
@@ -221,6 +217,10 @@ elif [ "${BOOTLOADER}" = "u-boot" -a -n "${UBOOT_SYSTEM}" ]; then
 
     if [ -f "${RELEASE_DIR}/3rdparty/bootloader/${DTB}" ]; then
       mcopy "${RELEASE_DIR}/3rdparty/bootloader/${DTB}" ::
+    fi
+
+    if [ -d "${RELEASE_DIR}/3rdparty/bootloader/overlays" ]; then
+      mcopy -s "${RELEASE_DIR}/3rdparty/bootloader/overlays" ::
     fi
 
     mkdir -p "${LE_TMP}/extlinux"

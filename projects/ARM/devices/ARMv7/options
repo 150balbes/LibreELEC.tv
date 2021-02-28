@@ -10,7 +10,8 @@
 	if [ "$PLATFORM" = "RK" ]; then
 #		TARGET_CPU="cortex-a17"
 		TARGET_CPU="cortex-a9"
-		TARGET_FPU="neon-vfpv4"
+#		TARGET_FPU="neon-vfpv4"
+		TARGET_FPU="neon-vfpv3"
 
 		# Kernel target
 		KERNEL_TARGET="zImage"
@@ -46,7 +47,11 @@
   # U-Boot firmware package(s) to use
     if [ "$PLATFORM" = "RK" ]; then
 	UBOOT_FIRMWARE="rkbin"
-	EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0 systemd.debug_shell=ttyS2 coherent_pool=2M cec.debounce_ms=5000"
+        if [ "${UBOOT_SYSTEM}" = "rk3188" ]; then
+		EXTRA_CMDLINE="console=uart8250,mmio32,0x20064000 console=tty0 systemd.debug_shell=ttyS2 coherent_pool=2M"
+	else
+		EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0 systemd.debug_shell=ttyS2 coherent_pool=2M cec.debounce_ms=5000"
+	fi
 	DEBUG_TTY="/dev/ttyS2"
     elif [ "$PLATFORM" = "AMLMX" ]; then
 	UBOOT_FIRMWARE="amlogic-boot-fip"
@@ -120,13 +125,21 @@
   # for a list of additional drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
+  ADDITIONAL_DRIVERS=""
+#  ADDITIONAL_DRIVERS+=" RTL8192CU"
+  ADDITIONAL_DRIVERS+=" RTL8192DU"
+#  ADDITIONAL_DRIVERS+=" RTL8192EU"
+  ADDITIONAL_DRIVERS+=" RTL8188EU"
+#  ADDITIONAL_DRIVERS+=" RTL8812AU"
+
   ADDITIONAL_DRIVERS+=" RTL88x2BU"
   ADDITIONAL_DRIVERS+=" RTL8189FS"
-  ADDITIONAL_DRIVERS+=" RTL8821CU"
+#  ADDITIONAL_DRIVERS+=" RTL8821CU"
   ADDITIONAL_DRIVERS+=" RTL8822BS"
   ADDITIONAL_DRIVERS+=" RTL8723DS"
   ADDITIONAL_DRIVERS+=" RTL8188FU"
-#  ADDITIONAL_DRIVERS+=" RTL8189ES"
+  ADDITIONAL_DRIVERS+=" RTL8189ES"
+  ADDITIONAL_DRIVERS+=" RTL8723AU"
 #  ADDITIONAL_DRIVERS=""
 
   # build and install driver addons (yes / no)
@@ -143,6 +156,5 @@
   # use the kernel CEC framework for libcec (yes / no)
     CEC_FRAMEWORK_SUPPORT="yes"
 
-    ADDON_SERVER_URL="http://balbes150.libreelec.tv/addons"
     ADDON_PROJECT="ARMv7"
 

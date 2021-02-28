@@ -30,6 +30,13 @@ export PROJECT="${PROJECT:-Generic}"
 export ARCH="${ARCH:-x86_64}"
 TARGET_ARCH="${ARCH}"
 
+# include arm-mem package on arm
+if [ "${TARGET_ARCH}" = "arm" ]; then
+  ARM_MEM_SUPPORT="yes"
+else
+  ARM_MEM_SUPPORT="no"
+fi
+
 # include helper functions
 . config/functions
 
@@ -76,7 +83,7 @@ VERBOSE="${VERBOSE:-yes}"
 #  Try values between 1 and number of processor cores present.
 #  default: use all cores
 [ -z "${CONCURRENCY_MAKE_LEVEL}" ] && export CONCURRENCY_MAKE_LEVEL=$(nproc)
-[ -z "${CONCURRENCY_LOAD}" ] && export CONCURRENCY_LOAD=$(python3 -c "import os; print('%.2f' % (os.cpu_count() * 1.5))")
+[ -z "${CONCURRENCY_LOAD}" ] && export CONCURRENCY_LOAD=$(python3 -c "import os; print(f'{os.cpu_count() * 1.5:.2f}')")
 
 # cache size for ccache
 # Set the maximum size of the files stored in the cache. You can specify a

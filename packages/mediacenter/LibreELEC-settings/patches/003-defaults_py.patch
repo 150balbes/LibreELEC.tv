@@ -1,5 +1,5 @@
---- a/src/defaults.py
-+++ b/src/defaults.py
+--- a/resources/lib/defaults.py
++++ b/resources/lib/defaults.py
 @@ -109,6 +109,15 @@
  
  xdbus = {'ENABLED': True}

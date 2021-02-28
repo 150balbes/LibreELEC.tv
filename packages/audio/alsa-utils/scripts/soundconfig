@@ -132,10 +132,10 @@ else
   mixer $card 'FRDDR_A SINK 1 SEL' 'OUT 1'
   mixer $card 'FRDDR_A SRC 1 EN' on
   mixer $card 'TDMOUT_B SRC SEL' 'IN 0'
-  mixer $card 'TOHDMITX I2S SRC' 'I2S B'
   mixer $card 'TOHDMITX' on
+  mixer $card 'TOHDMITX I2S SRC' 'I2S B'
 
-# Amlogic G12 S/PDIF to PCM1
+# Amlogic G12A/G12B/SM1 S/PDIF
   mixer $card 'FRDDR_B SINK 1 SEL' 'OUT 3'
   mixer $card 'FRDDR_B SRC 1 EN' on
   mixer $card 'SPDIFOUT SRC SEL' 'IN 1'
@@ -159,6 +159,9 @@ else
   mixer $card 'OUT MIXR DAC R1' on
   mixer $card 'Stereo DAC MIXL DAC L1' on
   mixer $card 'Stereo DAC MIXR DAC R1' on
+
+# Amlogic s8xx HDMI
+  mixer $card 'HDMI CTRL SRC' 'I2S'
 
 fi
 

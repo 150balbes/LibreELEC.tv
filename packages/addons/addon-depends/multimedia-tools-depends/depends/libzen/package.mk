@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libzen"
-PKG_VERSION="0.4.37"
-PKG_SHA256="38c0a68b715b55d6685d2759eecda040adf37bd066955d79a5d01f91977bd9a0"
+PKG_VERSION="0.4.38"
+PKG_SHA256="b8825b3190b3a31d8d362547cfa26a3c10e8c063df2d87e4a05758d6b756c8ab"
 PKG_LICENSE="GPL"
 PKG_SITE="http://mediaarea.net/en/MediaInfo/"
 PKG_URL="http://mediaarea.net/download/source/libzen/${PKG_VERSION}/libzen_${PKG_VERSION}.tar.xz"
@@ -16,8 +16,8 @@ configure_target() {
   cd Project/GNU/Library
   do_autoreconf
   ./configure \
-        --host=$TARGET_NAME \
-        --build=$HOST_NAME \
+        --host=${TARGET_NAME} \
+        --build=${HOST_NAME} \
         --enable-static \
         --disable-shared \
         --prefix=/usr
@@ -28,12 +28,12 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/usr/include/ZenLib $INSTALL/usr/lib/pkgconfig
-  cp -aP ../../../Source/ZenLib/*.h $INSTALL/usr/include/ZenLib
-  for i in HTTP_Client Format/Html Format/Http ; do
-    mkdir -p $INSTALL/usr/include/ZenLib/$i/
-    cp -aP ../../../Source/ZenLib/$i/*.h $INSTALL/usr/include/ZenLib/$i/
+  mkdir -p ${INSTALL}/usr/include/ZenLib ${INSTALL}/usr/lib/pkgconfig
+  cp -aP ../../../Source/ZenLib/*.h ${INSTALL}/usr/include/ZenLib
+  for i in HTTP_Client Format/Html Format/Http; do
+    mkdir -p ${INSTALL}/usr/include/ZenLib/${i}/
+    cp -aP ../../../Source/ZenLib/${i}/*.h ${INSTALL}/usr/include/ZenLib/${i}/
   done
-  cp -P .libs/* $INSTALL/usr/lib
-  cp -P libzen.pc $INSTALL/usr/lib/pkgconfig
+  cp -P .libs/* ${INSTALL}/usr/lib
+  cp -P libzen.pc ${INSTALL}/usr/lib/pkgconfig
 }

@@ -3,8 +3,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="bcm2835-driver"
-PKG_VERSION="a34f263ce6a9e35f3c1d62f6195f9f45f4f547e7"
-PKG_SHA256="063374702cfc4cb3056160c9a793d001ae152e7ea5ee72bf0bfe230cb8bf31d2"
+PKG_VERSION="5985247fb75681985547641d66196c77499f26b9"
+PKG_SHA256="bf2807be5ca1589a662a3a4f832f21c27cd0bf803a1b11fa57c1aae1b554396a"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.broadcom.com"
 PKG_URL="${DISTRO_SRC}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -23,17 +23,17 @@ makeinstall_target() {
   # Install vendor header files except proprietary GL headers
   mkdir -p ${SYSROOT_PREFIX}/usr/include
     for f in $(cd ${PKG_FLOAT}/opt/vc/include; ls | grep -v "GL"); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/include/$f ${SYSROOT_PREFIX}/usr/include
+      cp -PRv ${PKG_FLOAT}/opt/vc/include/${f} ${SYSROOT_PREFIX}/usr/include
     done
 
   # Install vendor libs & pkgconfigs except proprietary GL libs
   mkdir -p ${SYSROOT_PREFIX}/usr/lib
     for f in $(cd ${PKG_FLOAT}/opt/vc/lib; ls *.so *.a | grep -Ev "^lib(EGL|GL)"); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/lib/$f              ${SYSROOT_PREFIX}/usr/lib
+      cp -PRv ${PKG_FLOAT}/opt/vc/lib/${f}              ${SYSROOT_PREFIX}/usr/lib
     done
     mkdir -p ${SYSROOT_PREFIX}/usr/lib/pkgconfig
       for f in $(cd ${PKG_FLOAT}/opt/vc/lib/pkgconfig; ls | grep -v "gl"); do
-        cp -PRv ${PKG_FLOAT}/opt/vc/lib/pkgconfig/$f  ${SYSROOT_PREFIX}/usr/lib/pkgconfig
+        cp -PRv ${PKG_FLOAT}/opt/vc/lib/pkgconfig/${f}  ${SYSROOT_PREFIX}/usr/lib/pkgconfig
       done
 
   # Update prefix in vendor pkgconfig files
@@ -49,7 +49,7 @@ makeinstall_target() {
   # Install vendor libs except proprietary GL
   mkdir -p ${INSTALL}/usr/lib
     for f in $(cd ${PKG_FLOAT}/opt/vc/lib; ls *.so | grep -Ev "^lib(EGL|GL)"); do
-      cp -PRv ${PKG_FLOAT}/opt/vc/lib/$f ${INSTALL}/usr/lib
+      cp -PRv ${PKG_FLOAT}/opt/vc/lib/${f} ${INSTALL}/usr/lib
     done
 
   # Install useful tools

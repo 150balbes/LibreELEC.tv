@@ -2,11 +2,11 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="spdlog"
-PKG_VERSION="1.7.0"
-PKG_SHA256="f0114a4d3c88be9e696762f37a7c379619443ce9d668546c61b21d41affe5b62"
+PKG_VERSION="1.8.2"
+PKG_SHA256="e20e6bd8f57e866eaf25a5417f0a38a116e537f1a77ac7b5409ca2b180cec0d5"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/gabime/spdlog"
-PKG_URL="https://github.com/gabime/spdlog/archive/v$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/gabime/spdlog/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libfmt"
 PKG_LONGDESC="Very fast, header only, C++ logging library."
 PKG_TOOLCHAIN="cmake"

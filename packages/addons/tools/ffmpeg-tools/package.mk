@@ -3,7 +3,7 @@
 
 PKG_NAME="ffmpeg-tools"
 PKG_VERSION="1.0"
-PKG_REV="112"
+PKG_REV="114"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
@@ -18,6 +18,6 @@ PKG_ADDON_NAME="FFmpeg Tools"
 PKG_ADDON_TYPE="xbmc.python.script"
 
 addon() {
-  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin/
-  cp -L $(get_install_dir ffmpegx)/usr/local/bin/* $ADDON_BUILD/$PKG_ADDON_ID/bin
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
+  cp -L $(get_install_dir ffmpegx)/usr/local/bin/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 }

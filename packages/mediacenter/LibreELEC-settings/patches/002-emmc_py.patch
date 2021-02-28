@@ -1,8 +1,8 @@
 new file mode 100644
 index 000000000000..eae333d55208
 --- /dev/null
-+++ b/src/resources/lib/modules/emmc.py
-@@ -0,0 +1,217 @@
++++ b/resources/lib/modules/emmc.py
+@@ -0,0 +1,178 @@
 +################################################################################
 +#      This file is part of OpenELEC - http://www.openelec.tv
 +#      Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
@@ -30,15 +30,16 @@ index 000000000000..eae333d55208
 +################################################################################
 +# -*- coding: utf-8 -*-
 +
++import log
++import modules
++import oe
 +import os
-+import glob
 +import subprocess
 +import xbmc
 +import xbmcgui
-+import xbmcaddon
 +
 +
-+class emmc:
++class emmc(modules.Module):
 +
 +    ENABLED = False
 +    EMMC_INSTALL = "/flash/install2emmc.sh"
@@ -53,171 +54,131 @@ index 000000000000..eae333d55208
 +        'InfoText': 703,
 +        }}
 +
++    @log.log_function()
 +    def __init__(self, oeMain):
-+        try:
-+            oeMain.dbg_log('emmc::__init__', 'enter_function', 0)
-+            self.struct = {
-+                'emmc': {
-+                    'order': 1,
-+                    'name': 32820,
-+                    'not_supported': [],
-+                        'settings': {
-+                            'emmc_install': {
-+                                'order': 1,
-+                                'name': 32821,
-+                                'value': '0',
-+                                'action': 'install_emmc',
-+                                'type': 'button',
-+                                'InfoText': 2821,
-+                                },
-+                            'emmc_backup': {
-+                                'order': 2,
-+                                'name': 32822,
-+                                'value': '0',
-+                                'action': 'backup_emmc',
-+                                'type': 'button',
-+                                'InfoText': 2822,
-+                                },
-+                            'emmc_restore': {
-+                                'order': 3,
-+                                'name': 32823,
-+                                'value': '0',
-+                                'action': 'restore_emmc',
-+                                'type': 'button',
-+                                'InfoText': 2823,
-+                                },
-+                            'emmc_reboot_enable': {
-+                                'order': 4,
-+                                'name': 32824,
-+                                'value': '0',
-+                                'action': 'reboot_emmc_enable',
-+                                'type': 'button',
-+                                'InfoText': 2824,
-+                                },
-+                            'emmc_reboot_disable': {
-+                                'order': 5,
-+                                'name': 32825,
-+                                'value': '0',
-+                                'action': 'reboot_emmc_disable',
-+                                'type': 'button',
-+                                'InfoText': 2825,
-+                                },
-+                        },
++        super().__init__()
++        self.oe = oeMain
++        self.struct = {
++            'emmc': {
++                'order': 1,
++                'name': 32820,
++                'not_supported': [],
++                    'settings': {
++                        'emmc_install': {
++                            'order': 1,
++                            'name': 32821,
++                            'value': '0',
++                            'action': 'install_emmc',
++                            'type': 'button',
++                            'InfoText': 2821,
++                            },
++                        'emmc_backup': {
++                            'order': 2,
++                            'name': 32822,
++                            'value': '0',
++                            'action': 'backup_emmc',
++                            'type': 'button',
++                            'InfoText': 2822,
++                            },
++                        'emmc_restore': {
++                            'order': 3,
++                            'name': 32823,
++                            'value': '0',
++                            'action': 'restore_emmc',
++                            'type': 'button',
++                            'InfoText': 2823,
++                            },
++                        'emmc_reboot_enable': {
++                            'order': 4,
++                            'name': 32824,
++                            'value': '0',
++                            'action': 'reboot_emmc_enable',
++                            'type': 'button',
++                            'InfoText': 2824,
++                            },
++                        'emmc_reboot_disable': {
++                            'order': 5,
++                            'name': 32825,
++                            'value': '0',
++                            'action': 'reboot_emmc_disable',
++                            'type': 'button',
++                            'InfoText': 2825,
++                            },
 +                    },
-+                }
++                },
++            }
 +
-+            self.oe = oeMain
-+            oeMain.dbg_log('emmc::__init__', 'exit_function', 0)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::__init__', 'ERROR: (%s)' % repr(e))
-+
++    @log.log_function()
 +    def load_menu(self, focusItem):
-+        try:
-+            self.oe.dbg_log('emmc::load_menu', 'enter_function', 0)
-+            self.oe.winOeMain.build_menu(self.struct)
-+            self.oe.dbg_log('emmc::load_menu', 'exit_function', 0)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::load_menu', 'ERROR: (%s)' % repr(e))
++        oe.winOeMain.build_menu(self.struct)
 +
++    @log.log_function()
 +    def install_emmc(self, listItem=None):
-+        try:
-+            self.oe.dbg_log('emmc::install_emmc', 'enter_function', 0)
-+            if os.path.exists(self.EMMC_INSTALL):
-+                dialog = xbmcgui.Dialog()
-+                ret = dialog.yesno('Attention!', 'Install Libreelec to eMMC ?')
-+                if ret:
-+                    self.oe.notify(self.oe._(32363), 'Installation...')
-+                    self.oe.set_busy(1)
-+                    message = self.oe.execute(self.EMMC_INSTALL, 1).strip()
-+                    self.oe.set_busy(0)
-+                    if message == 'Done! Install Libreelec to eMMC completed.':
-+                        dialog = xbmcgui.Dialog()
-+                        dialog.notification('Install',
-+                                        '%s' % message,
-+                                        xbmcgui.NOTIFICATION_INFO, 3000)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::install_emmc', 'ERROR: (' + repr(e) + ')')
++        if os.path.exists(self.EMMC_INSTALL):
++            dialog = xbmcgui.Dialog()
++            ret = dialog.yesno('Attention!', 'Install Libreelec to eMMC ?')
++            if ret:
++                self.oe.notify(self.oe._(32363), 'Installation...')
++                message = self.oe.execute(self.EMMC_INSTALL)
++                if message == 'Done! Install Libreelec to eMMC completed.':
++                    dialog = xbmcgui.Dialog()
++                    dialog.notification('Install',
++                                    '%s' % message,
++                                    xbmcgui.NOTIFICATION_INFO, 3000)
 +
++    @log.log_function()
 +    def backup_emmc(self, listItem=None):
-+        try:
-+            self.oe.dbg_log('emmc::backup_emmc', 'enter_function', 0)
-+            if os.path.exists(self.EMMC_DDBR_BACKUP):
-+                dialog = xbmcgui.Dialog()
-+                ret = dialog.yesno('Attention!', 'Create full backup eMMC ?')
-+                if ret:
-+                    self.oe.notify(self.oe._(32363), 'Backup...')
-+                    self.oe.set_busy(1)
-+                    message = self.oe.execute(self.EMMC_DDBR_BACKUP, 1).strip()
-+                    self.oe.set_busy(0)
-+                    if message == 'Done! Full backup completed.':
-+                        dialog = xbmcgui.Dialog()
-+                        dialog.notification('Backup',
-+                                        '%s' % message,
-+                                        xbmcgui.NOTIFICATION_INFO, 3000)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::backup_emmc', 'ERROR: (' + repr(e) + ')')
++        if os.path.exists(self.EMMC_DDBR_BACKUP):
++            dialog = xbmcgui.Dialog()
++            ret = dialog.yesno('Attention!', 'Create full backup eMM ?')
++            if ret:
++                self.oe.notify(self.oe._(32363), 'Backup...')
++                message = self.oe.execute(self.EMMC_DDBR_BACKUP, 1).strip()
++                if message == 'Done! Full backup completed.':
++                    dialog = xbmcgui.Dialog()
++                    dialog.notification('Backup',
++                                    '%s' % message,
++                                    xbmcgui.NOTIFICATION_INFO, 3000)
 +
++    @log.log_function()
 +    def restore_emmc(self, listItem=None):
-+        try:
-+            self.oe.dbg_log('emmc::restore_emmc', 'enter_function', 0)
-+            if os.path.exists(self.EMMC_DDBR_RESTORE):
-+                dialog = xbmcgui.Dialog()
-+                ret = dialog.yesno('Attention!', 'Start restore full backup eMMC ?')
-+                if ret:
-+                    self.oe.notify(self.oe._(32363), 'Backup...')
-+                    self.oe.set_busy(1)
-+                    message = self.oe.execute(self.EMMC_DDBR_RESTORE, 1).strip()
-+                    self.oe.set_busy(0)
-+                    if message == 'Done! restore backup completed.':
-+                       dialog = xbmcgui.Dialog()
-+                       dialog.notification('Restore',
-+                                        '%s' % message,
-+                                        xbmcgui.NOTIFICATION_INFO, 3000)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::restore_emmc', 'ERROR: (' + repr(e) + ')')
++        if os.path.exists(self.EMMC_DDBR_RESTORE):
++            dialog = xbmcgui.Dialog()
++            ret = dialog.yesno('Attention!', 'Start restore full backup eMMC ?')
++            if ret:
++                self.oe.notify(self.oe._(32363), 'Restore...')
++                message = self.oe.execute(self.EMMC_DDBR_RESTORE, 1).strip()
++                if message == 'Done! restore backup completed.':
++                   dialog = xbmcgui.Dialog()
++                   dialog.notification('Restore',
++                                    '%s' % message,
++                                    xbmcgui.NOTIFICATION_INFO, 3000)
 +
++    @log.log_function()
 +    def reboot_emmc_enable(self, listItem=None):
-+        try:
-+            self.oe.dbg_log('emmc::reboot_emmc_enable', 'enter_function', 0)
-+            if os.path.exists(self.EMMC_REBOOT_ENABLE):
-+                dialog = xbmcgui.Dialog()
-+                ret = dialog.yesno('Attention!', 'Start enable reboot to Android ?')
-+                if ret:
-+                    self.oe.notify(self.oe._(32363), 'Enable...')
-+                    self.oe.set_busy(1)
-+                    message = self.oe.execute(self.EMMC_REBOOT_ENABLE, 1).strip()
-+                    self.oe.set_busy(0)
-+                    if message == 'Done! enable reboot android completed.':
-+                       dialog = xbmcgui.Dialog()
-+                       dialog.notification('Reboot',
-+                                        '%s' % message,
-+                                        xbmcgui.NOTIFICATION_INFO, 3000)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::reboot_emmc_enable', 'ERROR: (' + repr(e) + ')')
++        if os.path.exists(self.EMMC_REBOOT_ENABLE):
++            dialog = xbmcgui.Dialog()
++            ret = dialog.yesno('Attention!', 'Start enable reboot to Android ?')
++            if ret:
++                self.oe.notify(self.oe._(32363), 'Enable...')
++                message = self.oe.execute(self.EMMC_REBOOT_ENABLE, 1).strip()
++                if message == 'Done! enable reboot android completed.':
++                   dialog = xbmcgui.Dialog()
++                   dialog.notification('Reboot',
++                                    '%s' % message,
++                                    xbmcgui.NOTIFICATION_INFO, 3000)
 +
++    @log.log_function()
 +    def reboot_emmc_disable(self, listItem=None):
-+        try:
-+            self.oe.dbg_log('emmc::reboot_emmc_disable', 'enter_function', 0)
-+            if os.path.exists(self.EMMC_REBOOT_DISABLE):
-+                dialog = xbmcgui.Dialog()
-+                ret = dialog.yesno('Attention!', 'Start disable reboot to Android ?')
-+                if ret:
-+                    self.oe.notify(self.oe._(32363), 'Disable...')
-+                    self.oe.set_busy(1)
-+                    message = self.oe.execute(self.EMMC_REBOOT_DISABLE, 1).strip()
-+                    self.oe.set_busy(0)
-+                    if message == 'Done! disable reboot android completed.':
-+                       dialog = xbmcgui.Dialog()
-+                       dialog.notification('Reboot',
-+                                        '%s' % message,
-+                                        xbmcgui.NOTIFICATION_INFO, 3000)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::reboot_emmc_disable', 'ERROR: (' + repr(e) + ')')
-+
-+    def exit(self):
-+        try:
-+            self.oe.dbg_log('emmc::exit', 'enter_function', 0)
-+            self.oe.dbg_log('emmc::exit', 'exit_function', 0)
-+        except Exception as e:
-+            self.oe.dbg_log('emmc::exit', 'ERROR: (%s)' % repr(e), 4)
++        if os.path.exists(self.EMMC_REBOOT_DISABLE):
++            dialog = xbmcgui.Dialog()
++            ret = dialog.yesno('Attention!', 'Start disable reboot to Android ?')
++            if ret:
++                self.oe.notify(self.oe._(32363), 'Disable...')
++                message = self.oe.execute(self.EMMC_REBOOT_DISABLE, 1).strip()
++                if message == 'Done! disable reboot android completed.':
++                   dialog = xbmcgui.Dialog()
++                   dialog.notification('Reboot',
++                                    '%s' % message,
++                                    xbmcgui.NOTIFICATION_INFO, 3000)
 

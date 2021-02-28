@@ -47,6 +47,7 @@ elif [ "$PLATFORM" = "AML" -o "$PLATFORM" = "AMLMX" ]; then
     cat << EOF > "${LE_TMP}/uEnv.txt"
 FDT=/dtb/amlogic/${DTB}
 LINUX=/${KERNEL_NAME}
+VMODE=1080P
 APPEND=boot=LABEL=${DISTRO_BOOTLABEL} disk=LABEL=${DISTRO_DISKLABEL} quiet ${EXTRA_CMDLINE}
 EOF
       mcopy -s "${LE_TMP}/uEnv.txt" ::

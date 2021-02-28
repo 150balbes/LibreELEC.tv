@@ -1,5 +1,5 @@
---- a/language/resource.language.en_gb/strings.po
-+++ b/language/resource.language.en_gb/strings.po
+--- a/resources/language/resource.language.en_gb/strings.po
++++ b/resources/language/resource.language.en_gb/strings.po
 @@ -999,3 +999,49 @@
  msgctxt "#32399"
  msgid "Public"

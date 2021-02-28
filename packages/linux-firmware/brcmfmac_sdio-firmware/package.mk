@@ -2,18 +2,18 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="brcmfmac_sdio-firmware"
-PKG_VERSION="4b4acd5f91fcf3c8190a08b74e1afd2274080860"
-PKG_SHA256="df786a745c6af7754793367824830e4455e46cdcc8c0f06ab053ac8f25f6442c"
+PKG_VERSION="47c4aae498c935746b1e4a1fad87b0d9649ad947"
+PKG_SHA256="fee6192b6e5c1b46465faff4499189d12ce3568e40ed3909de821e4e3a9573cf"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/LibreELEC/brcmfmac_sdio-firmware"
-PKG_URL="https://github.com/LibreELEC/brcmfmac_sdio-firmware/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/LibreELEC/brcmfmac_sdio-firmware/archive/${PKG_VERSION}.tar.gz"
 PKG_LONGDESC="Broadcom SDIO firmware used with LibreELEC"
 PKG_TOOLCHAIN="manual"
 
 post_makeinstall_target() {
-  FW_TARGET_DIR=$INSTALL/$(get_full_firmware_dir)
+  FW_TARGET_DIR=${INSTALL}/$(get_full_firmware_dir)
 
-  if find_file_path firmwares/$PKG_NAME.dat; then
+  if find_file_path firmwares/${PKG_NAME}.dat; then
     FW_LISTS="${FOUND_PATH}"
   else
     FW_LISTS="${PKG_DIR}/firmwares/any.dat ${PKG_DIR}/firmwares/${TARGET_ARCH}.dat"
@@ -39,8 +39,8 @@ post_makeinstall_target() {
     done < ${fwlist}
   done
 
-  mkdir -p $INSTALL/usr/bin
-    cp $PKG_DIR/scripts/brcmfmac-firmware-setup $INSTALL/usr/bin
+  mkdir -p ${INSTALL}/usr/bin
+    cp ${PKG_DIR}/scripts/brcmfmac-firmware-setup ${INSTALL}/usr/bin
 }
 
 post_install() {

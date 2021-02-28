@@ -12,11 +12,9 @@ this should probably be removed after OE 6
  xbmc/windowing/X11/WinSystemX11.cpp | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/xbmc/windowing/X11/WinSystemX11.cpp b/xbmc/windowing/X11/WinSystemX11.cpp
-index 34d3138977..0cdc91a8ba 100644
 --- a/xbmc/windowing/X11/WinSystemX11.cpp
 +++ b/xbmc/windowing/X11/WinSystemX11.cpp
-@@ -743,8 +743,6 @@ bool CWinSystemX11::SetWindow(int width, int height, bool fullscreen, const std:
+@@ -753,8 +753,6 @@ bool CWinSystemX11::SetWindow(int width,
  
      if (fullscreen && hasWM)
      {
@@ -25,6 +23,3 @@ index 34d3138977..0cdc91a8ba 100644
        // disable desktop compositing for KDE, when Kodi is in full-screen mode
        int one = 1;
        Atom composite = XInternAtom(m_dpy, "_KDE_NET_WM_BLOCK_COMPOSITING", True);
--- 
-2.5.0
-
