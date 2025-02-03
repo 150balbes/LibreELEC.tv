@@ -207,4 +207,8 @@ makeinstall_init() {
       -e "s/@SYSTEM_SIZE@/${SYSTEM_SIZE}/g" \
       -i ${INSTALL}/init
   chmod 755 ${INSTALL}/init
+
+  mkdir -p ${INSTALL}/usr/lib/firmware/arm/mali/arch10.8
+  cp ${BUILD}/image/system/usr/lib/kernel-overlays/base/lib/firmware/arm/mali/arch10.8/mali_csffw.bin ${INSTALL}/usr/lib/firmware/arm/mali/arch10.8
+
 }
