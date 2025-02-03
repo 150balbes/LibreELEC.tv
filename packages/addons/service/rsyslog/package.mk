@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rsyslog"
-PKG_VERSION="8.2304.0"
-PKG_SHA256="d090e90283eb4b80de8b43e5ffc6e4b59c4e3970f2aa91e63beef0a11720d74d"
+PKG_VERSION="8.2408.0"
+PKG_SHA256="8bb2f15f9bf9bb7e635182e3d3e370bfc39d08bf35a367dce9714e186f787206"
 PKG_REV="0"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -43,8 +43,7 @@ addon() {
      ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
 
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/rsyslog
-  for l in $(find ${PKG_INSTALL}/usr/lib -name *.so)
-  do
+  for l in $(find ${PKG_INSTALL}/usr/lib -name *.so); do
     cp ${l} ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/rsyslog/
   done
 }

@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="glibc"
-PKG_VERSION="2.37"
-PKG_SHA256="2257eff111a1815d74f46856daaf40b019c1e553156c69d48ba0cbfc1bb91a43"
+PKG_VERSION="2.40"
+PKG_SHA256="19a890175e9263d748f627993de6f4b1af9cd21e03f080e4bfb3a1fac10205a2"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.gnu.org/software/libc/"
 PKG_URL="https://ftp.gnu.org/pub/gnu/glibc/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_TARGET="ccache:host autotools:host linux:host gcc:bootstrap pigz:host Python3:host"
+PKG_DEPENDS_TARGET="ccache:host autotools:host linux:host gcc:bootstrap Python3:host"
 PKG_DEPENDS_INIT="glibc"
 PKG_LONGDESC="The Glibc package contains the main C library."
 PKG_BUILD_FLAGS="+bfd"
@@ -31,7 +31,7 @@ PKG_CONFIGURE_OPTS_TARGET="BASH_SHELL=/bin/sh \
                            --with-__thread \
                            --with-binutils=${BUILD}/toolchain/bin \
                            --with-headers=${SYSROOT_PREFIX}/usr/include \
-                           --enable-kernel=6.1.0 \
+                           --enable-kernel=6.6.0 \
                            --without-cvs \
                            --without-gd \
                            --disable-build-nscd \
@@ -49,7 +49,7 @@ post_unpack() {
 }
 
 pre_configure_target() {
-# Filter out some problematic *FLAGS
+  # Filter out some problematic *FLAGS
   export CFLAGS=$(echo ${CFLAGS} | sed -e "s|-ffast-math||g")
   export CFLAGS=$(echo ${CFLAGS} | sed -e "s|-Ofast|-O2|g")
   export CFLAGS=$(echo ${CFLAGS} | sed -e "s|-O.|-O2|g")
@@ -101,8 +101,8 @@ post_makeinstall_target() {
     cp -a ${INSTALL}/usr/share/i18n/locales ${INSTALL}/.noinstall
     mv ${INSTALL}/usr/share/i18n/charmaps ${INSTALL}/.noinstall
 
-# cleanup
-# remove any programs we don't want/need, keeping only those we want
+  # cleanup
+  # remove any programs we don't want/need, keeping only those we want
   for f in $(find ${INSTALL}/usr/bin -type f); do
     listcontains "${GLIBC_INCLUDE_BIN}" "$(basename "${f}")" || safe_remove "${f}"
   done
@@ -112,7 +112,7 @@ post_makeinstall_target() {
   safe_remove ${INSTALL}/usr/lib/*.o
   safe_remove ${INSTALL}/var
 
-# add UTF-8 charmap
+  # add UTF-8 charmap
   mkdir -p ${INSTALL}/usr/share/i18n/charmaps
     cp -PR ${INSTALL}/.noinstall/charmaps/UTF-8.gz ${INSTALL}/usr/share/i18n/charmaps
 
@@ -123,7 +123,7 @@ post_makeinstall_target() {
       cp -PR ${PKG_BUILD}/localedata/locales/POSIX ${INSTALL}/usr/share/i18n/locales
   fi
 
-# create default configs
+  # create default configs
   mkdir -p ${INSTALL}/etc
     cp ${PKG_DIR}/config/nsswitch-target.conf ${INSTALL}/etc/nsswitch.conf
     cp ${PKG_DIR}/config/host.conf ${INSTALL}/etc
@@ -151,7 +151,7 @@ makeinstall_init() {
 }
 
 post_makeinstall_init() {
-# create default configs
+  # create default configs
   mkdir -p ${INSTALL}/etc
     cp ${PKG_DIR}/config/nsswitch-init.conf ${INSTALL}/etc/nsswitch.conf
 }

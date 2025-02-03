@@ -5,8 +5,8 @@
 PKG_NAME="linux"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kernel.org"
-PKG_DEPENDS_HOST="ccache:host rsync:host"
-PKG_DEPENDS_TARGET="linux:host kmod:host xz:host keyutils openssl:host ${KERNEL_EXTRA_DEPENDS_TARGET}"
+PKG_DEPENDS_HOST="ccache:host"
+PKG_DEPENDS_TARGET="linux:host kmod:host keyutils openssl:host ${KERNEL_EXTRA_DEPENDS_TARGET}"
 PKG_NEED_UNPACK="${LINUX_DEPENDS} $(get_pkg_directory initramfs) $(get_pkg_variable initramfs PKG_NEED_UNPACK)"
 PKG_LONGDESC="This package contains a precompiled kernel image and the modules."
 PKG_IS_KERNEL_PKG="yes"
@@ -16,23 +16,24 @@ PKG_PATCH_DIRS="${LINUX}"
 
 case "${LINUX}" in
   amlogic)
-    PKG_VERSION="7163dc197f14f1360506d97814fef17a51673293" # 6.1.36
-    PKG_SHA256="18f6a5e57cb2ca021e500680784e757c9985a63f6301f2bea32ea5ebee8edaf0"
+    PKG_VERSION="adc218676eef25575469234709c2d87185ca223a" # 6.12.0
+    PKG_SHA256="8787cc90ca7740ab7c955b6fad83010dc600f14a6d94511b548703e4f0f40caa"
     PKG_URL="https://github.com/torvalds/linux/archive/${PKG_VERSION}.tar.gz"
     PKG_SOURCE_NAME="linux-${LINUX}-${PKG_VERSION}.tar.gz"
-    PKG_PATCH_DIRS="default"
+    PKG_PATCH_DIRS="default rtlwifi/after-6.12"
     ;;
   raspberrypi)
-    PKG_VERSION="31dbf25138831241f31f7eee835b83a607eaa179" # 6.1.38
-    PKG_SHA256="90b365734a1f2c50f4b60c3ec3042673b3c256abdd12584c4b1f0f8a82b56eee"
+    PKG_VERSION="521f2baed818c04981fd61b275c996a8ef03b833" # 6.12
+    PKG_SHA256="7dc120ed828ab5d9adff848f699865c776c291f80af90f0d9b81d8905601a4a0"
     PKG_URL="https://github.com/raspberrypi/linux/archive/${PKG_VERSION}.tar.gz"
     PKG_SOURCE_NAME="linux-${LINUX}-${PKG_VERSION}.tar.gz"
+    PKG_PATCH_DIRS="raspberrypi rtlwifi/after-6.12"
     ;;
   *)
-    PKG_VERSION="6.4.1"
-    PKG_SHA256="0d9daa9f1c176fb13b9447f6e3d80e82b49043f0d344c247bbf09b4e625beef3"
+    PKG_VERSION="6.12"
+    PKG_SHA256="b1a2562be56e42afb3f8489d4c2a7ac472ac23098f1ef1c1e40da601f54625eb"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-    PKG_PATCH_DIRS="default"
+    PKG_PATCH_DIRS="default rtlwifi/after-6.12"
     ;;
 esac
 
@@ -59,6 +60,10 @@ fi
 
 if [[ "${KERNEL_TARGET}" = uImage* ]]; then
   PKG_DEPENDS_TARGET+=" u-boot-tools:host"
+fi
+
+if [ "${BOOTLOADER}" = "bcm2835-bootloader" -a "${TARGET_KERNEL_ARCH}" = "arm64" ]; then
+  PKG_DEPENDS_TARGET+=" pigz:host"
 fi
 
 # Ensure that the dependencies of initramfs:target are built correctly, but
@@ -98,7 +103,8 @@ makeinstall_host() {
 }
 
 pre_make_target() {
-  ( cd ${ROOT}
+  ( 
+    cd ${ROOT}
     rm -rf ${BUILD}/initramfs
     rm -f ${STAMPS_INSTALL}/initramfs/install_target ${STAMPS_INSTALL}/*/install_init
     ${SCRIPTS}/install initramfs
@@ -128,20 +134,13 @@ pre_make_target() {
     ${PKG_BUILD}/scripts/config --disable CONFIG_CIFS
   fi
 
-  # disable iscsi support if not enabled
-  if [ ! "${ISCSI_SUPPORT}" = yes ]; then
-    ${PKG_BUILD}/scripts/config --disable CONFIG_SCSI_ISCSI_ATTRS
-    ${PKG_BUILD}/scripts/config --disable CONFIG_ISCSI_TCP
-    ${PKG_BUILD}/scripts/config --disable CONFIG_ISCSI_BOOT_SYSFS
-    ${PKG_BUILD}/scripts/config --disable CONFIG_ISCSI_IBFT_FIND
-    ${PKG_BUILD}/scripts/config --disable CONFIG_ISCSI_IBFT
-  fi
-
-  # disable lima/panfrost if libmali is configured
-  if [ "${OPENGLES}" = "libmali" ]; then
-    ${PKG_BUILD}/scripts/config --disable CONFIG_DRM_LIMA
-    ${PKG_BUILD}/scripts/config --disable CONFIG_DRM_PANFROST
-  fi
+  # enable/disable iscsi support
+  [ "${ISCSI_SUPPORT}" = yes ] && OPTION="--enable" || OPTION="--disable"
+  ${PKG_BUILD}/scripts/config ${OPTION} CONFIG_SCSI_ISCSI_ATTRS
+  ${PKG_BUILD}/scripts/config ${OPTION} CONFIG_ISCSI_TCP
+  ${PKG_BUILD}/scripts/config ${OPTION} CONFIG_ISCSI_BOOT_SYSFS
+  ${PKG_BUILD}/scripts/config ${OPTION} CONFIG_ISCSI_IBFT_FIND
+  ${PKG_BUILD}/scripts/config ${OPTION} CONFIG_ISCSI_IBFT
 
   # disable wireguard support if not enabled
   if [ ! "${WIREGUARD_SUPPORT}" = yes ]; then
@@ -177,7 +176,7 @@ pre_make_target() {
     kernel_make oldconfig
   else
     # accept default answers for .config changes
-    yes "" | kernel_make oldconfig > /dev/null
+    yes "" | kernel_make oldconfig >/dev/null
   fi
 
   if [ -f "${DISTRO_DIR}/${DISTRO}/kernel_options" ]; then
@@ -191,7 +190,7 @@ pre_make_target() {
       if [ "$(${PKG_BUILD}/scripts/config --state ${OPTION%%=*})" != "$(echo ${OPTION##*=} | tr -d '"')" ]; then
         MISSING_KERNEL_OPTIONS+="\t${OPTION}\n"
       fi
-    done < ${DISTRO_DIR}/${DISTRO}/kernel_options
+    done <${DISTRO_DIR}/${DISTRO}/kernel_options
 
     if [ -n "${MISSING_KERNEL_OPTIONS}" ]; then
       print_color CLR_WARNING "LINUX: kernel options not correct: \n${MISSING_KERNEL_OPTIONS%%}\nPlease run ./tools/check_kernel_config\n"
@@ -213,7 +212,8 @@ make_target() {
   DTC_FLAGS=-@ kernel_make ${KERNEL_TARGET} ${KERNEL_MAKE_EXTRACMD} modules
 
   if [ "${PKG_BUILD_PERF}" = "yes" ]; then
-    ( cd tools/perf
+    ( 
+      cd tools/perf
 
       # arch specific perf build args
       case "${TARGET_ARCH}" in
@@ -255,9 +255,9 @@ make_target() {
     if [ "${KERNEL_UIMAGE_COMP}" != "none" ]; then
       COMPRESSED_SIZE=$(stat -t "arch/${TARGET_KERNEL_ARCH}/boot/${KERNEL_TARGET}" | awk '{print $2}')
       # align to 1 MiB
-      COMPRESSED_SIZE=$(( ((${COMPRESSED_SIZE} - 1 >> 20) + 1) << 20 ))
-      PKG_KERNEL_UIMAGE_LOADADDR=$(printf '%X' "$(( ${KERNEL_UIMAGE_LOADADDR} + ${COMPRESSED_SIZE} ))")
-      PKG_KERNEL_UIMAGE_ENTRYADDR=$(printf '%X' "$(( ${KERNEL_UIMAGE_ENTRYADDR} + ${COMPRESSED_SIZE} ))")
+      COMPRESSED_SIZE=$((((${COMPRESSED_SIZE} - 1 >> 20) + 1) << 20))
+      PKG_KERNEL_UIMAGE_LOADADDR=$(printf '%X' "$((${KERNEL_UIMAGE_LOADADDR} + ${COMPRESSED_SIZE}))")
+      PKG_KERNEL_UIMAGE_ENTRYADDR=$(printf '%X' "$((${KERNEL_UIMAGE_ENTRYADDR} + ${COMPRESSED_SIZE}))")
     else
       PKG_KERNEL_UIMAGE_LOADADDR=${KERNEL_UIMAGE_LOADADDR}
       PKG_KERNEL_UIMAGE_ENTRYADDR=${KERNEL_UIMAGE_ENTRYADDR}
@@ -286,7 +286,9 @@ makeinstall_target() {
 
   if [ "${BOOTLOADER}" = "u-boot" ]; then
     mkdir -p ${INSTALL}/usr/share/bootloader
-    for dtb in arch/${TARGET_KERNEL_ARCH}/boot/dts/*.dtb arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*.dtb; do
+    for dtb in arch/${TARGET_KERNEL_ARCH}/boot/dts/*.dtb \
+               arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*.dtb \
+               arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*/*.dtb; do
       if [ -f ${dtb} ]; then
         cp -v ${dtb} ${INSTALL}/usr/share/bootloader
       fi
@@ -302,7 +304,9 @@ makeinstall_target() {
 
     # install platform dtbs, but remove upstream kernel dtbs (i.e. without downstream
     # drivers and decent USB support) as these are not required by LibreELEC
-    for dtb in arch/${TARGET_KERNEL_ARCH}/boot/dts/*.dtb arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*.dtb; do
+    for dtb in arch/${TARGET_KERNEL_ARCH}/boot/dts/*.dtb \
+               arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*.dtb \
+               arch/${TARGET_KERNEL_ARCH}/boot/dts/*/*/*.dtb; do
       if [ -f ${dtb} ]; then
         cp -v ${dtb} ${INSTALL}/usr/share/bootloader
       fi

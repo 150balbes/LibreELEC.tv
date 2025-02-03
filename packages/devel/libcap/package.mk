@@ -4,13 +4,13 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libcap"
-PKG_VERSION="2.69"
-PKG_SHA256="f311f8f3dad84699d0566d1d6f7ec943a9298b28f714cae3c931dfd57492d7eb"
+PKG_VERSION="2.71"
+PKG_SHA256="b7006c9af5168315f35fc734bf1a8d2aa70766bd8b8c4340962e05b19c35b900"
 PKG_LICENSE="GPL"
 PKG_SITE="https://git.kernel.org/pub/scm/libs/libcap/libcap.git/log/"
 PKG_URL="https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="ccache:host"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="make:host gcc:host"
 PKG_LONGDESC="A library for getting and setting POSIX.1e capabilities."
 PKG_BUILD_FLAGS="+pic"
 

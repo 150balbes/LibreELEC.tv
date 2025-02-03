@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-pce-fast"
-PKG_VERSION="7ff6d867dbde199185f462070c1c1b5b84affe79"
-PKG_SHA256="864ffaf464f9231347ba8eaa83d3585fa256aa6d000bb75ab42e189ac51b4f0a"
+PKG_VERSION="087f70453a23185796c67440d4143442a857b3ff"
+PKG_SHA256="674b1e8a7c3a8bb08ce6f913020e4281cc2b78417870a17100c96a90dd4c5b58"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-pce-fast-libretro"
 PKG_URL="https://github.com/libretro/beetle-pce-fast-libretro/archive/${PKG_VERSION}.tar.gz"
@@ -20,5 +20,5 @@ PKG_LIBVAR="BEETLE-PCE-FAST_LIB"
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 }

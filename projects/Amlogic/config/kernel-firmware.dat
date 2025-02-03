@@ -1,9 +1,13 @@
 ath9k_htc
 ath10k/QCA9377
 mediatek/mt7668pr2h.bin
+mediatek/*MT7961*.bin
 mrvl/sd8897_uapsta.bin
+mt7662.bin
+mt7662_rom_patch.bin
 qca/nvm_00230302.bin
 qca/rampatch_00230302.bin
+rtlwifi/rtl8188eufw.bin
 rtlwifi/rtl8192cufw_TMSC.bin
 rtlwifi/rtl8192cufw.bin
 rtlwifi/rtl8192eu_nic.bin
@@ -13,6 +17,8 @@ rtw88/rtw8822c_fw.bin
 rtw88/rtw8822c_wow_fw.bin
 rtl_bt/rtl8723bs_fw.bin
 rtl_bt/rtl8723bs_config-OBDA8723.bin
+rtl_bt/rtl8761bu_config.bin
+rtl_bt/rtl8761bu_fw.bin
 rtl_bt/rtl8821c_config.bin
 rtl_bt/rtl8821c_fw.bin
 rtl_bt/rtl8822cs_config.bin

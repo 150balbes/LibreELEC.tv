@@ -1,0 +1,79 @@
+From b4ca194c66389e2d9f27d3346e93f856aff9120b Mon Sep 17 00:00:00 2001
+From: Callum Parsey <callum@neoninteger.au>
+Date: Sat, 12 Oct 2024 08:03:51 +0000
+Subject: [PATCH 11/12] FROMGIT: configs: meson64: Ensure commands for boot
+ targets are available
+
+When populating BOOT_TARGET_DEVICES on Amlogic Meson platforms, verify
+that the shell commands for accessing the relevant media have been
+enabled in the build configuration.
+
+This was already being done for USB, NVME and SCSI devices, but not
+for MMC devices or network boot. This meant that configuring U-Boot
+without the networking or MMC subsystems/drivers would cause an error
+to be thrown during preprocessing.
+
+Signed-off-by: Callum Parsey <callum@neoninteger.au>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://lore.kernel.org/r/20241012080340.2596-1-callum@neoninteger.au
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ include/configs/meson64.h | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/include/configs/meson64.h b/include/configs/meson64.h
+index 8b6f8159e78..72d3caa30be 100644
+--- a/include/configs/meson64.h
++++ b/include/configs/meson64.h
+@@ -77,6 +77,15 @@
+ 	#define BOOTENV_DEV_NAME_USB_DFU(devtypeu, devtypel, instance)
+ #endif
+ 
++#ifdef CONFIG_CMD_MMC
++	#define BOOT_TARGET_MMC(func) \
++		func(MMC, mmc, 0) \
++		func(MMC, mmc, 1) \
++		func(MMC, mmc, 2)
++#else
++	#define BOOT_TARGET_MMC(func)
++#endif
++
+ #ifdef CONFIG_CMD_USB
+ #define BOOT_TARGET_DEVICES_USB(func) func(USB, usb, 0)
+ #else
+@@ -95,18 +104,27 @@
+ 	#define BOOT_TARGET_SCSI(func)
+ #endif
+ 
++#if defined(CONFIG_CMD_DHCP) && defined(CONFIG_CMD_PXE)
++	#define BOOT_TARGET_PXE(func) func(PXE, pxe, na)
++	#define BOOT_TARGET_DHCP(func) func(DHCP, dhcp, na)
++#elif defined(CONFIG_CMD_DHCP)
++	#define BOOT_TARGET_PXE(func)
++	#define BOOT_TARGET_DHCP(func) func(DHCP, dhcp, na)
++#else
++	#define BOOT_TARGET_PXE(func)
++	#define BOOT_TARGET_DHCP(func)
++#endif
++
+ #ifndef BOOT_TARGET_DEVICES
+ #define BOOT_TARGET_DEVICES(func) \
+ 	func(ROMUSB, romusb, na)  \
+ 	func(USB_DFU, usbdfu, na)  \
+-	func(MMC, mmc, 0) \
+-	func(MMC, mmc, 1) \
+-	func(MMC, mmc, 2) \
++	BOOT_TARGET_MMC(func) \
+ 	BOOT_TARGET_DEVICES_USB(func) \
+ 	BOOT_TARGET_NVME(func) \
+ 	BOOT_TARGET_SCSI(func) \
+-	func(PXE, pxe, na) \
+-	func(DHCP, dhcp, na)
++	BOOT_TARGET_PXE(func) \
++	BOOT_TARGET_DHCP(func)
+ #endif
+ 
+ #define BOOTM_SIZE		__stringify(0x1700000)
+-- 
+2.34.1
+

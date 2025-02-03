@@ -2,11 +2,11 @@
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="fuse3"
-PKG_VERSION="3.15.0"
-PKG_SHA256="70589cfd5e1cff7ccd6ac91c86c01be340b227285c5e200baa284e401eea2ca0"
+PKG_VERSION="3.16.2"
+PKG_SHA256="f797055d9296b275e981f5f62d4e32e089614fc253d1ef2985851025b8a0ce87"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/libfuse/libfuse/"
-PKG_URL="https://github.com/libfuse/libfuse/releases/download/fuse-${PKG_VERSION}/fuse-${PKG_VERSION}.tar.xz"
+PKG_URL="https://github.com/libfuse/libfuse/releases/download/fuse-${PKG_VERSION}/fuse-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain systemd"
 PKG_LONGDESC="FUSE is an interface for userspace programs to export a filesystem to the Linux kernel."
 

@@ -1,0 +1,49 @@
+From 868c1409d2ec75b3d5b6c04eeac0ea3127893b66 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sat, 26 Oct 2024 12:27:19 +0000
+Subject: [PATCH] libfdt: Fix build with swig 4.3.0
+
+Call SWIG_AppendOutput instead of SWIG_Python_AppendOutput so that
+is_void is handled within swig.
+
+Link: https://github.com/swig/swig/commit/cd39cf132c96a0887be07c826b80804d7677a701
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+---
+ scripts/dtc/pylibfdt/libfdt.i_shipped | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/dtc/pylibfdt/libfdt.i_shipped b/scripts/dtc/pylibfdt/libfdt.i_shipped
+index 56cc5d48f4..e4659489a9 100644
+--- a/scripts/dtc/pylibfdt/libfdt.i_shipped
++++ b/scripts/dtc/pylibfdt/libfdt.i_shipped
+@@ -1037,7 +1037,7 @@ typedef uint32_t fdt32_t;
+ 			fdt_string(fdt1, fdt32_to_cpu($1->nameoff)));
+ 		buff = PyByteArray_FromStringAndSize(
+ 			(const char *)($1 + 1), fdt32_to_cpu($1->len));
+-		resultobj = SWIG_Python_AppendOutput(resultobj, buff);
++		resultobj = SWIG_AppendOutput(resultobj, buff);
+ 	}
+ }
+ 
+@@ -1076,7 +1076,7 @@ typedef uint32_t fdt32_t;
+ 
+ %typemap(argout) int *depth {
+         PyObject *val = Py_BuildValue("i", *arg$argnum);
+-        resultobj = SWIG_Python_AppendOutput(resultobj, val);
++        resultobj = SWIG_AppendOutput(resultobj, val);
+ }
+ 
+ %apply int *depth { int *depth };
+@@ -1092,7 +1092,7 @@ typedef uint32_t fdt32_t;
+            if (PyTuple_GET_SIZE(resultobj) == 0)
+               resultobj = val;
+            else
+-              resultobj = SWIG_Python_AppendOutput(resultobj, val);
++              resultobj = SWIG_AppendOutput(resultobj, val);
+         }
+ }
+ 
+-- 
+2.43.0
+

@@ -3,9 +3,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mpd"
-PKG_VERSION="0.23.12"
-PKG_SHA256="b7fca62284ecc25a681ea6a07abc49200af5353be42cb5a31e3173be9d8702e7"
-PKG_REV="0"
+PKG_VERSION="0.23.15"
+PKG_SHA256="550132239ad1acf82ccf8905b56cc13dc2c81a4489b96fba7731b3049907661a"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.musicpd.org"
@@ -102,7 +102,9 @@ addon() {
   # copy mpd cli binary
   cp -P $(get_install_dir mpd-mpc)/usr/bin/mpc ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
-  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
-  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/{mpc,mpd}
+
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+  cp -p $(get_install_dir libmpdclient)/usr/lib/libmpdclient.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 }

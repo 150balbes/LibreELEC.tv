@@ -3,14 +3,14 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gcc"
-PKG_VERSION="13.1.0"
-PKG_SHA256="61d684f0aa5e76ac6585ad8898a2427aade8979ed5e7f85492286c4dfc13ee86"
+PKG_VERSION="14.2.0"
+PKG_SHA256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9"
 PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://gcc.gnu.org/"
 PKG_URL="https://ftpmirror.gnu.org/gcc/${PKG_NAME}-${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_BOOTSTRAP="ccache:host autoconf:host binutils:host gmp:host mpfr:host mpc:host zstd:host"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_DEPENDS_HOST="ccache:host autoconf:host binutils:host gmp:host mpfr:host mpc:host zstd:host glibc"
+PKG_DEPENDS_HOST="ccache:host autoconf:host binutils:host gmp:host mpfr:host mpc:host zstd:host glibc libxcrypt"
 PKG_DEPENDS_INIT="toolchain"
 PKG_LONGDESC="This package contains the GNU Compiler Collection."
 
@@ -19,7 +19,7 @@ if [ "${MOLD_SUPPORT}" = "yes" ]; then
 fi
 
 case ${TARGET_ARCH} in
-  arm|riscv64)
+  arm | riscv64)
     OPTS_LIBATOMIC="--enable-libatomic"
     ;;
   *)
@@ -89,7 +89,7 @@ post_makeinstall_bootstrap() {
 
   rm -f ${TARGET_PREFIX}gcc
 
-cat > ${TARGET_PREFIX}gcc <<EOF
+  cat >${TARGET_PREFIX}gcc <<EOF
 #!/bin/sh
 ${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
 EOF
@@ -129,7 +129,7 @@ post_makeinstall_host() {
 
   rm -f ${TARGET_PREFIX}gcc
 
-cat > ${TARGET_PREFIX}gcc <<EOF
+  cat >${TARGET_PREFIX}gcc <<EOF
 #!/bin/sh
 ${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
 EOF
@@ -141,7 +141,7 @@ EOF
 
   [ ! -f "${CROSS_CXX}" ] && mv ${TARGET_PREFIX}g++ ${CROSS_CXX}
 
-cat > ${TARGET_PREFIX}g++ <<EOF
+  cat >${TARGET_PREFIX}g++ <<EOF
 #!/bin/sh
 ${TOOLCHAIN}/bin/ccache ${CROSS_CXX} "\$@"
 EOF
@@ -157,11 +157,11 @@ EOF
 }
 
 configure_target() {
- : # reuse configure_host()
+  : # reuse configure_host()
 }
 
 make_target() {
- : # reuse make_host()
+  : # reuse make_host()
 }
 
 makeinstall_target() {
@@ -174,11 +174,11 @@ makeinstall_target() {
 }
 
 configure_init() {
- : # reuse configure_host()
+  : # reuse configure_host()
 }
 
 make_init() {
- : # reuse make_host()
+  : # reuse make_host()
 }
 
 makeinstall_init() {

@@ -3,17 +3,18 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libdrm"
-PKG_VERSION="2.4.115"
-PKG_SHA256="554cfbfe0542bddb391b4e3e05bfbbfc3e282b955bd56218d21c0616481f65eb"
+PKG_VERSION="2.4.123"
+PKG_SHA256="a2b98567a149a74b0f50e91e825f9c0315d86e7be9b74394dae8b298caadb79e"
 PKG_LICENSE="GPL"
 PKG_SITE="https://dri.freedesktop.org"
 PKG_URL="https://dri.freedesktop.org/libdrm/libdrm-${PKG_VERSION}.tar.xz"
+PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain libpciaccess"
 PKG_LONGDESC="The userspace interface library to kernel DRM services."
 
 get_graphicdrivers
 
-PKG_MESON_OPTS_TARGET="-Dnouveau=disabled \
+PKG_MESON_OPTS_COMMON="-Dnouveau=disabled \
                        -Domap=disabled \
                        -Dexynos=disabled \
                        -Dtegra=disabled \
@@ -21,8 +22,22 @@ PKG_MESON_OPTS_TARGET="-Dnouveau=disabled \
                        -Dman-pages=disabled \
                        -Dvalgrind=disabled \
                        -Dfreedreno-kgsl=false \
-                       -Dinstall-test-programs=true \
                        -Dudev=false"
+
+PKG_MESON_OPTS_HOST="${PKG_MESON_OPTS_COMMON} \
+                     -Damdgpu=disabled \
+                     -Detnaviv=disabled \
+                     -Dfreedreno=disabled \
+                     -Dintel=disabled \
+                     -Dradeon=disabled \
+                     -Dvc4=disabled \
+                     -Dvmwgfx=disabled \
+                     -Dtests=false \
+                     -Dinstall-test-programs=false"
+
+PKG_MESON_OPTS_TARGET="${PKG_MESON_OPTS_COMMON} \
+                     -Dtests=true \
+                     -Dinstall-test-programs=true"
 
 listcontains "${GRAPHIC_DRIVERS}" "(crocus|i915|iris)" &&
   PKG_MESON_OPTS_TARGET+=" -Dintel=enabled" || PKG_MESON_OPTS_TARGET+=" -Dintel=disabled"
@@ -47,9 +62,8 @@ listcontains "${GRAPHIC_DRIVERS}" "etnaviv" &&
 
 post_makeinstall_target() {
   # Remove all test programs installed by install-test-programs=true except modetest
-  for PKG_LIBDRM_TEST in \
-    drmdevice modeprint proptest vbltest
-  do
+  PKG_LIBDRM_LIST="drmdevice modeprint proptest vbltest"
+  for PKG_LIBDRM_TEST in ${PKG_LIBDRM_LIST}; do
     safe_remove ${INSTALL}/usr/bin/${PKG_LIBDRM_TEST}
   done
 

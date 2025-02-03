@@ -1,10 +1,10 @@
-From 95ed57b0ca24cde1d7547878101c62f552cb1160 Mon Sep 17 00:00:00 2001
+From 3f8ffb82b65019d9ee227f15e6a1b8cc7552e448 Mon Sep 17 00:00:00 2001
 From: Christian Hewitt <christianshewitt@gmail.com>
 Date: Fri, 13 Nov 2020 02:09:36 +0000
-Subject: [PATCH 01/22] LOCAL: configs: meson64: prevent stdout/stderr on
+Subject: [PATCH 01/12] LOCAL: configs: meson64: prevent stdout/stderr on
  videoconsole
 
-Several devices have CONFIG_DM_VIDEO enabled which causes stdout/stderr
+Several devices have CONFIG_VIDEO enabled which causes stdout/stderr
 to appear on videoconsole, so remove videoconsole from STDOUT so that
 early u-boot boot remains silent unless using the uart/serial console.
 
@@ -14,13 +14,13 @@ Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/configs/meson64.h b/include/configs/meson64.h
-index 40803ee9da..05b1fcb9fd 100644
+index ccb8ea2e716..8b6f8159e78 100644
 --- a/include/configs/meson64.h
 +++ b/include/configs/meson64.h
-@@ -18,7 +18,7 @@
+@@ -28,7 +28,7 @@
  
  /* For splashscreen */
- #ifdef CONFIG_DM_VIDEO
+ #ifdef CONFIG_VIDEO
 -#define STDOUT_CFG "vidconsole,serial"
 +#define STDOUT_CFG "serial"
  #else

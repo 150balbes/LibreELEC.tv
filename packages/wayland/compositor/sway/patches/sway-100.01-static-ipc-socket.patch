@@ -1,6 +1,6 @@
 --- a/sway/ipc-server.c
 +++ b/sway/ipc-server.c
-@@ -140,7 +140,7 @@ struct sockaddr_un *ipc_user_sockaddr(vo
+@@ -138,7 +138,7 @@ struct sockaddr_un *ipc_user_sockaddr(vo
  		dir = "/tmp";
  	}
  	if (path_size <= snprintf(ipc_sockaddr->sun_path, path_size,

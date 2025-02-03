@@ -30,9 +30,6 @@
   # OpenGL-ES implementation to use
     OPENGLES="mesa"
 
-  # Mali GPU family
-    MALI_FAMILY="450"
-
   # KODI Player implementation to use
     KODIPLAYER_DRIVER="$OPENGLES"
 

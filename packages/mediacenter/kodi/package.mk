@@ -3,12 +3,13 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="kodi"
-PKG_VERSION="21.0a2-Omega"
-PKG_SHA256="b4433b6d0c165b3de82d3594224c7297a89cc9fb2c12c5cc56b899f60912fda6"
+PKG_VERSION="65703fe91c077d8cc11be4ba10221b56cd38d30b"
+PKG_SHA256="74dbd28a417509f7a7c3a60648ade60b193bc5d34d1c24afb6e3235d1443015a"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
 PKG_URL="https://github.com/xbmc/xbmc/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain JsonSchemaBuilder:host TexturePacker:host Python3 zlib systemd lzo pcre swig:host libass curl fontconfig fribidi tinyxml libjpeg-turbo freetype libcdio taglib libxml2 libxslt rapidjson sqlite ffmpeg crossguid libdvdnav libfmt lirc libfstrcmp flatbuffers:host flatbuffers libudfread spdlog"
+PKG_DEPENDS_TARGET="toolchain JsonSchemaBuilder:host TexturePacker:host Python3 zlib systemd lzo pcre2 swig:host libass curl exiv2 fontconfig fribidi tinyxml tinyxml2 libjpeg-turbo freetype libcdio taglib libxml2 libxslt rapidjson sqlite ffmpeg crossguid libdvdnav libfmt lirc libfstrcmp flatbuffers:host flatbuffers libudfread spdlog libxkbcommon"
+PKG_DEPENDS_UNPACK="commons-lang3 commons-text groovy"
 PKG_DEPENDS_HOST="toolchain"
 PKG_LONGDESC="A free and open source cross-platform media player."
 PKG_BUILD_FLAGS="+speed"
@@ -72,7 +73,7 @@ configure_package() {
     KODI_ALSA="-DENABLE_ALSA=ON"
   else
     KODI_ALSA="-DENABLE_ALSA=OFF"
- fi
+  fi
 
   if [ "${KODI_PULSEAUDIO_SUPPORT}" = yes ]; then
     PKG_DEPENDS_TARGET+=" pulseaudio"
@@ -135,13 +136,17 @@ configure_package() {
   fi
 
   case "${KODI_MYSQL_SUPPORT}" in
-    mysql)   PKG_DEPENDS_TARGET="${PKG_DEPENDS_TARGET} mysql"
-             KODI_MYSQL="-DENABLE_MYSQLCLIENT=ON -DENABLE_MARIADBCLIENT=OFF"
-             ;;
-    mariadb) PKG_DEPENDS_TARGET="${PKG_DEPENDS_TARGET} mariadb-connector-c"
-             KODI_MYSQL="-DENABLE_MARIADBCLIENT=ON -DENABLE_MYSQLCLIENT=OFF"
-             ;;
-    *)       KODI_MYSQL="-DENABLE_MYSQLCLIENT=OFF -DENABLE_MARIADBCLIENT=OFF"
+    mysql)
+      PKG_DEPENDS_TARGET="${PKG_DEPENDS_TARGET} mysql"
+      KODI_MYSQL="-DENABLE_MYSQLCLIENT=ON -DENABLE_MARIADBCLIENT=OFF"
+      ;;
+    mariadb)
+      PKG_DEPENDS_TARGET="${PKG_DEPENDS_TARGET} mariadb-connector-c"
+      KODI_MYSQL="-DENABLE_MARIADBCLIENT=ON -DENABLE_MYSQLCLIENT=OFF"
+      ;;
+    *)
+      KODI_MYSQL="-DENABLE_MYSQLCLIENT=OFF -DENABLE_MARIADBCLIENT=OFF"
+      ;;
   esac
 
   if [ "${KODI_AIRPLAY_SUPPORT}" = yes ]; then
@@ -213,7 +218,7 @@ configure_package() {
   fi
 
   if [ ! "${KODIPLAYER_DRIVER}" = "default" -a "${DISPLAYSERVER}" = "no" ]; then
-    PKG_DEPENDS_TARGET+=" ${KODIPLAYER_DRIVER} libinput libxkbcommon libdisplay-info"
+    PKG_DEPENDS_TARGET+=" ${KODIPLAYER_DRIVER} libinput libdisplay-info"
     if [ "${OPENGLES_SUPPORT}" = yes -a "${KODIPLAYER_DRIVER}" = "${OPENGLES}" ]; then
       KODI_PLATFORM="-DCORE_PLATFORM_NAME=gbm -DAPP_RENDER_SYSTEM=gles"
       CFLAGS+=" -DEGL_NO_X11"
@@ -237,17 +242,17 @@ configure_package() {
   PKG_CMAKE_OPTS_TARGET="-DNATIVEPREFIX=${TOOLCHAIN} \
                          -DWITH_TEXTUREPACKER=${TOOLCHAIN}/bin/TexturePacker \
                          -DWITH_JSONSCHEMABUILDER=${TOOLCHAIN}/bin/JsonSchemaBuilder \
-                         -DDEPENDS_PATH=${PKG_BUILD}/depends \
                          -DSWIG_EXECUTABLE=${TOOLCHAIN}/bin/swig \
                          -DPYTHON_EXECUTABLE=${TOOLCHAIN}/bin/${PKG_PYTHON_VERSION} \
-                         -DPYTHON_INCLUDE_DIRS=${SYSROOT_PREFIX}/usr/include/${PKG_PYTHON_VERSION} \
                          -DGIT_VERSION=${PKG_VERSION} \
                          -DFFMPEG_PATH=${SYSROOT_PREFIX}/usr \
-                         -DENABLE_INTERNAL_FFMPEG=OFF \
                          -DENABLE_INTERNAL_CROSSGUID=OFF \
-                         -DENABLE_INTERNAL_UDFREAD=OFF \
-                         -DENABLE_INTERNAL_SPDLOG=OFF \
+                         -DENABLE_INTERNAL_EXIV2=OFF \
+                         -DENABLE_INTERNAL_FFMPEG=OFF \
+                         -DENABLE_INTERNAL_FLATBUFFERS=OFF \
                          -DENABLE_INTERNAL_RapidJSON=OFF \
+                         -DENABLE_INTERNAL_SPDLOG=OFF \
+                         -DENABLE_INTERNAL_UDFREAD=OFF \
                          -DENABLE_UDEV=ON \
                          -DENABLE_DBUS=ON \
                          -DENABLE_XSLT=ON \
@@ -257,9 +262,12 @@ configure_package() {
                          -DENABLE_DEBUGFISSION=OFF \
                          -DENABLE_APP_AUTONAME=OFF \
                          -DENABLE_TESTING=OFF \
-                         -DENABLE_INTERNAL_FLATBUFFERS=OFF \
                          -DENABLE_LCMS2=OFF \
                          -DADDONS_CONFIGURE_AT_STARTUP=OFF \
+                         -Dgroovy_SOURCE_DIR=$(get_build_dir groovy) \
+                         -Dapache-commons-lang_SOURCE_DIR=$(get_build_dir commons-lang3) \
+                         -Dapache-commons-text_SOURCE_DIR=$(get_build_dir commons-text) \
+                         -DPCRE2_USE_STATIC_LIBS=ON \
                          ${PKG_KODI_USE_LTO} \
                          ${PKG_KODI_LINKER} \
                          ${KODI_ARCH} \
@@ -286,13 +294,13 @@ configure_package() {
 configure_host() {
   setup_toolchain target:cmake
   cmake ${CMAKE_GENERATOR_NINJA} \
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CONF} \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-        -DHEADERS_ONLY=ON \
-        ${KODI_ARCH} \
-        ${KODI_NEON} \
-        ${KODI_PLATFORM} ..
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CONF} \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+    -DHEADERS_ONLY=ON \
+    ${KODI_ARCH} \
+    ${KODI_NEON} \
+    ${KODI_PLATFORM} ..
 }
 
 make_host() {
@@ -314,10 +322,9 @@ pre_configure_target() {
 
 post_makeinstall_target() {
   mkdir -p ${INSTALL}/.noinstall
-    mv ${INSTALL}/usr/share/kodi/addons/skin.estouchy \
-       ${INSTALL}/usr/share/kodi/addons/skin.estuary \
-       ${INSTALL}/usr/share/kodi/addons/service.xbmc.versioncheck \
-       ${INSTALL}/.noinstall
+  mv ${INSTALL}/usr/share/kodi/addons/skin.estuary \
+     ${INSTALL}/usr/share/kodi/addons/service.xbmc.versioncheck \
+     ${INSTALL}/.noinstall
 
   rm -rf ${INSTALL}/usr/bin/kodi
   rm -rf ${INSTALL}/usr/bin/kodi-standalone
@@ -330,53 +337,53 @@ post_makeinstall_target() {
   rm -rf ${INSTALL}/usr/share/xsessions
 
   mkdir -p ${INSTALL}/usr/lib/kodi
-    cp ${PKG_DIR}/scripts/kodi-config ${INSTALL}/usr/lib/kodi
-    cp ${PKG_DIR}/scripts/kodi-safe-mode ${INSTALL}/usr/lib/kodi
-    cp ${PKG_DIR}/scripts/kodi.sh ${INSTALL}/usr/lib/kodi
+  cp ${PKG_DIR}/scripts/kodi-config ${INSTALL}/usr/lib/kodi
+  cp ${PKG_DIR}/scripts/kodi-safe-mode ${INSTALL}/usr/lib/kodi
+  cp ${PKG_DIR}/scripts/kodi.sh ${INSTALL}/usr/lib/kodi
 
-    # Configure safe mode triggers - default 5 restarts within 900 seconds/15 minutes
-    sed -e "s|@KODI_MAX_RESTARTS@|${KODI_MAX_RESTARTS:-5}|g" \
-        -e "s|@KODI_MAX_SECONDS@|${KODI_MAX_SECONDS:-900}|g" \
-        -i ${INSTALL}/usr/lib/kodi/kodi.sh
+  # Configure safe mode triggers - default 5 restarts within 900 seconds/15 minutes
+  sed -e "s|@KODI_MAX_RESTARTS@|${KODI_MAX_RESTARTS:-5}|g" \
+      -e "s|@KODI_MAX_SECONDS@|${KODI_MAX_SECONDS:-900}|g" \
+      -i ${INSTALL}/usr/lib/kodi/kodi.sh
 
-    if [ "${KODI_PIPEWIRE_SUPPORT}" = "yes" ]; then
-      KODI_AUDIO_ARGS="--audio-backend=pipewire"
-    elif [ "${KODI_PULSEAUDIO_SUPPORT}" = "yes" -a "${KODI_ALSA_SUPPORT}" = "yes" ]; then
-      KODI_AUDIO_ARGS="--audio-backend=alsa+pulseaudio"
-    elif [ "${KODI_PULSEAUDIO_SUPPORT}" = "yes" -a "${KODI_ALSA_SUPPORT}" != "yes" ]; then
-      KODI_AUDIO_ARGS="--audio-backend=pulseaudio"
-    elif [ "${KODI_PULSEAUDIO_SUPPORT}" != "yes" -a "${KODI_ALSA_SUPPORT}" = "yes" ]; then
-      KODI_AUDIO_ARGS="--audio-backend=alsa"
-    fi
+  if [ "${KODI_PIPEWIRE_SUPPORT}" = "yes" ]; then
+    KODI_AUDIO_ARGS="--audio-backend=pipewire"
+  elif [ "${KODI_PULSEAUDIO_SUPPORT}" = "yes" -a "${KODI_ALSA_SUPPORT}" = "yes" ]; then
+    KODI_AUDIO_ARGS="--audio-backend=alsa+pulseaudio"
+  elif [ "${KODI_PULSEAUDIO_SUPPORT}" = "yes" -a "${KODI_ALSA_SUPPORT}" != "yes" ]; then
+    KODI_AUDIO_ARGS="--audio-backend=pulseaudio"
+  elif [ "${KODI_PULSEAUDIO_SUPPORT}" != "yes" -a "${KODI_ALSA_SUPPORT}" = "yes" ]; then
+    KODI_AUDIO_ARGS="--audio-backend=alsa"
+  fi
 
-    # adjust audio output device to what was built
-    sed "s/@KODI_AUDIO_ARGS@/${KODI_AUDIO_ARGS}/" ${PKG_DIR}/config/kodi.conf.in > ${INSTALL}/usr/lib/kodi/kodi.conf
+  # adjust audio output device to what was built
+  sed "s/@KODI_AUDIO_ARGS@/${KODI_AUDIO_ARGS}/" ${PKG_DIR}/config/kodi.conf.in >${INSTALL}/usr/lib/kodi/kodi.conf
 
-    # set default display environment
-    if [ "${DISPLAYSERVER}" = "x11" ]; then
-      echo "DISPLAY=:0.0" >> ${INSTALL}/usr/lib/kodi/kodi.conf
-    elif [ "${DISPLAYSERVER}" = "wl" ]; then
-      echo "WAYLAND_DISPLAY=wayland-1" >> ${INSTALL}/usr/lib/kodi/kodi.conf
-    fi
+  # set default display environment
+  if [ "${DISPLAYSERVER}" = "x11" ]; then
+    echo "DISPLAY=:0.0" >>${INSTALL}/usr/lib/kodi/kodi.conf
+  elif [ "${DISPLAYSERVER}" = "wl" ]; then
+    echo "WAYLAND_DISPLAY=wayland-1" >>${INSTALL}/usr/lib/kodi/kodi.conf
+  fi
 
-    # nvidia: Enable USLEEP to reduce CPU load while rendering
-    if listcontains "${GRAPHIC_DRIVERS}" "nvidia" || listcontains "${GRAPHIC_DRIVERS}" "nvidia-legacy"; then
-      echo "__GL_YIELD=USLEEP" >> ${INSTALL}/usr/lib/kodi/kodi.conf
-    fi
+  # nvidia: Enable USLEEP to reduce CPU load while rendering
+  if listcontains "${GRAPHIC_DRIVERS}" "nvidia" || listcontains "${GRAPHIC_DRIVERS}" "nvidia-legacy"; then
+    echo "__GL_YIELD=USLEEP" >>${INSTALL}/usr/lib/kodi/kodi.conf
+  fi
 
   mkdir -p ${INSTALL}/usr/sbin
-    cp ${PKG_DIR}/scripts/service-addon-wrapper ${INSTALL}/usr/sbin
+  cp ${PKG_DIR}/scripts/service-addon-wrapper ${INSTALL}/usr/sbin
 
   mkdir -p ${INSTALL}/usr/bin
-    cp ${PKG_DIR}/scripts/kodi-remote ${INSTALL}/usr/bin
-    cp ${PKG_DIR}/scripts/setwakeup.sh ${INSTALL}/usr/bin
-    cp ${PKG_DIR}/scripts/pastekodi ${INSTALL}/usr/bin
-    ln -sf /usr/bin/pastekodi ${INSTALL}/usr/bin/pastecrash
+  cp ${PKG_DIR}/scripts/kodi-remote ${INSTALL}/usr/bin
+  cp ${PKG_DIR}/scripts/setwakeup.sh ${INSTALL}/usr/bin
+  cp ${PKG_DIR}/scripts/pastekodi ${INSTALL}/usr/bin
+  ln -sf /usr/bin/pastekodi ${INSTALL}/usr/bin/pastecrash
 
   mkdir -p ${INSTALL}/usr/share/kodi/addons
-    cp -R ${PKG_DIR}/config/repository.libreelec.tv ${INSTALL}/usr/share/kodi/addons
-    sed -e "s|@ADDON_URL@|${ADDON_URL}|g" -i ${INSTALL}/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
-    sed -e "s|@ADDON_VERSION@|${ADDON_VERSION}|g" -i ${INSTALL}/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
+  cp -R ${PKG_DIR}/config/repository.libreelec.tv ${INSTALL}/usr/share/kodi/addons
+  sed -e "s|@ADDON_URL@|${ADDON_URL}|g" -i ${INSTALL}/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
+  sed -e "s|@ADDON_VERSION@|${ADDON_VERSION}|g" -i ${INSTALL}/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
 
   mkdir -p ${INSTALL}/usr/share/kodi/config
 
@@ -385,33 +392,38 @@ post_makeinstall_target() {
   mkdir -p ${INSTALL}/usr/share/kodi/system/settings
 
   ${PKG_DIR}/scripts/xml_merge.py ${PKG_DIR}/config/guisettings.xml \
-                                ${PROJECT_DIR}/${PROJECT}/kodi/guisettings.xml \
-                                ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/guisettings.xml \
-                                > ${INSTALL}/usr/share/kodi/config/guisettings.xml
+                                  ${PROJECT_DIR}/${PROJECT}/kodi/guisettings.xml \
+                                  ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/guisettings.xml \
+                                  >${INSTALL}/usr/share/kodi/config/guisettings.xml
 
   ${PKG_DIR}/scripts/xml_merge.py ${PKG_DIR}/config/sources.xml \
-                                ${PROJECT_DIR}/${PROJECT}/kodi/sources.xml \
-                                ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/sources.xml \
-                                > ${INSTALL}/usr/share/kodi/config/sources.xml
+                                  ${PROJECT_DIR}/${PROJECT}/kodi/sources.xml \
+                                  ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/sources.xml \
+                                  >${INSTALL}/usr/share/kodi/config/sources.xml
 
   ${PKG_DIR}/scripts/xml_merge.py ${PKG_DIR}/config/advancedsettings.xml \
-                                ${PROJECT_DIR}/${PROJECT}/kodi/advancedsettings.xml \
-                                ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/advancedsettings.xml \
-                                > ${INSTALL}/usr/share/kodi/system/advancedsettings.xml
+                                  ${PROJECT_DIR}/${PROJECT}/kodi/advancedsettings.xml \
+                                  ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/advancedsettings.xml \
+                                  >${INSTALL}/usr/share/kodi/system/advancedsettings.xml
 
   ${PKG_DIR}/scripts/xml_merge.py ${PKG_DIR}/config/appliance.xml \
-                                ${PKG_APPLIANCE_XML} \
-                                ${PROJECT_DIR}/${PROJECT}/kodi/appliance.xml \
-                                ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/appliance.xml \
-                                > ${INSTALL}/usr/share/kodi/system/settings/appliance.xml
+                                  ${PKG_APPLIANCE_XML} \
+                                  ${PROJECT_DIR}/${PROJECT}/kodi/appliance.xml \
+                                  ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/kodi/appliance.xml \
+                                  >${INSTALL}/usr/share/kodi/system/settings/appliance.xml
 
   mkdir -p ${INSTALL}/usr/cache/libreelec
-    cp ${PKG_DIR}/config/network_wait ${INSTALL}/usr/cache/libreelec
+  cp ${PKG_DIR}/config/network_wait ${INSTALL}/usr/cache/libreelec
+
+  # GBM: install udev rule to ignore the power button in libinput/kodi so logind can handle it
+  if [ "${DISPLAYSERVER}" = "no" ]; then
+    mkdir -p ${INSTALL}/usr/lib/udev/rules.d/
+    cp ${PKG_DIR}/config/70-libinput-ignore-power-button.rules ${INSTALL}/usr/lib/udev/rules.d/
+  fi
 
   # update addon manifest
   ADDON_MANIFEST=${INSTALL}/usr/share/kodi/system/addon-manifest.xml
   xmlstarlet ed -L -d "/addons/addon[text()='service.xbmc.versioncheck']" ${ADDON_MANIFEST}
-  xmlstarlet ed -L -d "/addons/addon[text()='skin.estouchy']" ${ADDON_MANIFEST}
   xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "repository.libreelec.tv" ${ADDON_MANIFEST}
   if [ -n "${DISTRO_PKG_SETTINGS}" ]; then
     xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "${DISTRO_PKG_SETTINGS_ID}" ${ADDON_MANIFEST}
@@ -428,7 +440,7 @@ post_makeinstall_target() {
 
   if [ "${KODI_EXTRA_FONTS}" = yes ]; then
     mkdir -p ${INSTALL}/usr/share/kodi/media/Fonts
-      cp ${PKG_DIR}/fonts/*.ttf ${INSTALL}/usr/share/kodi/media/Fonts
+    cp ${PKG_DIR}/fonts/*.ttf ${INSTALL}/usr/share/kodi/media/Fonts
   fi
 
   # Compile kodi Python site-packages to .pyc bytecode, and remove .py source code

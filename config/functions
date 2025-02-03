@@ -299,25 +299,18 @@ get_target_linker() {
 
 setup_toolchain() {
   if [ "$LTO_SUPPORT" = "yes" ]; then
-    if flag_enabled "lto-parallel" "no"; then
-      TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO_PARALLEL $FLAGS_OPTIM_LTO_NO_FAT"
-      TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO_PARALLEL $FLAGS_OPTIM_LTO_NO_FAT"
-      TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_LTO_COMMON $FLAGS_OPTIM_LTO_PARALLEL"
-    elif flag_enabled "lto-fat" "no"; then
-      TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO_NO_PARALLEL $FLAGS_OPTIM_LTO_FAT"
-      TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO_NO_PARALLEL $FLAGS_OPTIM_LTO_FAT"
-      TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_LTO_COMMON $FLAGS_OPTIM_LTO_NO_PARALLEL"
+    if flag_enabled "lto-fat" "no"; then
+      TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO $FLAGS_OPTIM_LTO_FAT"
+      TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO $FLAGS_OPTIM_LTO_FAT"
     elif flag_enabled "lto" "no"; then
-      TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO_NO_PARALLEL $FLAGS_OPTIM_LTO_NO_FAT"
-      TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO_NO_PARALLEL $FLAGS_OPTIM_LTO_NO_FAT"
-      TARGET_LDFLAGS+=" $LDFLAGS_OPTIM_LTO_COMMON $FLAGS_OPTIM_LTO_NO_PARALLEL"
+      TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO $FLAGS_OPTIM_LTO_NO_FAT"
+      TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO $FLAGS_OPTIM_LTO_NO_FAT"
     fi
   fi
 
   if flag_enabled "lto-off" "no"; then
     TARGET_CFLAGS+=" $FLAGS_OPTIM_LTO_OFF"
     TARGET_CXXFLAGS+=" $FLAGS_OPTIM_LTO_OFF"
-    TARGET_LDFLAGS+=" $FLAGS_OPTIM_LTO_OFF"
   fi
 
   local linker="$(get_target_linker)"
@@ -580,7 +573,7 @@ c = '$CC'
 cpp = '$CXX'
 ar = '$AR'
 strip = '$STRIP'
-pkgconfig = '$PKG_CONFIG'
+pkg-config = '$PKG_CONFIG'
 llvm-config = '$TOOLCHAIN/bin/llvm-config'
 libgcrypt-config = '$SYSROOT_PREFIX/usr/bin/libgcrypt-config'
 
@@ -618,7 +611,7 @@ c = '$TARGET_CC'
 cpp = '$TARGET_CXX'
 ar = '$TARGET_AR'
 strip = '$TARGET_STRIP'
-pkgconfig = '$PKG_CONFIG'
+pkg-config = '$PKG_CONFIG'
 llvm-config = '$SYSROOT_PREFIX/usr/bin/llvm-config'
 libgcrypt-config = '$SYSROOT_PREFIX/usr/bin/libgcrypt-config'
 
@@ -1382,6 +1375,15 @@ python_fix_abi() {
     echo "python_fix_abi: Removing ABI from ${pymodule} -> ${pyname}.so"
     mv ${pymodule} ${pymodule%/*}/${pyname}.so
   done
+}
+
+# arg1: python command for target
+python_target_env() {
+  _PYTHON_HOST_PLATFORM="linux-${TARGET_ARCH}" \
+  _PYTHON_PROJECT_BASE="$(get_install_dir Python3)" \
+  _PYTHON_SYSCONFIGDATA_NAME="_sysconfigdata__linux_${TARGET_ARCH}-linux-gnu${TARGET_ABI}" \
+  PYTHONPATH="$(get_install_dir Python3)/usr/lib/${PKG_PYTHON_VERSION}" \
+  PYTHONNOUSERSITE=1 $@
 }
 
 ### KERNEL HELPERS ###

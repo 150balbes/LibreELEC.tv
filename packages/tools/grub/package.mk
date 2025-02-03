@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="grub"
-PKG_VERSION="2.06"
-PKG_SHA256="660eaa2355a4045d8d0cdb5765169d1cad9912ec07873b86c9c6d55dbaa9dfca"
+PKG_VERSION="2.12"
+PKG_SHA256="af4d58df3024988799225e94bc1cfaccdeaa9d5725b4ad5517f3b6cf2ee9ed78"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://www.gnu.org/software/grub/index.html"
@@ -13,6 +13,7 @@ PKG_DEPENDS_TARGET="toolchain flex freetype:host gettext:host grub:host"
 PKG_DEPENDS_UNPACK="gnulib"
 PKG_LONGDESC="GRUB is a Multiboot boot loader."
 PKG_TOOLCHAIN="configure"
+PKG_BUILD_FLAGS="-cfg-libs -cfg-libs:host"
 
 pre_configure_host() {
   unset CFLAGS

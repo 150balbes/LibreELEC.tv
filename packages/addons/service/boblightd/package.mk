@@ -37,13 +37,17 @@ fi
 
 PKG_CONFIGURE_OPTS_TARGET="${EXTRAOPTS} --without-portaudio"
 
+post_configure_target() {
+  libtool_remove_rpath libtool
+}
+
 makeinstall_target() {
   : # nothing to do here
 }
 
 addon() {
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
-  cp -P ${PKG_BUILD}/.${TARGET_NAME}/src/.libs/libboblight.so* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  cp -PL ${PKG_BUILD}/.${TARGET_NAME}/src/.libs/libboblight.so ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
 
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
   cp -P ${PKG_BUILD}/.${TARGET_NAME}/src/boblightd ${ADDON_BUILD}/${PKG_ADDON_ID}/bin

@@ -2,7 +2,7 @@
 
 # base ffmpeg version
 FFMPEG_REPO="git://source.ffmpeg.org/ffmpeg.git"
-FFMPEG_VERSION="n6.0"
+FFMPEG_VERSION="n6.0.1"
 
 ALL_FEATURE_SETS="v4l2-drmprime v4l2-request libreelec rpi vf-deinterlace-v4l2m2m"
 
@@ -13,7 +13,10 @@ if [ $# -eq 0 ]; then
 fi
 
 FFMPEG_ROOT="$(pwd)"
-LE_ROOT="$(cd $(dirname $0)/../.. ; pwd)"
+LE_ROOT="$(
+  cd $(dirname $0)/../..
+  pwd
+)"
 
 create_patch() {
   FEATURE_SET="$1"
@@ -25,7 +28,7 @@ create_patch() {
   PATCH_CREATE_DIFF="no"
 
   case "${FEATURE_SET}" in
-    v4l2-drmprime|v4l2-request|vf-deinterlace-v4l2m2m)
+    v4l2-drmprime | v4l2-request | vf-deinterlace-v4l2m2m)
       REPO="https://github.com/jernejsk/FFmpeg"
       REFSPEC="${FEATURE_SET}-${FFMPEG_VERSION}"
       ;;
@@ -35,7 +38,7 @@ create_patch() {
       ;;
     rpi)
       REPO="https://github.com/jc-kynesim/rpi-ffmpeg"
-      REFSPEC="dev/6.0/rpi_import_1"
+      REFSPEC="test/6.0.1/main"
       ;;
     *)
       echo "illegal feature set ${FEATURE_SET}"
@@ -67,14 +70,14 @@ create_patch() {
 
   if [ "${PATCH_CREATE_DIFF}" = "yes" ]; then
     # create diff in case format-patch doesn't work, eg when we have non-linear history
-    git diff "${BASE_REV}..${REV}" > "${LE_ROOT}/${PATCH_FILE}"
+    git diff "${BASE_REV}..${REV}" >"${LE_ROOT}/${PATCH_FILE}"
   else
-    git format-patch --stdout --no-signature "${BASE_REV}..${REV}" > "${LE_ROOT}/${PATCH_FILE}"
+    git format-patch --stdout --no-signature "${BASE_REV}..${REV}" >"${LE_ROOT}/${PATCH_FILE}"
   fi
 
   MSG=$(mktemp)
 
-  cat << EOF > "${MSG}"
+  cat <<EOF >"${MSG}"
 ffmpeg: ${ACTION} ${FEATURE_SET} patch
 
 Patch created using revisions ${BASE_REV:0:7}..${REV:0:7}

@@ -15,7 +15,7 @@ PKG_SECTION="service"
 PKG_SHORTDESC="LCDproc: Software to display system information from your Linux/*BSD box on a LCD"
 PKG_LONGDESC="LCDproc (${PKG_VERSION}) is a piece of software that displays real-time system information from your Linux/*BSD box on a LCD. The server supports several serial devices: Matrix Orbital, Crystal Fontz, Bayrad, LB216, LCDM001 (kernelconcepts.de), Wirz-SLI, Cwlinux(.com) and PIC-an-LCD; and some devices connected to the LPT port: HD44780, STV5730, T6963, SED1520 and SED1330. Various clients are available that display things like CPU load, system load, memory usage, uptime, and a lot more."
 PKG_TOOLCHAIN="autotools"
-PKG_BUILD_FLAGS="-parallel"
+PKG_BUILD_FLAGS="-parallel -cfg-libs"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="LCDproc"
@@ -42,9 +42,11 @@ addon() {
 
   cp -PR ${PKG_INSTALL}/etc/LCDd.conf ${ADDON_BUILD}/${PKG_ADDON_ID}/config/
   cp -PR ${PKG_INSTALL}/usr/lib       ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
+  patchelf --add-rpath '${ORIGIN}/../../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/lcdproc/glcd.so
   cp -PR ${PKG_INSTALL}/usr/sbin      ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
 
-  cp -L $(get_install_dir serdisplib)/usr/lib/libserdisp.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+  cp -L $(get_install_dir serdisplib)/usr/lib/libserdisp.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 
   sed -e "s|^DriverPath=.*$|DriverPath=/storage/.kodi/addons/service.lcdd/lib/lcdproc/|" \
       -e "s|^#Foreground=.*$|Foreground=no|" \

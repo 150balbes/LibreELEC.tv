@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="bluez"
-PKG_VERSION="5.68"
-PKG_SHA256="fc505e6445cb579a55cacee6821fe70d633921522043d322b696de0a175ff933"
+PKG_VERSION="5.79"
+PKG_SHA256="4164a5303a9f71c70f48c03ff60be34231b568d93a9ad5e79928d34e6aa0ea8a"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.bluez.org/"
 PKG_URL="https://www.kernel.org/pub/linux/bluetooth/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -40,7 +40,7 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-dependency-tracking \
                            storagedir=/storage/.cache/bluetooth"
 
 pre_configure_target() {
-# bluez fails to build in subdirs
+  # bluez fails to build in subdirs
   cd ${PKG_BUILD}
     rm -rf .${TARGET_NAME}
 
@@ -55,7 +55,6 @@ post_makeinstall_target() {
   safe_remove ${INSTALL}/usr/lib/systemd
   safe_remove ${INSTALL}/usr/bin/bluemoon
   safe_remove ${INSTALL}/usr/bin/ciptool
-  safe_remove ${INSTALL}/usr/share/dbus-1
 
   mkdir -p ${INSTALL}/etc/bluetooth
     cp src/main.conf ${INSTALL}/etc/bluetooth
@@ -63,6 +62,8 @@ post_makeinstall_target() {
         -e "s|^#\[Policy\]|\[Policy\]|g" \
         -e "s|^#AutoEnable.*|AutoEnable=true|g" \
         -e "s|^#JustWorksRepairing.*|JustWorksRepairing=always|g"
+    echo "[General]" >${INSTALL}/etc/bluetooth/input.conf
+    echo "ClassicBondedOnly=false" >>${INSTALL}/etc/bluetooth/input.conf
 
   mkdir -p ${INSTALL}/usr/share/services
     cp -P ${PKG_DIR}/default.d/*.conf ${INSTALL}/usr/share/services

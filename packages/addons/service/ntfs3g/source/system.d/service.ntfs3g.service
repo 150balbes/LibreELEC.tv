@@ -1,0 +1,12 @@
+[Unit]
+Description=ntfs3g for udevil
+Before=samba-config.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/mount -o bind /storage/.kodi/addons/service.ntfs3g/bin/mount.ntfs3g /usr/sbin/mount.ntfs
+ExecStop=/usr/bin/umount /usr/sbin/mount.ntfs
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

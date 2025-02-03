@@ -20,7 +20,7 @@ PKG_MAKE_OPTS_TARGET="-f Makefile.libretro"
 
 if [ "${ARCH}" = "aarch64" ]; then
   PKG_MAKE_OPTS_TARGET+=" platform=unix-aarch64"
-elif target_has_feature neon ; then
+elif target_has_feature neon; then
   PKG_MAKE_OPTS_TARGET+=" platform=unix-neon"
 else
   PKG_MAKE_OPTS_TARGET+=" platform=unix"
@@ -34,7 +34,7 @@ pre_configure_target() {
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 
   cp -v capsimg.so ${SYSROOT_PREFIX}/usr/lib/
 }

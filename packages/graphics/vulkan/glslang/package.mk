@@ -6,8 +6,8 @@ PKG_NAME="glslang"
 # The SPIRV-Tools & SPIRV-Headers pkg_version/s need to match the compatible (known_good) glslang pkg_version.
 # https://raw.githubusercontent.com/KhronosGroup/glslang/${PKG_VERSION}/known_good.json
 # When updating glslang pkg_version please update to the known_good spirv-tools & spirv-headers pkg_version/s.
-PKG_VERSION="12.2.0"
-PKG_SHA256="870d17030fda7308c1521fb2e01a9e93cbe4b130bc8274e90d00e127432ab6f6"
+PKG_VERSION="15.0.0"
+PKG_SHA256="c31c8c2e89af907507c0631273989526ee7d5cdf7df95ececd628fd7b811e064"
 PKG_LICENSE="Apache-2.0"
 PKG_SITE="https://github.com/KhronosGroup/glslang"
 PKG_URL="https://github.com/KhronosGroup/glslang/archive/${PKG_VERSION}.tar.gz"
@@ -23,15 +23,19 @@ PKG_CMAKE_OPTS_COMMON="-DBUILD_EXTERNAL=ON \
                        -DENABLE_EXCEPTIONS=OFF \
                        -DENABLE_OPT=ON \
                        -DENABLE_PCH=ON \
-                       -DENABLE_CTEST=OFF \
-                       -DUSE_CCACHE=ON \
+                       -DGLSLANG_TESTS=OFF \
                        -Wno-dev"
 
 post_unpack() {
   # Enables SPIR-V optimzer capability needed for ENABLE_OPT CMake build option
+  mkdir -p ${PKG_BUILD}/External/spirv-tools
+    tar --strip-components=1 \
+      -xf "${SOURCES}/spirv-tools/spirv-tools-$(get_pkg_version spirv-tools).tar.gz" \
+      -C "${PKG_BUILD}/External/spirv-tools"
   mkdir -p ${PKG_BUILD}/External/spirv-tools/external/spirv-headers
-    cp -R $(get_build_dir spirv-tools)/* ${PKG_BUILD}/External/spirv-tools
-    cp -R $(get_build_dir spirv-headers)/* ${PKG_BUILD}/External/spirv-tools/external/spirv-headers
+    tar --strip-components=1 \
+      -xf "${SOURCES}/spirv-headers/spirv-headers-$(get_pkg_version spirv-headers).tar.gz" \
+      -C "${PKG_BUILD}/External/spirv-tools/external/spirv-headers"
 }
 
 pre_configure_host() {

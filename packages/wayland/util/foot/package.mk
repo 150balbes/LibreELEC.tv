@@ -2,8 +2,8 @@
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="foot"
-PKG_VERSION="1.14.0"
-PKG_SHA256="9a306951bc6bdce150364bccb0fb4b67720f50e98e9ac1de89792c1c1aa30690"
+PKG_VERSION="1.19.0"
+PKG_SHA256="148b0b545ca37e15b877ff9f6a768a4ce6feb0ed256f8a5f853cb2e16e3323c1"
 PKG_LICENSE="MIT"
 PKG_SITE="https://codeberg.org/dnkl/foot/"
 PKG_URL="https://codeberg.org/dnkl/foot/archive/${PKG_VERSION}.tar.gz"
@@ -17,7 +17,7 @@ PKG_MESON_OPTS_TARGET="-Ddocs=disabled \
                        -Dterminfo=disabled \
                        -Ddefault-terminfo=xterm"
 
-post_makeinstall_target(){
+post_makeinstall_target() {
   # clean up
   safe_remove ${INSTALL}/usr/share/*
 

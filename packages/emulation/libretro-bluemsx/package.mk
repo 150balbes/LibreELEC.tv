@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-bluemsx"
-PKG_VERSION="e21bf74bddb79ad1bbe20b4d964e7515269c669b"
-PKG_SHA256="bd53a42e03ef010a7d3d73a7c5516c9149feeac23e7ee74640ea3cb126b2a575"
+PKG_VERSION="1f6b5b393df17e746bec118902b1d1f6ed3e4109"
+PKG_SHA256="2de09c4b4bdcc5d9c9076940624151ae5fb47e39259a0367f8030cb51f842a35"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/blueMSX-libretro"
 PKG_URL="https://github.com/libretro/blueMSX-libretro/archive/${PKG_VERSION}.tar.gz"
@@ -20,5 +20,5 @@ PKG_LIBVAR="BLUEMSX_LIB"
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 }

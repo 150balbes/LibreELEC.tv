@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="weston"
-PKG_VERSION="12.0.1"
-PKG_SHA256="b18591eab278bc191720f6c09158040b795e7118af1d5ddca6acd9a8e2039535"
+PKG_VERSION="14.0.1"
+PKG_SHA256="a8150505b126a59df781fe8c30c8e6f87da7013e179039eb844a5bbbcc7c79b3"
 PKG_LICENSE="MIT"
 PKG_SITE="https://wayland.freedesktop.org/"
 PKG_URL="https://gitlab.freedesktop.org/wayland/weston/-/releases/${PKG_VERSION}/downloads/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -31,7 +31,6 @@ PKG_MESON_OPTS_TARGET="-Dbackend-drm=true \
                        -Dshell-kiosk=false \
                        -Ddesktop-shell-client-default="weston-desktop-shell" \
                        -Dcolor-management-lcms=false \
-                       -Dlauncher-libseat=true \
                        -Dimage-jpeg=true \
                        -Dimage-webp=false \
                        -Dtools=['terminal']

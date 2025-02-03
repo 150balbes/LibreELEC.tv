@@ -1,0 +1,23 @@
+diff -Nur a/plat/imx/common/include/imx_sip_svc.h b/plat/imx/common/include/imx_sip_svc.h
+--- a/plat/imx/common/include/imx_sip_svc.h	2024-11-12 15:39:40.000000000 +0000
++++ b/plat/imx/common/include/imx_sip_svc.h	2024-11-14 14:54:18.965199761 +0000
+@@ -88,7 +88,7 @@
+ 		    u_register_t x2, u_register_t x3, void *handle);
+ #endif
+ 
+-#if defined(PLAT_imx8mm) || defined(PLAT_imx8mn) || defined(PLAT_imx8mp)
++#if defined(PLAT_imx8mm) || defined(PLAT_imx8mn) || defined(PLAT_imx8mp) || defined(PLAT_imx8mq)
+ int imx_hab_handler(uint32_t smc_fid, u_register_t x1,
+ 		    u_register_t x2, u_register_t x3, u_register_t x4);
+ #endif
+diff -Nur a/plat/imx/imx8m/imx8mq/platform.mk b/plat/imx/imx8m/imx8mq/platform.mk
+--- a/plat/imx/imx8m/imx8mq/platform.mk	2024-11-12 15:39:40.000000000 +0000
++++ b/plat/imx/imx8m/imx8mq/platform.mk	2024-11-14 15:10:06.955672418 +0000
+@@ -29,6 +29,7 @@
+ 				plat/imx/imx8m/imx8mq/imx8mq_bl31_setup.c	\
+ 				plat/imx/imx8m/imx8mq/imx8mq_psci.c		\
+ 				plat/imx/imx8m/gpc_common.c			\
++				plat/imx/imx8m/imx_hab.c			\
+ 				plat/imx/imx8m/imx_aipstz.c			\
+ 				plat/imx/imx8m/imx8m_caam.c			\
+ 				plat/imx/imx8m/imx8m_ccm.c			\

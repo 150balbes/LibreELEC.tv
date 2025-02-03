@@ -13,7 +13,7 @@
     KERNEL_MAKE_EXTRACMD="dtbs"
 
   # Additional kernel dependencies
-    KERNEL_EXTRA_DEPENDS_TARGET="lz4:host"
+    KERNEL_EXTRA_DEPENDS_TARGET=""
 
   # Kernel to use. values can be:
   # default:  default mainline kernel
@@ -36,7 +36,7 @@
   # OpenGL(X) implementation to use (no / mesa)
     OPENGL="no"
 
-  # OpenGL-ES implementation to use (no / libmali / mesa)
+  # OpenGL-ES implementation to use (no / mesa)
     OPENGLES="${OPENGLES:-mesa}"
 
   # Vulkan implementation to use (vulkan-loader / no)

@@ -1,0 +1,136 @@
+From 17b878fcccac17b59a8abfd7a72f36723bb3fd77 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Tue, 17 Sep 2024 14:34:45 +0200
+Subject: [PATCH 03/12] FROMGIT: board: libretech-ac: move board support into
+ dedicated directory
+
+The libretech-ac aka aml-s805x-ac supports mainline U-boot
+from a dedicated SPI flash, move the board support into
+a dedicated vendor/board subdirectory in order to support
+vendor specific customization.
+
+It also aligns with the vendor downstream changes.
+
+Link: https://lore.kernel.org/r/20240917-u-boot-topic-dynamic-uuid-v2-1-416e39c6e271@linaro.org
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ board/amlogic/p212/MAINTAINERS                |  2 -
+ board/libre-computer/aml-s805x-ac/MAINTAINERS |  8 ++++
+ board/libre-computer/aml-s805x-ac/Makefile    |  6 +++
+ .../aml-s805x-ac/aml-s805x-ac.c               | 47 +++++++++++++++++++
+ configs/libretech-ac_defconfig                |  2 +
+ 5 files changed, 63 insertions(+), 2 deletions(-)
+ create mode 100644 board/libre-computer/aml-s805x-ac/MAINTAINERS
+ create mode 100644 board/libre-computer/aml-s805x-ac/Makefile
+ create mode 100644 board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
+
+diff --git a/board/amlogic/p212/MAINTAINERS b/board/amlogic/p212/MAINTAINERS
+index b2e3205fdf0..e73a4e52c1f 100644
+--- a/board/amlogic/p212/MAINTAINERS
++++ b/board/amlogic/p212/MAINTAINERS
+@@ -5,11 +5,9 @@ L:	u-boot-amlogic@groups.io
+ F:	board/amlogic/p212/
+ F:	include/configs/p212.h
+ F:	configs/khadas-vim_defconfig
+-F:	configs/libretech-ac_defconfig
+ F:	configs/libretech-cc_defconfig
+ F:	configs/libretech-cc_v2_defconfig
+ F:	configs/p212_defconfig
+ F:	doc/board/amlogic/p212.rst
+-F:	doc/board/amlogic/libretech-ac.rst
+ F:	doc/board/amlogic/libretech-cc.rst
+ F:	doc/board/amlogic/khadas-vim.rst
+diff --git a/board/libre-computer/aml-s805x-ac/MAINTAINERS b/board/libre-computer/aml-s805x-ac/MAINTAINERS
+new file mode 100644
+index 00000000000..7cbc08aeb6c
+--- /dev/null
++++ b/board/libre-computer/aml-s805x-ac/MAINTAINERS
+@@ -0,0 +1,8 @@
++LIBRE-COMPUTER AML-S805X-AC
++M:	Neil Armstrong <neil.armstrong@linaro.org>
++S:	Maintained
++L:	u-boot-amlogic@groups.io
++F:	board/amlogic/aml-s805x-ac/
++F:	include/configs/libretech-ac.h
++F:	configs/libretech-ac_defconfig
++F:	doc/board/amlogic/libretech-ac.rst
+diff --git a/board/libre-computer/aml-s805x-ac/Makefile b/board/libre-computer/aml-s805x-ac/Makefile
+new file mode 100644
+index 00000000000..b4367ea522b
+--- /dev/null
++++ b/board/libre-computer/aml-s805x-ac/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# (C) Copyright 2016 BayLibre, SAS
++# Author: Neil Armstrong <narmstrong@baylibre.com>
++
++obj-y	:= aml-s805x-ac.o
+diff --git a/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c b/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
+new file mode 100644
+index 00000000000..ae9834c0bf8
+--- /dev/null
++++ b/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#include <dm.h>
++#include <env.h>
++#include <init.h>
++#include <net.h>
++#include <asm/io.h>
++#include <asm/arch/gx.h>
++#include <asm/arch/sm.h>
++#include <asm/arch/eth.h>
++#include <asm/arch/mem.h>
++
++#define EFUSE_SN_OFFSET		20
++#define EFUSE_SN_SIZE		16
++#define EFUSE_MAC_OFFSET	52
++#define EFUSE_MAC_SIZE		6
++
++int misc_init_r(void)
++{
++	u8 mac_addr[EFUSE_MAC_SIZE + 1];
++	char serial[EFUSE_SN_SIZE + 1];
++	ssize_t len;
++
++	if (!eth_env_get_enetaddr("ethaddr", mac_addr)) {
++		len = meson_sm_read_efuse(EFUSE_MAC_OFFSET,
++					  mac_addr, EFUSE_MAC_SIZE);
++		mac_addr[len] = '\0';
++		if (len == EFUSE_MAC_SIZE && is_valid_ethaddr(mac_addr))
++			eth_env_set_enetaddr("ethaddr", mac_addr);
++		else
++			meson_generate_serial_ethaddr();
++	}
++
++	if (!env_get("serial#")) {
++		len = meson_sm_read_efuse(EFUSE_SN_OFFSET, serial,
++			EFUSE_SN_SIZE);
++		serial[len] = '\0';
++		if (len == EFUSE_SN_SIZE)
++			env_set("serial#", serial);
++	}
++
++	return 0;
++}
+diff --git a/configs/libretech-ac_defconfig b/configs/libretech-ac_defconfig
+index 6ad04570022..11d9795e05d 100644
+--- a/configs/libretech-ac_defconfig
++++ b/configs/libretech-ac_defconfig
+@@ -1,5 +1,7 @@
+ CONFIG_ARM=y
+ CONFIG_SYS_CONFIG_NAME="libretech-ac"
++CONFIG_SYS_VENDOR="libre-computer"
++CONFIG_SYS_BOARD="aml-s805x-ac"
+ CONFIG_ARCH_MESON=y
+ CONFIG_TEXT_BASE=0x01000000
+ CONFIG_NR_DRAM_BANKS=1
+-- 
+2.34.1
+

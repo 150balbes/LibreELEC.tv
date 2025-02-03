@@ -3,8 +3,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="freetype"
-PKG_VERSION="2.13.1"
-PKG_SHA256="ea67e3b019b1104d1667aa274f5dc307d8cbd606b399bc32df308a77f1a564bf"
+PKG_VERSION="2.13.3"
+PKG_SHA256="0550350666d427c74daeb85d5ac7bb353acba5f76956395995311a9c6f063289"
 PKG_LICENSE="GPL"
 PKG_SITE="https://freetype.org"
 PKG_URL="https://download.savannah.gnu.org/releases/freetype/freetype-${PKG_VERSION}.tar.xz"
@@ -20,10 +20,11 @@ PKG_CONFIGURE_OPTS_TARGET="LIBPNG_CFLAGS=-I${SYSROOT_PREFIX}/usr/include \
 
 pre_configure_target() {
   # unset LIBTOOL because freetype uses its own
-    ( cd ..
-      unset LIBTOOL
-      sh autogen.sh
-    )
+  (
+    cd ..
+    unset LIBTOOL
+    sh autogen.sh
+  )
 }
 
 post_makeinstall_target() {

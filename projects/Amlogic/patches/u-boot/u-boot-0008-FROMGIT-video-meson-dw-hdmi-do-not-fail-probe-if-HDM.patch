@@ -1,0 +1,35 @@
+From 3afcf6403a22a276be297d57ed1af9342510ea3b Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 9 Oct 2024 10:01:56 +0200
+Subject: [PATCH 08/12] FROMGIT: video: meson: dw-hdmi: do not fail probe if
+ HDMI regulator is already enabled
+
+If the regulator is already enabled, this happens if the regulator
+is set in regulator-always-on, regulator_set_enable() return -EALREADY.
+
+Ignore the -EALREADY return since it's not an error.
+
+Suggested-by: Jonas Karlman <jonas@kwiboo.se>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/video/meson/meson_dw_hdmi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/meson/meson_dw_hdmi.c b/drivers/video/meson/meson_dw_hdmi.c
+index 587df7beb9b..1631dc38416 100644
+--- a/drivers/video/meson/meson_dw_hdmi.c
++++ b/drivers/video/meson/meson_dw_hdmi.c
+@@ -418,8 +418,8 @@ static int meson_dw_hdmi_probe(struct udevice *dev)
+ 	}
+ 
+ 	if (!ret) {
+-		ret = regulator_set_enable(supply, true);
+-		if (ret)
++		ret = regulator_set_enable_if_allowed(supply, true);
++		if (ret && ret != -ENOSYS)
+ 			return ret;
+ 	}
+ #endif
+-- 
+2.34.1
+

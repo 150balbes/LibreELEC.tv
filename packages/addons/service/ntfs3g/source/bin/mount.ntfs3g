@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# SPDX-License-Identifier: GPL-2.0-only
+# Copyright (C) 2024-present Team LibreELEC (https://libreelec.tv)
+
+exec /storage/.kodi/addons/service.ntfs3g/bin/ntfs-3g "$@"

@@ -21,12 +21,12 @@ if [ "${ARCH}" = "arm" ]; then
   PKG_MAKE_OPTS_TARGET+=" platform=unix-armv"
 fi
 
-if target_has_feature neon ; then
+if target_has_feature neon; then
   PKG_MAKE_OPTS_TARGET+=" HAVE_NEON=1"
 fi
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 }

@@ -23,7 +23,7 @@ index 81ea6b8..7ab5f13 100644
 @@ -106,7 +103,7 @@ $(OBJDIR)/libbpf.so.$(LIBBPF_VERSION): $(SHARED_OBJS)
  		  $^ $(ALL_LDFLAGS) -o $@
  
- $(OBJDIR)/libbpf.pc: force
+ $(OBJDIR)/libbpf.pc: force | $(OBJDIR)
 -	$(Q)sed -e "s|@PREFIX@|$(PREFIX)|" \
 +	$(Q)sed -e "s|@PREFIX@|$(PREFIX_PC)|" \
  		-e "s|@LIBDIR@|$(LIBDIR_PC)|" \

@@ -2,8 +2,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="miniupnpc"
-PKG_VERSION="2.2.4"
-PKG_SHA256="481a5e4aede64e9ef29895b218836c3608d973e77a35b4f228ab1f3629412c4b"
+PKG_VERSION="2.2.7"
+PKG_SHA256="b0c3a27056840fd0ec9328a5a9bac3dc5e0ec6d2e8733349cf577b0aa1e70ac1"
 PKG_LICENSE="BSD"
 PKG_SITE="http://miniupnp.free.fr"
 PKG_URL="http://miniupnp.free.fr/files/${PKG_NAME}-${PKG_VERSION}.tar.gz"

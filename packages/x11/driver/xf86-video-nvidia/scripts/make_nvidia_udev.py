@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
 import os, sys
-import requests
+
+try:
+  import requests
+except:
+  print('requests module not installed.\n\nOn Ubuntu, use "sudo apt install python3-requests"')
+  sys.exit(1)
 
 try:
   from lxml import html
@@ -29,13 +34,10 @@ page = requests.get(url, headers=headers)
 tree = html.fromstring(page.content)
 
 # These are the tables we want to use (gpu's supported by the current driver)
-# NVIDIA GeForce GPUs = 1
-# NVIDIA Quadro GPUs = 2
-# NVIDIA NVS GPUs = 3
-# NVIDIA Tesla GPUs = 4
+# NVIDIA GPU product = 2
 
 ids = []
-for table in range(1, 5):
+for table in range(1, 2):
   ids = ids + tree.xpath('//html/body/div[@class="appendix"]/div[@class="informaltable"][' + str(table) + ']/table/tbody/tr[starts-with(@id, "devid")]/td[2]//text()')
 
 # If three IDs are listed, the first is the PCI Device ID, the second is the PCI Subsystem Vendor ID, and the third is the PCI Subsystem Device ID.

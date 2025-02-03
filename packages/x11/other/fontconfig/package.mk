@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="fontconfig"
-PKG_VERSION="2.14.2"
-PKG_SHA256="3ba2dd92158718acec5caaf1a716043b5aa055c27b081d914af3ccb40dce8a55"
+PKG_VERSION="2.15.0"
+PKG_SHA256="f5f359d6332861bd497570848fcb42520964a9e83d5e3abe397b6b6db9bcaaf4"
 PKG_LICENSE="OSS"
 PKG_SITE="https://www.freedesktop.org/wiki/Software/fontconfig/"
 PKG_URL="https://www.freedesktop.org/software/fontconfig/release/${PKG_NAME}-${PKG_VERSION}.tar.gz"
@@ -21,7 +21,7 @@ PKG_CONFIGURE_OPTS_TARGET="--with-arch=${TARGET_ARCH} \
                            --disable-rpath"
 
 pre_configure_target() {
-# ensure we dont use '-O3' optimization.
+  # ensure we dont use '-O3' optimization.
   CFLAGS=$(echo ${CFLAGS} | sed -e "s|-O3|-O2|")
   CXXFLAGS=$(echo ${CXXFLAGS} | sed -e "s|-O3|-O2|")
   CFLAGS+=" -I${PKG_BUILD}"

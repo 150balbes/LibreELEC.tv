@@ -3,8 +3,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="alsa-utils"
-PKG_VERSION="1.2.9"
-PKG_SHA256="e7623d4525595f92e11ce25ee9a97f2040a14c6e4dcd027aa96e06cbce7817bd"
+PKG_VERSION="1.2.13"
+PKG_SHA256="1702a6b1cdf9ba3e996ecbc1ddcf9171e6808f5961d503d0f27e80ee162f1daa"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.alsa-project.org/"
 PKG_URL="https://www.alsa-project.org/files/pub/utils/alsa-utils-${PKG_VERSION}.tar.bz2"
@@ -21,14 +21,18 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-alsaconf \
                            --disable-rst2man \
                            --disable-xmlto"
 
+post_configure_target() {
+  libtool_remove_rpath libtool
+}
+
 post_makeinstall_target() {
   rm -rf ${INSTALL}/lib ${INSTALL}/var
   rm -rf ${INSTALL}/usr/share/alsa/speaker-test
   rm -rf ${INSTALL}/usr/share/sounds
   rm -rf ${INSTALL}/usr/lib/systemd/system
 
-# remove default udev rule to restore mixer configs, we install our own.
-# so we avoid resetting our soundconfig
+  # remove default udev rule to restore mixer configs, we install our own.
+  # so we avoid resetting our soundconfig
   rm -rf ${INSTALL}/usr/lib/udev/rules.d/90-alsa-restore.rules
 
   mkdir -p ${INSTALL}/.noinstall

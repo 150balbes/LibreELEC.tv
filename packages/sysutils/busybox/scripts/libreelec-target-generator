@@ -7,7 +7,7 @@
 EARLY_DIR="$2"
 
 log() {
-  echo "libreelec-target-generator: $@" > /dev/kmsg
+  echo "libreelec-target-generator: $@" >/dev/kmsg
 }
 
 if [ -z "$EARLY_DIR" ]; then
@@ -40,8 +40,6 @@ elif [ -f /storage/.cache/reset_hard -o -f /storage/.cache/reset_soft ]; then
   TARGET="factory-reset.target"
 elif [ -f "$BACKUP_FILE" ]; then
   TARGET="backup-restore.target"
-elif [ -f /storage/.rpi_flash_firmware ]; then
-  TARGET="rpi-flash-firmware.target"
 fi
 
 if [ -n "$TARGET" ]; then

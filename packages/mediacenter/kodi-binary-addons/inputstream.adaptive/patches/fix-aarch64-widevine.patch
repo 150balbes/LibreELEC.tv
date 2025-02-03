@@ -1,0 +1,39 @@
+From 32f69bcb315efdb443b48bc50966d302bb546813 Mon Sep 17 00:00:00 2001
+From: Matthias Reichl <hias@horus.com>
+Date: Sun, 17 Nov 2024 18:16:38 +0100
+Subject: [PATCH] Fix widevine on aarch64
+
+The switch to hidden symbol visibility broke widevine on aarch64
+as the functions in cdm_loader.cpp were no longer exported.
+
+Add attributes to specify default visibility to those functions
+to make it work again.
+
+Signed-off-by: Matthias Reichl <hias@horus.com>
+---
+ lib/cdm_aarch64/cdm_loader.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/cdm_aarch64/cdm_loader.cpp b/lib/cdm_aarch64/cdm_loader.cpp
+index 5dd47b74ea26..b4dbf6ca3a70 100644
+--- a/lib/cdm_aarch64/cdm_loader.cpp
++++ b/lib/cdm_aarch64/cdm_loader.cpp
+@@ -16,13 +16,13 @@ extern "C"
+ // See https://github.com/xbmc/inputstream.adaptive/issues/1128
+ #if defined(__linux__) && (defined(__aarch64__) || defined(__arm64__))
+ 
+-  __attribute__((target("no-outline-atomics"))) int32_t __aarch64_ldadd4_acq_rel(int32_t value,
++  __attribute__((target("no-outline-atomics"))) __attribute__((visibility("default"))) int32_t __aarch64_ldadd4_acq_rel(int32_t value,
+                                                                                  int32_t* ptr)
+   {
+     return __atomic_fetch_add(ptr, value, __ATOMIC_ACQ_REL);
+   }
+ 
+-  __attribute__((target("no-outline-atomics"))) int32_t __aarch64_swp4_acq_rel(int32_t value,
++  __attribute__((target("no-outline-atomics"))) __attribute__((visibility("default"))) int32_t __aarch64_swp4_acq_rel(int32_t value,
+                                                                                int32_t* ptr)
+   {
+     return __atomic_exchange_n(ptr, value, __ATOMIC_ACQ_REL);
+-- 
+2.39.5
+

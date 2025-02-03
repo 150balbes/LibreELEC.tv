@@ -1,0 +1,33 @@
+From 2089ed103a91fa226af44bd6c72a14e7066277aa Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Tue, 8 Oct 2024 18:23:42 +0200
+Subject: [PATCH 07/12] FROMGIT: dts: meson-g12-common-u-boot: do not disable
+ canvas
+
+We were disabling canvas, which causes meson vpu probe failure,
+just stop and leave canvas alone.
+
+Fixes: ce9fa7bffc5 ("ARM: dts: meson-g12a: add U-Boot specific DT for graphics")
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ arch/arm/dts/meson-g12-common-u-boot.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/dts/meson-g12-common-u-boot.dtsi b/arch/arm/dts/meson-g12-common-u-boot.dtsi
+index 8070b62af5b..6629f3256a8 100644
+--- a/arch/arm/dts/meson-g12-common-u-boot.dtsi
++++ b/arch/arm/dts/meson-g12-common-u-boot.dtsi
+@@ -17,10 +17,6 @@
+ 	};
+ };
+ 
+-&canvas {
+-	status = "disabled";
+-};
+-
+ &vpu {
+ 	reg = <0x0 0xff900000 0x0 0x100000>,
+ 	      <0x0 0xff63c000 0x0 0x1000>,
+-- 
+2.34.1
+

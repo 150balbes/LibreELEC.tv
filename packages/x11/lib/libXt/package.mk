@@ -3,8 +3,8 @@
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libXt"
-PKG_VERSION="1.3.0"
-PKG_SHA256="52820b3cdb827d08dc90bdfd1b0022a3ad8919b57a39808b12591973b331bf91"
+PKG_VERSION="1.3.1"
+PKG_SHA256="e0a774b33324f4d4c05b199ea45050f87206586d81655f8bef4dba434d931288"
 PKG_LICENSE="OSS"
 PKG_SITE="https://www.X.org"
 PKG_URL="https://xorg.freedesktop.org/archive/individual/lib/${PKG_NAME}-${PKG_VERSION}.tar.xz"

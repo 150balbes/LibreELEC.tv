@@ -3,19 +3,18 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mc"
-PKG_VERSION="4.8.29"
-PKG_SHA256="01d8a3b94f58180cca5bf17257b5078d1fd6fd27a9b5c0e970ec767549540ad4"
+PKG_VERSION="4.8.32"
+PKG_SHA256="4ddc83d1ede9af2363b3eab987f54b87cf6619324110ce2d3a0e70944d1359fe"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.midnight-commander.org"
 PKG_URL="http://ftp.midnight-commander.org/mc-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_TARGET="toolchain gettext:host glib libssh2 libtool:host ncurses pcre"
+PKG_DEPENDS_TARGET="toolchain gettext:host glib libssh2 libtool:host ncurses pcre2"
 PKG_LONGDESC="Midnight Commander is a text based filemanager that emulates Norton Commander."
 PKG_BUILD_FLAGS="-sysroot"
 
 PKG_CONFIGURE_OPTS_TARGET=" \
   --datadir=/storage/.kodi/addons/virtual.system-tools/data \
   --libexecdir=/storage/.kodi/addons/virtual.system-tools/mclib \
-  --with-homedir=/storage/.kodi/userdata/addon_data/virtual.system-tools \
   --sysconfdir=/storage/.kodi/addons/virtual.system-tools/etc \
   --with-screen=ncurses \
   --with-sysroot=${SYSROOT_PREFIX} \
@@ -34,6 +33,8 @@ PKG_CONFIGURE_OPTS_TARGET=" \
   --enable-vfs-ftp \
   --enable-vfs-sftp \
   --enable-vfs-tar \
+  --with-search-engine=pcre2 \
+  --with-pcre2=${SYSROOT_PREFIX}/usr \
   --without-x"
 
 pre_configure_target() {

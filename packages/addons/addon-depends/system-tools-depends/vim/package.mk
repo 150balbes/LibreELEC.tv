@@ -2,14 +2,14 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vim"
-PKG_VERSION="9.0.1417"
-PKG_SHA256="02c67859046f7c0206afb909061763cf40747c6bf40c22bb6efaf9c06be41591"
+PKG_VERSION="9.1.0"
+PKG_SHA256="ddb435f6e386c53799a3025bdc5a3533beac735a0ee596cb27ada97366a1c725"
 PKG_LICENSE="VIM"
 PKG_SITE="http://www.vim.org/"
 PKG_URL="https://github.com/vim/vim/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain ncurses"
 PKG_LONGDESC="Vim is a highly configurable text editor built to enable efficient text editing."
-PKG_BUILD_FLAGS="-sysroot"
+PKG_BUILD_FLAGS="-sysroot -cfg-libs"
 
 PKG_CONFIGURE_OPTS_TARGET="vim_cv_getcwd_broken=no \
                            vim_cv_memmove_handles_overlap=yes \
@@ -48,8 +48,8 @@ pre_makeinstall_target() {
 
 post_makeinstall_target() {
   (
-  cd ${INSTALL}/storage/.kodi/addons/virtual.system-tools/data/vim
-  rm -r doc tutor gvimrc_example.vim
-  mv vimrc_example.vim vimrc
+    cd ${INSTALL}/storage/.kodi/addons/virtual.system-tools/data/vim
+    rm -r doc tutor gvimrc_example.vim
+    mv vimrc_example.vim vimrc
   )
 }

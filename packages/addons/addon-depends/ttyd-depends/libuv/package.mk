@@ -2,8 +2,8 @@
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libuv"
-PKG_VERSION="1.44.2"
-PKG_SHA256="e6e2ba8b4c349a4182a33370bb9be5e23c51b32efb9b9e209d0e8556b73a48da"
+PKG_VERSION="1.48.0"
+PKG_SHA256="8c253adb0f800926a6cbd1c6576abae0bc8eb86a4f891049b72f9e5b7dc58f33"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libuv/libuv"
 PKG_URL="https://github.com/libuv/libuv/archive/v${PKG_VERSION}.tar.gz"

@@ -3,26 +3,14 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="simplejson"
-PKG_VERSION="3.19.1"
-PKG_SHA256="6277f60848a7d8319d27d2be767a7546bc965535b28070e310b3a9af90604a4c"
+PKG_VERSION="3.19.3"
+PKG_SHA256="8e086896c36210ab6050f2f9f095a5f1e03c83fa0e7f296d6cba425411364680"
 PKG_LICENSE="OSS"
 PKG_SITE="http://pypi.org/project/simplejson"
 PKG_URL="https://files.pythonhosted.org/packages/source/${PKG_NAME:0:1}/${PKG_NAME}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain Python3 distutilscross:host"
+PKG_DEPENDS_TARGET="toolchain Python3 setuptools:host"
 PKG_LONGDESC="A simple, fast, complete, correct and extensible JSON encoder and decoder for Python 2.5+."
-PKG_TOOLCHAIN="manual"
-
-pre_make_target() {
-  export PYTHONXCPREFIX="${SYSROOT_PREFIX}/usr"
-}
-
-make_target() {
-  python3 setup.py build --cross-compile
-}
-
-makeinstall_target() {
-  python3 setup.py install --root=${INSTALL} --prefix=/usr
-}
+PKG_TOOLCHAIN="python"
 
 post_makeinstall_target() {
   python_remove_source

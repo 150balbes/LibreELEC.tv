@@ -3,13 +3,13 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xz"
-PKG_VERSION="5.4.3"
-PKG_SHA256="92177bef62c3824b4badc524f8abcce54a20b7dbcfb84cde0a2eb8b49159518c"
+PKG_VERSION="5.6.3"
+PKG_SHA256="db0590629b6f0fa36e74aea5f9731dc6f8df068ce7b7bafa45301832a5eebc3a"
 PKG_LICENSE="GPL"
 PKG_SITE="https://tukaani.org/xz/"
-PKG_URL="https://tukaani.org/xz/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_URL="https://github.com/tukaani-project/xz/releases/download/v${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="ccache:host"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="autotools:host gcc:host"
 PKG_LONGDESC="A free general-purpose data compression software with high compression ratio."
 PKG_BUILD_FLAGS="+pic +pic:host"
 PKG_TOOLCHAIN="configure"
@@ -24,9 +24,13 @@ PKG_CONFIGURE_OPTS_HOST="--disable-shared --enable-static \
                          --disable-scripts \
                          --enable-symbol-versions=no"
 
-PKG_CONFIGURE_OPTS_TARGET="--disable-shared --enable-static \
+PKG_CONFIGURE_OPTS_TARGET="--enable-static \
+                           --disable-shared \
+                           --disable-doc \
+                           --disable-lzmadec \
+                           --disable-lzmainfo \
+                           --disable-lzma-links \
+                           --disable-scripts \
+                           --disable-xz \
+                           --disable-xzdec \
                            --enable-symbol-versions=no"
-
-post_makeinstall_target() {
-  rm -rf ${INSTALL}
-}

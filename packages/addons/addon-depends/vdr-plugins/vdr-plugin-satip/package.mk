@@ -3,12 +3,12 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vdr-plugin-satip"
-PKG_VERSION="0a216f1cf9d6401b1afbff420f4fa244ec15d299"
-PKG_SHA256="817900c9fa5ade5c52b0391b791f801832c57bdbed5e7501d7e92b4fe29de816"
+PKG_VERSION="20240720"
+PKG_SHA256="2a9709bfb31a3745c18c867a543d708eddbf4c41af898555e4a0daa63a2199a7"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.saunalahti.fi/~rahrenbe/vdr/satip/"
-PKG_URL="https://github.com/rofafor/vdr-plugin-satip/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain vdr curl tinyxml"
+PKG_SITE="https://vdr-projects.github.io/"
+PKG_URL="https://github.com/wirbel-at-vdr-portal/vdr-plugin-satip/archive/${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain vdr curl librepfunc tinyxml"
 PKG_NEED_UNPACK="$(get_pkg_directory vdr)"
 PKG_LONGDESC="This is an SAT>IP plugin for the Video Disk Recorder (VDR)."
 PKG_TOOLCHAIN="manual"
@@ -16,7 +16,8 @@ PKG_TOOLCHAIN="manual"
 make_target() {
   VDR_DIR=$(get_build_dir vdr)
   export PKG_CONFIG_PATH=${VDR_DIR}:${PKG_CONFIG_PATH}
-  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include
+  export CPLUS_INCLUDE_PATH=${VDR_DIR}/include:$(get_install_dir librepfunc)/usr/include
+  export LDFLAGS+=" -L$(get_install_dir librepfunc)/usr/lib"
 
   make \
     SATIP_USE_TINYXML=1 \

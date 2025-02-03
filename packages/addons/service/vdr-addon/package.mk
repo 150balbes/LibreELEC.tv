@@ -4,8 +4,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vdr-addon"
-PKG_VERSION="2.6.3"
-PKG_REV="0"
+PKG_VERSION="2.7.1"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
@@ -25,7 +25,7 @@ PKG_ADDON_REQUIRES="pvr.vdr.vnsi:0.0.0 script.config.vdr:0.0.0"
 
 addon() {
   # create dirs
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,lib,plugin,locale}
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,lib.private,plugin,locale}
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/config/epgsources
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/config/plugins/{eepg,epgfixer,epgsearch,streamdev-server,vnsiserver}
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/res/plugins/{live,restfulapi}
@@ -37,7 +37,7 @@ addon() {
   cp -P $(get_build_dir vdr-plugin-vnsiserver)/vnsiserver/allowed_hosts.conf ${ADDON_BUILD}/${PKG_ADDON_ID}/config/plugins/vnsiserver
 
   touch ${ADDON_BUILD}/${PKG_ADDON_ID}/config/channels.conf
-  echo '0.0.0.0/0' >> ${ADDON_BUILD}/${PKG_ADDON_ID}/config/svdrphosts.conf
+  echo '0.0.0.0/0' >>${ADDON_BUILD}/${PKG_ADDON_ID}/config/svdrphosts.conf
 
   # copy static files
   cp -PR $(get_build_dir vdr-plugin-restfulapi)/web/* \
@@ -49,12 +49,15 @@ addon() {
   cp -P $(get_build_dir vdr-plugin-xmltv2vdr)/dist/epgdata2xmltv/epgdata2xmltv.dist ${ADDON_BUILD}/${PKG_ADDON_ID}/config/epgsources/epgdata2xmltv
 
   # copy binaries
-  for pkg in ddci2 dummydevice dvbapi eepg epgfixer epgsearch iptv live restfulapi robotv satip vnsiserver wirbelscan wirbelscancontrol xmltv2vdr; do
+  for pkg in ddci2 dummydevice dvbapi eepg epgfixer epgsearch iptv live restfulapi robotv satip \
+              vnsiserver wirbelscan wirbelscancontrol xmltv2vdr; do
     cp -PR $(get_build_dir vdr-plugin-${pkg})/libvdr*.so.* ${ADDON_BUILD}/${PKG_ADDON_ID}/plugin
   done
+  patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/plugin/libvdr-live.so.*
 
   # copy locale (omit ddci, dummydevice, robotv)
-  for pkg in dvbapi eepg epgfixer epgsearch iptv live restfulapi satip vnsiserver wirbelscan wirbelscancontrol xmltv2vdr; do
+  for pkg in dvbapi eepg epgfixer epgsearch iptv live restfulapi satip vnsiserver wirbelscan \
+             wirbelscancontrol xmltv2vdr; do
     cp -PR $(get_build_dir vdr-plugin-${pkg})/locale/* ${ADDON_BUILD}/${PKG_ADDON_ID}/locale
   done
 
@@ -65,7 +68,7 @@ addon() {
         $(get_build_dir vdr-plugin-streamdev)/server/locale/* \
         ${ADDON_BUILD}/${PKG_ADDON_ID}/locale
 
-  cp -PL $(get_install_dir tntnet)/usr/lib/libtntnet.so.13 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  cp -PL $(get_install_dir tntnet)/usr/lib/libtntnet.so.13 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 
   cp -P $(get_build_dir vdr)/vdr ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/vdr.bin
   cp -PR $(get_build_dir vdr)/locale/* ${ADDON_BUILD}/${PKG_ADDON_ID}/locale

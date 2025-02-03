@@ -2,9 +2,9 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.beetle-pce"
-PKG_VERSION="1.29.0.22-Nexus"
-PKG_SHA256="2d1f2c473f4ef3d94373d06e28b92d171315d2ae38662a839e8fb89c2dcdb307"
-PKG_REV="1"
+PKG_VERSION="1.29.0.29-Nexus"
+PKG_SHA256="023495220f2037560092f21de97452183ca7d052f4a91ca57f53046f8657e857"
+PKG_REV="3"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/kodi-game/game.libretro.beetle-pce"

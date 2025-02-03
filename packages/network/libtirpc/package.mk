@@ -3,8 +3,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libtirpc"
-PKG_VERSION="1.3.3"
-PKG_SHA256="6474e98851d9f6f33871957ddee9714fdcd9d8a5ee9abb5a98d63ea2e60e12f3"
+PKG_VERSION="1.3.6"
+PKG_SHA256="bbd26a8f0df5690a62a47f6aa30f797f3ef8d02560d1bc449a83066b5a1d3508"
 PKG_LICENSE="GPL"
 PKG_SITE="https://sourceforge.net/projects/libtirpc/"
 PKG_URL="https://downloads.sourceforge.net/project/libtirpc/libtirpc/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"

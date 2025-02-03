@@ -3,20 +3,20 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpeg"
-PKG_VERSION="6.0"
-PKG_SHA256="57be87c22d9b49c112b6d24bc67d42508660e6b718b3db89c44e47e289137082"
+PKG_VERSION="6.0.1"
+PKG_SHA256="9b16b8731d78e596b4be0d720428ca42df642bb2d78342881ff7f5bc29fc9623"
 PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="http://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
+PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex libxml2"
 PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
 PKG_PATCH_DIRS="libreelec"
 
 case "${PROJECT}" in
   Amlogic)
-    PKG_VERSION="6859fc2a8791c0fcc25851b77fed15a691ceb332"
+    PKG_VERSION="9011d22fed1834cb7bd946349cc8a5eda748eec7"
     PKG_FFMPEG_BRANCH="dev/6.0/rpi_import_1"
-    PKG_SHA256="d9ba353b5ab95489bb999cec958bed154534ccb46c154fb8b9d6848188f7ef8c"
+    PKG_SHA256="35b6b84a3e6542a4d96f9a0537c8dbf95176cc07452b0a63339a44b1590bf5f2"
     PKG_URL="https://github.com/jc-kynesim/rpi-ffmpeg/archive/${PKG_VERSION}.tar.gz"
     ;;
   RPi)
@@ -26,8 +26,9 @@ case "${PROJECT}" in
   *)
     PKG_PATCH_DIRS+=" v4l2-request v4l2-drmprime"
     case "${PROJECT}" in
-      Allwinner|Rockchip)
+      Allwinner | Rockchip)
         PKG_PATCH_DIRS+=" vf-deinterlace-v4l2m2m"
+        ;;
     esac
     ;;
 esac
@@ -35,9 +36,9 @@ esac
 post_unpack() {
   # Fix FFmpeg version
   if [ "${PROJECT}" = "Amlogic" ]; then
-    echo "${PKG_FFMPEG_BRANCH}-${PKG_VERSION:0:7}" > ${PKG_BUILD}/VERSION
+    echo "${PKG_FFMPEG_BRANCH}-${PKG_VERSION:0:7}" >${PKG_BUILD}/VERSION
   else
-    echo "${PKG_VERSION}" > ${PKG_BUILD}/RELEASE
+    echo "${PKG_VERSION}" >${PKG_BUILD}/RELEASE
   fi
 }
 
@@ -51,7 +52,7 @@ if [ "${V4L2_SUPPORT}" = "yes" ]; then
   PKG_NEED_UNPACK+=" $(get_pkg_directory libdrm)"
   PKG_FFMPEG_V4L2="--enable-v4l2_m2m --enable-libdrm"
 
-  if [ "${PROJECT}" = "Allwinner" -o "${PROJECT}" = "Rockchip" -o "${DEVICE}" = "iMX8" -o "${DEVICE}" = "RPi4" ]; then
+  if [ "${PROJECT}" = "Allwinner" -o "${PROJECT}" = "Rockchip" -o "${DEVICE}" = "iMX8" -o "${DEVICE}" = "RPi4" -o "${DEVICE}" = "RPi5" ]; then
     PKG_V4L2_REQUEST="yes"
   else
     PKG_V4L2_REQUEST="no"
@@ -121,6 +122,8 @@ pre_configure_target() {
 
 if [ "${FFMPEG_TESTING}" = "yes" ]; then
   PKG_FFMPEG_TESTING="--enable-encoder=wrapped_avframe --enable-muxer=null"
+  PKG_FFMPEG_TESTING+=" --enable-encoder=rawvideo --enable-muxer=rawvideo"
+  PKG_FFMPEG_TESTING+=" --enable-muxer=image2 --enable-muxer=md5 --enable-muxer=framemd5"
   if [ "${PROJECT}" = "RPi" ]; then
     PKG_FFMPEG_TESTING+=" --enable-vout-drm --enable-outdev=vout_drm"
   fi
@@ -225,6 +228,7 @@ configure_target() {
               --disable-libvpx \
               --disable-libx264 \
               --disable-libxavs \
+              --enable-libxml2 \
               --disable-libxvid \
               --enable-zlib \
               --enable-asm \

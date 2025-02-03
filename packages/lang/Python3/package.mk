@@ -3,46 +3,49 @@
 
 PKG_NAME="Python3"
 # When changing PKG_VERSION remember to sync PKG_PYTHON_VERSION!
-PKG_VERSION="3.11.4"
-PKG_SHA256="2f0e409df2ab57aa9fc4cbddfb976af44e4e55bf6f619eee6bc5c2297264a7f6"
+PKG_VERSION="3.12.7"
+PKG_SHA256="24887b92e2afd4a2ac602419ad4b596372f67ac9b077190f459aba390faf5550"
 PKG_LICENSE="OSS"
 PKG_SITE="https://www.python.org/"
 PKG_URL="https://www.python.org/ftp/python/${PKG_VERSION}/${PKG_NAME::-1}-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host util-linux:host xz:host autoconf-archive:host"
-PKG_DEPENDS_TARGET="toolchain Python3:host sqlite expat zlib bzip2 xz openssl libffi readline ncurses util-linux"
+PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host util-linux:host autoconf-archive:host"
+PKG_DEPENDS_TARGET="autotools:host gcc:host Python3:host sqlite expat zlib bzip2 xz openssl libffi readline ncurses util-linux"
 PKG_LONGDESC="Python3 is an interpreted object-oriented programming language."
+PKG_BUILD_FLAGS="-cfg-libs -cfg-libs:host"
 PKG_TOOLCHAIN="autotools"
 
-PKG_PYTHON_VERSION="python3.11"
-
-PKG_PY_DISABLED_MODULES="_tkinter nis gdbm bsddb ossaudiodev"
+PKG_PYTHON_VERSION="python3.12"
 
 PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_HAS_HG=/bin/false
                          ac_cv_prog_SVNVERSION=/bin/false
+                         py_cv_module_unicodedata=yes
+                         py_cv_module__bz2=n/a
+                         py_cv_module__codecs_cn=n/a
+                         py_cv_module__codecs_hk=n/a
+                         py_cv_module__codecs_iso2022=n/a
+                         py_cv_module__codecs_jp=n/a
+                         py_cv_module__codecs_kr=n/a
+                         py_cv_module__codecs_tw=n/a
+                         py_cv_module__decimal=n/a
+                         py_cv_module__lzma=n/a
+                         py_cv_module_nis=n/a
+                         py_cv_module_ossaudiodev=n/a
+                         py_cv_module__dbm=n/a
+                         py_cv_module__gdbm=n/a
                          --disable-pyc-build
-                         --disable-ossaudiodev
                          --disable-sqlite3
-                         --disable-codecs-cjk
-                         --disable-nis
-                         --enable-unicodedata
-                         --enable-openssl
-                         --disable-readline
-                         --disable-bzip2
-                         --enable-zlib
-                         --enable-xz
+                         --without-readline
                          --disable-tk
                          --disable-curses
                          --disable-pydoc
                          --disable-test-modules
                          --disable-lib2to3
                          --disable-idle3
-                         --without-cxx-main
                          --with-expat=builtin
-                         --with-libmpdec=none
                          --with-doc-strings
-                         --with-system-ffi
                          --without-pymalloc
-                         --without-ensurepip
+                         --with-ensurepip=no
+                         --enable-shared
 "
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
@@ -57,38 +60,40 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
                            ac_cv_buggy_getaddrinfo=no
                            ac_cv_header_bluetooth_bluetooth_h=no
                            ac_cv_header_bluetooth_h=no
+                           py_cv_module_unicodedata=yes
+                           py_cv_module__codecs_cn=n/a
+                           py_cv_module__codecs_hk=n/a
+                           py_cv_module__codecs_iso2022=n/a
+                           py_cv_module__codecs_jp=n/a
+                           py_cv_module__codecs_kr=n/a
+                           py_cv_module__codecs_tw=n/a
+                           py_cv_module__decimal=n/a
+                           py_cv_module_nis=n/a
+                           py_cv_module_ossaudiodev=n/a
+                           py_cv_module__dbm=n/a
                            --disable-pyc-build
-                           --disable-ossaudiodev
                            --enable-sqlite3
-                           --disable-codecs-cjk
-                           --disable-nis
-                           --enable-unicodedata
-                           --enable-openssl
-                           --enable-readline
-                           --enable-bzip2
-                           --enable-zlib
-                           --enable-xz
+                           --with-readline
                            --disable-tk
                            --enable-curses
                            --disable-pydoc
                            --disable-test-modules
                            --disable-lib2to3
                            --disable-idle3
-                           --without-cxx-main
                            --with-expat=system
-                           --with-libmpdec=none
                            --with-doc-strings
-                           --with-system-ffi
                            --without-pymalloc
                            --without-ensurepip
                            --enable-ipv6
                            --with-build-python=${TOOLCHAIN}/bin/python
+                           --enable-shared
 "
 
 pre_configure_host() {
-  export PYTHON_MODULES_INCLUDE="${HOST_INCDIR}"
-  export PYTHON_MODULES_LIB="${HOST_LIBDIR}"
-  export DISABLED_EXTENSIONS="readline _curses _curses_panel ${PKG_PY_DISABLED_MODULES}"
+  # control patch Python3-0300-generate-legacy-pyc-bytecode
+  # this needs to be set when building host based py file
+  # do not set this for py compiles being done for target use
+  export DONT_BUILD_LEGACY_PYC=1
 }
 
 post_make_host() {
@@ -99,19 +104,14 @@ post_make_host() {
 post_makeinstall_host() {
   ln -sf ${PKG_PYTHON_VERSION} ${TOOLCHAIN}/bin/python
 
-  rm -f ${TOOLCHAIN}/bin/smtpd.py*
-  rm -f ${TOOLCHAIN}/bin/pyvenv
-  rm -f ${TOOLCHAIN}/bin/pydoc*
-
   rm -fr ${PKG_BUILD}/.${HOST_NAME}/build/temp.*
-
-  cp ${PKG_BUILD}/Tools/scripts/reindent.py ${TOOLCHAIN}/lib/${PKG_PYTHON_VERSION}
 }
 
-pre_configure_target() {
-  export PYTHON_MODULES_INCLUDE="${TARGET_INCDIR}"
-  export PYTHON_MODULES_LIB="${TARGET_LIBDIR}"
-  export DISABLED_EXTENSIONS="${PKG_PY_DISABLED_MODULES}"
+post_make_target() {
+  # fix sysconfig paths for cross compiling
+  PKG_SYSCONFIG_FILE=$(find ${PKG_BUILD}/.${TARGET_NAME} -not -path '*/__pycache__/*' -name '_sysconfigdata__*.py')
+  sed -e "s,\([\'|\ ]\)/usr/include,\1${SYSROOT_PREFIX}/usr/include,g" -i ${PKG_SYSCONFIG_FILE}
+  sed -e "s,\([\'|\ ]\)/usr/lib,\1${SYSROOT_PREFIX}/usr/lib,g" -i ${PKG_SYSCONFIG_FILE}
 }
 
 post_makeinstall_target() {
@@ -125,11 +125,7 @@ post_makeinstall_target() {
     rm -rf ${PKG_INSTALL_PATH_LIB}/${dir}
   done
 
-  rm -rf ${PKG_INSTALL_PATH_LIB}/distutils/command/*.exe
-
-  rm -rf ${INSTALL}/usr/bin/pyvenv
-  rm -rf ${INSTALL}/usr/bin/python*-config
-  rm -rf ${INSTALL}/usr/bin/smtpd.py ${INSTALL}/usr/bin/smtpd.py.*
+  safe_remove ${INSTALL}/usr/bin/python*-config
 
   find ${INSTALL} -name '*.o' -delete
 

@@ -2,8 +2,8 @@
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gst-plugins-bad"
-PKG_VERSION="1.22.4"
-PKG_SHA256="eaaf53224565eaabd505ca39c6d5769719b45795cf532ce1ceb60e1b2ebe99ac"
+PKG_VERSION="1.24.9"
+PKG_SHA256="36fcf7a9af0a753b43bb03b9835246f74d72f7124369e66a1e2dc7b04f5a5cab"
 PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://gstreamer.freedesktop.org/modules/gst-plugins-bad.html"
 PKG_URL="https://gstreamer.freedesktop.org/src/gst-plugins-bad/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -113,7 +113,6 @@ pre_configure_target() {
                          -Dgsm=disabled \
                          -Dipcpipeline=disabled \
                          -Diqa=disabled \
-                         -Dkate=disabled \
                          -Dkms=disabled \
                          -Dladspa=disabled \
                          -Dlibde265=disabled \
@@ -189,11 +188,10 @@ pre_configure_target() {
 post_makeinstall_target() {
   # clean up
   safe_remove ${INSTALL}/usr/bin
-  for PKG_GST_PLUGINS_BAD in \
-    libgstadaptivedemux libgstbadaudio libgstbasecamerabinsrc libgstcodecs \
-    libgstinsertbin libgstisoff libgstmpegts libgstphotography libgstplayer \
-    libgstsctp libgsttranscoder libgsturidownloader libgstwebrtc
-  do
+  PKG_GST_PLUGINS_BAD_LIST="libgstadaptivedemux libgstbadaudio libgstbasecamerabinsrc libgstcodecs \
+                            libgstinsertbin libgstisoff libgstmpegts libgstphotography libgstplayer \
+                            libgstsctp libgsttranscoder libgsturidownloader libgstwebrtc"
+  for PKG_GST_PLUGINS_BAD in ${PKG_GST_PLUGINS_BAD_LIST}; do
     safe_remove ${INSTALL}/usr/lib/${PKG_GST_PLUGINS_BAD}-1.0*
   done
   safe_remove ${INSTALL}/usr/share

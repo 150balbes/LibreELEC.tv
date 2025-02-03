@@ -3,13 +3,13 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="u-boot"
-PKG_VERSION="2022.10"
-PKG_SHA256="50b4482a505bc281ba8470c399a3c26e145e29b23500bc35c50debd7fa46bdf8"
+PKG_VERSION="2024.10"
+PKG_SHA256="b28daf4ac17e43156363078bf510297584137f6df50fced9b12df34f61a92fb0"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
 PKG_SITE="https://www.denx.de/wiki/U-Boot"
 PKG_URL="https://ftp.denx.de/pub/u-boot/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
-PKG_DEPENDS_TARGET="toolchain openssl:host pkg-config:host Python3:host swig:host"
+PKG_DEPENDS_TARGET="toolchain openssl:host pkg-config:host Python3:host swig:host pyelftools:host"
 PKG_LONGDESC="Das U-Boot is a cross-platform bootloader for embedded systems."
 
 PKG_STAMP="${UBOOT_SYSTEM} ${UBOOT_TARGET}"
@@ -28,7 +28,7 @@ post_patch() {
   if [ -n "${UBOOT_SYSTEM}" ] && find_file_path bootloader/config; then
     PKG_CONFIG_FILE="${PKG_BUILD}/configs/$(${ROOT}/${SCRIPTS}/uboot_helper ${PROJECT} ${DEVICE} ${UBOOT_SYSTEM} config)"
     if [ -f "${PKG_CONFIG_FILE}" ]; then
-      cat ${FOUND_PATH} >> "${PKG_CONFIG_FILE}"
+      cat ${FOUND_PATH} >>"${PKG_CONFIG_FILE}"
     fi
   fi
 }

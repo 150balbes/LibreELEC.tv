@@ -2,20 +2,17 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="screen"
-PKG_VERSION="4.9.0"
-PKG_SHA256="f9335281bb4d1538ed078df78a20c2f39d3af9a4e91c57d084271e0289c730f4"
+PKG_VERSION="5.0.0"
+PKG_SHA256="f04a39d00a0e5c7c86a55338808903082ad5df4d73df1a2fd3425976aed94971"
 PKG_LICENSE="GPL"
-PKG_SITE="http://www.gnu.org/software/screen/"
-PKG_URL="http://ftpmirror.gnu.org/screen/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_SITE="https://www.gnu.org/software/screen/"
+PKG_URL="https://ftpmirror.gnu.org/screen/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain ncurses"
 PKG_LONGDESC="Screen is a window manager that multiplexes a physical terminal between several processes"
-PKG_BUILD_FLAGS="-sysroot -parallel"
+PKG_BUILD_FLAGS="-sysroot -parallel -cfg-libs"
 PKG_TOOLCHAIN="autotools"
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_header_utempter_h=no \
-                           --enable-colors256 \
                            --disable-pam \
-                           --disable-use-locale \
                            --disable-telnet \
                            --disable-socket-dir"
-

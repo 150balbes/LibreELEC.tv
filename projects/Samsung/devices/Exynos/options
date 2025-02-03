@@ -20,6 +20,3 @@
 
   # KODI Player implementation to use
     KODIPLAYER_DRIVER="$OPENGLES"
-
-  # Mali GPU family
-    MALI_FAMILY="t620"

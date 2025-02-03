@@ -1,7 +1,7 @@
 diff -Naur a/Makefile.am b/Makefile.am
 --- a/Makefile.am	2015-01-20 07:34:33.000000000 -0800
 +++ b/Makefile.am	2015-10-27 11:16:49.027497480 -0700
-@@ -406,22 +406,6 @@
+@@ -408,23 +408,6 @@
  	$(AM_V_GEN)$(MAKEINFO) -P '$(srcdir)/doc' --no-headers \
  	    $(MAKEINFOFLAGS) -o '$@' '$(notes_texi)'
  
@@ -16,9 +16,10 @@ diff -Naur a/Makefile.am b/Makefile.am
 -# manual pages if the sources for the build-tree files we want to
 -# run have changed.
 -$(libtool_1): $(ltmain_sh)
--	$(AM_V_GEN)$(update_mans) --help-option=--help-all libtool
+-	$(AM_V_GEN)$(update_mans) -n 'Provide generalized library-building support services' --help-option=--help-all libtool
 -$(libtoolize_1): $(libtoolize_in)
--	$(AM_V_GEN)$(update_mans) libtoolize
+-	$(AM_V_GEN)$(update_mans) -n 'Prepare a package to use libtool' libtoolize
+-
 -
 -
  ## ------------- ##

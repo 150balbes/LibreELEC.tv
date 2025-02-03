@@ -2,8 +2,8 @@
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-fbneo"
-PKG_VERSION="3d1495688c2a1322b42a575e8c43a9cb589960f2"
-PKG_SHA256="835c21d3c40505572a10cc38ecdcdf32509642427b1e277e5e79f542fe144547"
+PKG_VERSION="d48f1485e7052b97962594c18714de762214ae2b"
+PKG_SHA256="d9cd7b2152f2fb50b9d4f457cd96a89e28961df79d19ae0df4b2f856df42092a"
 PKG_LICENSE="Non-commercial"
 PKG_SITE="https://github.com/libretro/fbneo"
 PKG_URL="https://github.com/libretro/FBNeo/archive/${PKG_VERSION}.tar.gz"
@@ -20,7 +20,7 @@ PKG_MAKE_OPTS_TARGET="-C src/burner/libretro"
 if [ "${ARCH}" = "arm" ]; then
   PKG_MAKE_OPTS_TARGET+=" profile=performance"
 
-  if target_has_feature neon ; then
+  if target_has_feature neon; then
     PKG_MAKE_OPTS_TARGET+=" HAVE_NEON=1"
   fi
 
@@ -35,7 +35,7 @@ fi
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 
   mkdir -p ${SYSROOT_PREFIX}/usr/share/libretro-database/fbneo
   cp -vr dats/* ${SYSROOT_PREFIX}/usr/share/libretro-database/fbneo

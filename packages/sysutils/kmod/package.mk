@@ -2,13 +2,13 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="kmod"
-PKG_VERSION="30"
-PKG_SHA256="f897dd72698dc6ac1ef03255cd0a5734ad932318e4adbaebc7338ef2f5202f9f"
+PKG_VERSION="33"
+PKG_SHA256="dc768b3155172091f56dc69430b5481f2d76ecd9ccb54ead8c2540dbcf5ea9bc"
 PKG_LICENSE="GPL"
 PKG_SITE="https://git.kernel.org/pub/scm/utils/kernel/kmod/kmod.git"
 PKG_URL="https://www.kernel.org/pub/linux/utils/kernel/kmod/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_HOST="toolchain:host"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_HOST="autotools:host"
+PKG_DEPENDS_TARGET="autotools:host gcc:host"
 PKG_LONGDESC="kmod offers the needed flexibility and fine grained control over insertion, removal, configuration and listing of kernel modules."
 
 PKG_CONFIGURE_OPTS_HOST="--enable-tools \
@@ -34,7 +34,7 @@ post_makeinstall_host() {
 }
 
 post_makeinstall_target() {
-# make symlinks for compatibility
+  # make symlinks for compatibility
   mkdir -p ${INSTALL}/usr/sbin
     ln -sf /usr/bin/kmod ${INSTALL}/usr/sbin/lsmod
     ln -sf /usr/bin/kmod ${INSTALL}/usr/sbin/insmod
@@ -46,6 +46,6 @@ post_makeinstall_target() {
   mkdir -p ${INSTALL}/etc
     ln -sf /storage/.config/modprobe.d ${INSTALL}/etc/modprobe.d
 
-# add user modprobe.d dir
+  # add user modprobe.d dir
   mkdir -p ${INSTALL}/usr/config/modprobe.d
 }

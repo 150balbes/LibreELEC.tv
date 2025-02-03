@@ -1,0 +1,67 @@
+From 1698107823f718396364641b24a2ee9ae5f3c862 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 9 Oct 2024 11:15:21 +0200
+Subject: [PATCH 10/12] FROMGIT: power/domain: meson-ee-pwrc: make sure to not
+ enable a domain twice
+
+The upstream Device Tree for GXBB/GXL/G12A was updated with VPU domain
+shared between the VPU and HDMI node, causing a double enable.
+
+Simply store the enable state and avoid enabling twice, fixing
+HDMI output on all platforms.
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/power/domain/meson-ee-pwrc.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/power/domain/meson-ee-pwrc.c b/drivers/power/domain/meson-ee-pwrc.c
+index 20e9f32b381..4d9f3bba644 100644
+--- a/drivers/power/domain/meson-ee-pwrc.c
++++ b/drivers/power/domain/meson-ee-pwrc.c
+@@ -60,6 +60,7 @@ struct meson_ee_pwrc_domain_desc {
+ 	unsigned int mem_pd_count;
+ 	struct meson_ee_pwrc_mem_domain *mem_pd;
+ 	bool (*get_power)(struct power_domain *power_domain);
++	bool enabled;
+ };
+ 
+ struct meson_ee_pwrc_domain_data {
+@@ -306,6 +307,8 @@ static int meson_ee_pwrc_off(struct power_domain *power_domain)
+ 		clk_disable_bulk(&priv->clks);
+ 	}
+ 
++	pwrc_domain->enabled = false;
++
+ 	return 0;
+ }
+ 
+@@ -317,6 +320,9 @@ static int meson_ee_pwrc_on(struct power_domain *power_domain)
+ 
+ 	pwrc_domain = &priv->data->domains[power_domain->id];
+ 
++	if (pwrc_domain->enabled)
++		return 0;
++
+ 	if (pwrc_domain->top_pd)
+ 		regmap_update_bits(priv->regmap_ao,
+ 				   pwrc_domain->top_pd->sleep_reg,
+@@ -347,8 +353,13 @@ static int meson_ee_pwrc_on(struct power_domain *power_domain)
+ 			return ret;
+ 	}
+ 
+-	if (pwrc_domain->clk_names_count)
+-		return clk_enable_bulk(&priv->clks);
++	if (pwrc_domain->clk_names_count) {
++		ret = clk_enable_bulk(&priv->clks);
++		if (ret)
++			return ret;
++	}
++
++	pwrc_domain->enabled = true;
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
+

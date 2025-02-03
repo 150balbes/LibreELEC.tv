@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-gambatte"
-PKG_VERSION="e6bcb9f43c13f44fbf4a30153e3885b3dd174443"
-PKG_SHA256="08e4c84b7bb4d8c31ea49789a0349a6b773cfa05be62d7cba730f9c00fee684b"
+PKG_VERSION="27123e99d3f525b57199adeeb25d12c9dc0008e2"
+PKG_SHA256="6a3421ef3a28bd63b185bf03a348e073efef46a7e4101f977c8642fabd7eb2dc"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/gambatte-libretro"
 PKG_URL="https://github.com/libretro/gambatte-libretro/archive/${PKG_VERSION}.tar.gz"
@@ -20,5 +20,5 @@ PKG_MAKE_OPTS_TARGET="-f Makefile.libretro"
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}
   cp ${PKG_LIBPATH} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME}
-  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" > ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
+  echo "set(${PKG_LIBVAR} ${SYSROOT_PREFIX}/usr/lib/${PKG_LIBNAME})" >${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}/${PKG_NAME}-config.cmake
 }

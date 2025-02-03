@@ -4,12 +4,12 @@
 PKG_NAME="chrome"
 PKG_VERSION="1.0"
 # curl -s http://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -B 1 Version
-PKG_VERSION_NUMBER="109.0.5414.74"
-PKG_REV="0"
+PKG_VERSION_NUMBER="130.0.6723.116"
+PKG_REV="1"
 PKG_ARCH="x86_64"
 PKG_LICENSE="Custom"
 PKG_SITE="http://www.google.com/chrome"
-PKG_DEPENDS_TARGET="toolchain at-spi2-atk atk cairo chrome-libXcomposite \
+PKG_DEPENDS_TARGET="toolchain at-spi2-core atk cairo chrome-libXcomposite \
                     chrome-libXdamage chrome-libXfixes chrome-libXi chrome-libXrender \
                     chrome-libXtst chrome-libxcb chrome-libxkbcommon chrome-libxshmfence cups \
                     gdk-pixbuf gtk3 harfbuzz-icu libXcursor libxss nss pango \
@@ -29,7 +29,7 @@ make_target() {
 }
 
 addon() {
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,config,lib,resources}
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,config,lib.private,resources}
 
   # config
   cp -P ${PKG_DIR}/config/* ${ADDON_BUILD}/${PKG_ADDON_ID}/config
@@ -43,8 +43,7 @@ addon() {
          $(get_install_dir gdk-pixbuf)/usr/lib/libgdk_pixbuf-2.0.so.0 \
          $(get_install_dir gtk3)/usr/lib/{libgtk-3.so.0,libgdk-3.so.0} \
          $(get_install_dir harfbuzz-icu)/usr/lib/{libharfbuzz.so.0,libharfbuzz-icu.so*} \
-         $(get_install_dir at-spi2-atk)/usr/lib/libatk-bridge-2.0.so.0 \
-         $(get_install_dir at-spi2-core)/usr/lib/libatspi.so.0 \
+         $(get_install_dir at-spi2-core)/usr/lib/{libatk-bridge-2.0.so.0,libatspi.so.0} \
          $(get_install_dir cups)/usr/lib/libcups.so.2 \
          $(get_install_dir chrome-libxcb)/usr/lib/{libxcb.so.1,libxcb-dri3.so.0} \
          $(get_install_dir chrome-libXcomposite)/usr/lib/libXcomposite.so.1 \
@@ -58,7 +57,7 @@ addon() {
          $(get_install_dir libxss)/usr/lib/libXss.so.1 \
          $(get_install_dir chrome-libXtst)/usr/lib/libXtst.so.6 \
          $(get_install_dir pango)/usr/lib/{libpangocairo-1.0.so.0,libpango-1.0.so.0,libpangoft2-1.0.so.0} \
-         ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+         ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 
   # unix_ar
   cp -P $(get_build_dir unix_ar)/unix_ar.py ${ADDON_BUILD}/${PKG_ADDON_ID}/resources

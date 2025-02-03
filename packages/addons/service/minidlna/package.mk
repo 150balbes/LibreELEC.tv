@@ -2,9 +2,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="minidlna"
-PKG_VERSION="1.3.2"
-PKG_SHA256="222ce45a1a60c3ce3de17527955d38e5ff7a4592d61db39577e6bf88e0ae1cb0"
-PKG_REV="0"
+PKG_VERSION="1.3.3"
+PKG_SHA256="39026c6d4a139b9180192d1c37225aa3376fdf4f1a74d7debbdbb693d996afa4"
+PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD-3c/GPLv2"
 PKG_SITE="https://sourceforge.net/projects/minidlna/"
@@ -14,6 +14,7 @@ PKG_SECTION="service"
 PKG_SHORTDESC="MiniDLNA (ReadyMedia): a fully compliant DLNA/UPnP-AV server"
 PKG_LONGDESC="MiniDLNA (${PKG_VERSION_DATE}) (ReadyMedia) is a media server, with the aim of being fully compliant with DLNA/UPnP-AV clients."
 PKG_TOOLCHAIN="autotools"
+PKG_BUILD_FLAGS="-sysroot -cfg-libs"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="MiniDLNA (ReadyMedia)"
@@ -34,8 +35,9 @@ pre_configure_target() {
 
 addon() {
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
-  cp -P ${PKG_INSTALL}/usr/sbin/minidlnad ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -P ${PKG_INSTALL}/usr/sbin/minidlnad ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/minidlnad
 
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
-  cp -p $(get_install_dir libexif)/usr/lib/libexif.so.12 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+    cp -p $(get_install_dir libexif)/usr/lib/libexif.so.12 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 }

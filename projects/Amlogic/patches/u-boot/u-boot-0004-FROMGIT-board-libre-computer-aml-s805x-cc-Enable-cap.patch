@@ -1,0 +1,123 @@
+From 766b23d9252d70c2e193876c7cc8b5cca954cba7 Mon Sep 17 00:00:00 2001
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Tue, 17 Sep 2024 14:34:46 +0200
+Subject: [PATCH 04/12] FROMGIT: board: libre-computer: aml-s805x-cc: Enable
+ capsule updates
+
+Since the aml-s805-cc works well using EFI, and now the capsule updates
+backend has been merged, let's enable the missing configs and add
+the required structures to support it.
+
+The GUID is dynamically generated for the board, to get it:
+=> efidebug capsule esrt
+========================================
+ESRT: fw_resource_count=1
+ESRT: fw_resource_count_max=1
+ESRT: fw_resource_version=1
+[entry 0]==============================
+ESRT: fw_class=B8079027-9B2C-57D4-86AA-CC782ADA598C
+ESRT: fw_type=unknown
+ESRT: fw_version=0
+ESRT: lowest_supported_fw_version=0
+ESRT: capsule_flags=0
+ESRT: last_attempt_version=0
+ESRT: last_attempt_status=success
+========================================
+
+On the host (with the aml_encrypt_gxl result binary):
+$ eficapsule --guid B8079027-9B2C-57D4-86AA-CC782ADA598C -i 1 u-boot.bin u-boot.cap
+
+On the board (from USB disk containing u-boot.cap at root):
+=> load usb 0:1 $kernel_addr_r u-boot.cap
+=> efidebug capsule update $kernel_addr_r
+
+The binary will then be flashed on the SPI.
+
+Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Link: https://lore.kernel.org/r/20240917-u-boot-topic-dynamic-uuid-v2-2-416e39c6e271@linaro.org
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ .../aml-s805x-ac/aml-s805x-ac.c               | 24 +++++++++++++++++++
+ configs/libretech-ac_defconfig                |  6 +++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c b/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
+index ae9834c0bf8..94cf5b4361f 100644
+--- a/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
++++ b/board/libre-computer/aml-s805x-ac/aml-s805x-ac.c
+@@ -8,6 +8,7 @@
+ #include <env.h>
+ #include <init.h>
+ #include <net.h>
++#include <efi_loader.h>
+ #include <asm/io.h>
+ #include <asm/arch/gx.h>
+ #include <asm/arch/sm.h>
+@@ -19,6 +20,29 @@
+ #define EFUSE_MAC_OFFSET	52
+ #define EFUSE_MAC_SIZE		6
+ 
++struct efi_fw_image fw_images[] = {
++	{
++		.fw_name = u"AML_S805X_AC_BOOT",
++		.image_index = 1,
++	},
++};
++
++struct efi_capsule_update_info update_info = {
++	.dfu_string = "sf 0:0=u-boot-bin raw 0 0x10000",
++	.num_images = ARRAY_SIZE(fw_images),
++	.images = fw_images,
++};
++
++#if IS_ENABLED(CONFIG_SET_DFU_ALT_INFO)
++void set_dfu_alt_info(char *interface, char *devstr)
++{
++	if (strcmp(interface, "ram") == 0)
++		env_set("dfu_alt_info", "fitimage ram 0x08080000 0x4000000");
++	else if (IS_ENABLED(CONFIG_EFI_HAVE_CAPSULE_SUPPORT))
++		env_set("dfu_alt_info", update_info.dfu_string);
++}
++#endif
++
+ int misc_init_r(void)
+ {
+ 	u8 mac_addr[EFUSE_MAC_SIZE + 1];
+diff --git a/configs/libretech-ac_defconfig b/configs/libretech-ac_defconfig
+index 11d9795e05d..7763a14f203 100644
+--- a/configs/libretech-ac_defconfig
++++ b/configs/libretech-ac_defconfig
+@@ -35,6 +35,7 @@ CONFIG_SYS_MAXARGS=32
+ # CONFIG_CMD_IMI is not set
+ CONFIG_CMD_ADC=y
+ CONFIG_CMD_DFU=y
++CONFIG_CMD_NVEDIT_EFI=y
+ CONFIG_CMD_GPIO=y
+ # CONFIG_CMD_LOADS is not set
+ CONFIG_CMD_MMC=y
+@@ -42,6 +43,7 @@ CONFIG_CMD_SF_TEST=y
+ CONFIG_CMD_SPI=y
+ CONFIG_CMD_USB=y
+ CONFIG_CMD_USB_MASS_STORAGE=y
++CONFIG_CMD_EFIDEBUG=y
+ # CONFIG_CMD_SETEXPR is not set
+ CONFIG_CMD_REGULATOR=y
+ CONFIG_OF_CONTROL=y
+@@ -49,6 +51,8 @@ CONFIG_ENV_IS_IN_SPI_FLASH=y
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+ CONFIG_SARADC_MESON=y
+ CONFIG_DFU_RAM=y
++CONFIG_DFU_SF=y
++CONFIG_SET_DFU_ALT_INFO=y
+ CONFIG_MMC_MESON_GX=y
+ CONFIG_MTD=y
+ CONFIG_DM_MTD=y
+@@ -98,3 +102,5 @@ CONFIG_VIDEO_BMP_RLE8=y
+ CONFIG_BMP_16BPP=y
+ CONFIG_BMP_24BPP=y
+ CONFIG_BMP_32BPP=y
++CONFIG_EFI_RUNTIME_UPDATE_CAPSULE=y
++CONFIG_EFI_CAPSULE_FIRMWARE_RAW=y
+-- 
+2.34.1
+

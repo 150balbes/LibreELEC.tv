@@ -5,7 +5,7 @@
 PKG_NAME="screensaver.shadertoy"
 PKG_VERSION="20.2.0-Nexus"
 PKG_SHA256="91500d2c4eb97390d77fbaf5700ee472c41afa30cb76c6ecbe7e2683a14795fc"
-PKG_REV="3"
+PKG_REV="5"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/xbmc/screensaver.shadertoy"
@@ -19,11 +19,11 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_TYPE="xbmc.ui.screensaver"
 
 if [ ! "${OPENGL}" = "no" ]; then
-# for OpenGL (GLX) support
+  # for OpenGL (GLX) support
   PKG_DEPENDS_TARGET+=" ${OPENGL} glew"
 fi
 
 if [ "${OPENGLES_SUPPORT}" = yes ]; then
-# for OpenGL-ES support
+  # for OpenGL-ES support
   PKG_DEPENDS_TARGET+=" ${OPENGLES}"
 fi

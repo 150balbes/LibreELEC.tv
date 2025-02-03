@@ -10,6 +10,10 @@ evdev:input:b0005v045Ep0041*
  KEYBOARD_KEY_7006f=x
  KEYBOARD_KEY_7006e=i
 
+# bt250 remote
+evdev:input:b0005v1D5ApC080e0000*
+ KEYBOARD_KEY_c0041=enter
+
 # buzztv bt-300/bt-400 smart remote
 evdev:input:b0005v0957p1001*
  KEYBOARD_KEY_c0041=enter
@@ -21,6 +25,10 @@ evdev:input:b0005v0957p1001*
  KEYBOARD_KEY_70044=o
  KEYBOARD_KEY_70045=volumeup
  KEYBOARD_KEY_70069=volumedown
+
+# google tv remote
+evdev:name:*Chromecast Remote*:*
+ KEYBOARD_KEY_c0041=enter
 
 # g7bts remote
 evdev:input:b0005v045Ep0041e0300*
@@ -47,7 +55,11 @@ evdev:input:b0005v0217p0000e0110*
  KEYBOARD_KEY_c0041=enter
  KEYBOARD_KEY_c0040=c
 
-# osmcrf25 remotes
+# all osmc remotes
+evdev:input:b0003v2252p17*
+ KEYBOARD_KEY_7000c=kpleftparen
+ KEYBOARD_KEY_70006=kprightparen
+
 evdev:input:b0003v2252p1069*
  KEYBOARD_KEY_7002e=volumeup
  KEYBOARD_KEY_7002d=volumedown
@@ -82,6 +94,10 @@ evdev:input:b0003v2252p1037*
 evdev:input:b0005v005Dp0001*
  KEYBOARD_KEY_c0041=enter
 
+# UR02 remote
+evdev:input:b0005v0508p1980*
+ KEYBOARD_KEY_c0041=enter
+
 # wechip g20 remote
 evdev:input:b0003v4842p0001*
  KEYBOARD_KEY_c0041=enter
@@ -96,4 +112,8 @@ evdev:input:b0005v0416p0300*
 
 # zidoo v10
 evdev:input:b0005v2B54p1600*
+ KEYBOARD_KEY_c0041=enter
+
+# ZTERCR21 remote
+evdev:input:b0005v0508p0110*
  KEYBOARD_KEY_c0041=enter

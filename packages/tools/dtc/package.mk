@@ -3,13 +3,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="dtc"
-PKG_VERSION="1.7.0"
-PKG_SHA256="8bca9b594702267d84453e530cc974b7f8e06aea7e60d65614d4bf23be3167d2"
+PKG_VERSION="1.7.2"
+PKG_SHA256="92d8ca769805ae1f176204230438fe52808f4e1c7944053c9eec0e649b237539"
 PKG_LICENSE="GPL"
 PKG_SITE="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/"
-PKG_URL="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_HOST="toolchain:host"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_URL="https://www.kernel.org/pub/software/utils/dtc/dtc-${PKG_VERSION}.tar.xz"
+PKG_DEPENDS_HOST="make:host flex:host ninja:host"
+PKG_DEPENDS_TARGET="make:host gcc:host ninja:host"
 PKG_LONGDESC="The Device Tree Compiler"
 PKG_TOOLCHAIN="make"
 
@@ -27,7 +27,7 @@ makeinstall_host() {
   mkdir -p ${TOOLCHAIN}/bin
     cp -P ${PKG_BUILD}/.${HOST_NAME}/dtc ${TOOLCHAIN}/bin
   mkdir -p ${TOOLCHAIN}/lib
-    cp -P ${PKG_BUILD}/.${HOST_NAME}/libfdt/{libfdt.so,libfdt.so.1} ${TOOLCHAIN}/lib
+    cp -P ${PKG_BUILD}/.${HOST_NAME}/libfdt/libfdt.so* ${TOOLCHAIN}/lib
 }
 
 pre_make_target() {
@@ -43,5 +43,9 @@ makeinstall_target() {
     cp -P ${PKG_BUILD}/.${TARGET_NAME}/fdtput ${INSTALL}/usr/bin/
     cp -P ${PKG_BUILD}/.${TARGET_NAME}/fdtget ${INSTALL}/usr/bin/
   mkdir -p ${INSTALL}/usr/lib
-    cp -P ${PKG_BUILD}/.${TARGET_NAME}/libfdt/{libfdt.so,libfdt.so.1} ${INSTALL}/usr/lib/
+    cp -P ${PKG_BUILD}/.${TARGET_NAME}/libfdt/libfdt.so* ${INSTALL}/usr/lib/
+  mkdir -p ${SYSROOT_PREFIX}/usr/lib
+    cp -P ${PKG_BUILD}/.${TARGET_NAME}/libfdt/libfdt.so* ${SYSROOT_PREFIX}/usr/lib/
+  mkdir -p ${SYSROOT_PREFIX}/usr/include
+    cp -P ${PKG_BUILD}/.${TARGET_NAME}/libfdt/*.h ${SYSROOT_PREFIX}/usr/include/
 }

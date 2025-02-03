@@ -2,8 +2,8 @@
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="nvidia"
-PKG_VERSION="525.116.03"
-PKG_SHA256="47d32cabbc01af0f4d64e9cb45e9a451f3401b475ea155dfb7f840cba97b99e8"
+PKG_VERSION="550.127.05"
+PKG_SHA256="27343aa3eecf10e90c5abd6d4edfdcc5bfcc0a2b07eb90e41310f837d06a8fb7"
 PKG_ARCH="x86_64"
 PKG_LICENSE="nonfree"
 PKG_SITE="https://www.nvidia.com/en-us/drivers/unix/"
@@ -49,8 +49,8 @@ makeinstall_target() {
 
   mkdir -p ${INSTALL}/usr/share/egl/egl_external_platform.d
     cp -p 15_nvidia_gbm.json          ${INSTALL}/usr/share/egl/egl_external_platform.d
-    cp -p libnvidia-egl-gbm.so.1.1.0  ${INSTALL}/usr/lib
-    ln -sf libnvidia-egl-gbm.so.1.1.0 ${INSTALL}/usr/lib/libnvidia-egl-gbm.so.1
+    cp -p libnvidia-egl-gbm.so.1.1.1  ${INSTALL}/usr/lib
+    ln -sf libnvidia-egl-gbm.so.1.1.1 ${INSTALL}/usr/lib/libnvidia-egl-gbm.so.1
     ln -sf libnvidia-egl-gbm.so.1     ${INSTALL}/usr/lib/libnvidia-egl-gbm.so
 
   # GLVND
@@ -59,8 +59,8 @@ makeinstall_target() {
 
   # Wayland
   mkdir -p ${INSTALL}/usr/lib
-    cp -p libnvidia-egl-wayland.so.1.1.10  ${INSTALL}/usr/lib/
-    ln -sf libnvidia-egl-wayland.so.1.1.10 ${INSTALL}/usr/lib/libnvidia-egl-wayland.so.1
+    cp -p libnvidia-egl-wayland.so.1.1.13  ${INSTALL}/usr/lib/
+    ln -sf libnvidia-egl-wayland.so.1.1.13 ${INSTALL}/usr/lib/libnvidia-egl-wayland.so.1
     ln -sf libnvidia-egl-wayland.so.1     ${INSTALL}/usr/lib/libnvidia-egl-wayland.so
 
   mkdir -p ${INSTALL}/usr/share/egl/egl_external_platform.d
@@ -96,9 +96,9 @@ makeinstall_target() {
       ln -sf libnvidia-vulkan-producer.so.1              ${INSTALL}/usr/lib/libnvidia-vulkan-producer.so
 
     mkdir -p ${INSTALL}/usr/share/vulkan/implicit_layer.d
-      sed "s#libGLX_nvidia.so.0#libEGL_nvidia.so.0#" nvidia_layers.json > ${INSTALL}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json
+      sed "s#libGLX_nvidia.so.0#libEGL_nvidia.so.0#" nvidia_layers.json >${INSTALL}/usr/share/vulkan/implicit_layer.d/nvidia_layers.json
     mkdir -p ${INSTALL}/usr/share/vulkan/icd.d
-      sed "s#libGLX_nvidia.so.0#libEGL_nvidia.so.0#" nvidia_icd.json > ${INSTALL}/usr/share/vulkan/icd.d/nvidia_icd.json
+      sed "s#libGLX_nvidia.so.0#libEGL_nvidia.so.0#" nvidia_icd.json >${INSTALL}/usr/share/vulkan/icd.d/nvidia_icd.json
   fi
 
   # CUDA
@@ -112,6 +112,10 @@ makeinstall_target() {
     cp -p libnvcuvid.so.${PKG_VERSION}  ${INSTALL}/usr/lib
     ln -sf libnvcuvid.so.${PKG_VERSION} ${INSTALL}/usr/lib/libnvcuvid.so.1
     ln -sf libnvcuvid.so.1              ${INSTALL}/usr/lib/libnvcuvid.so
+
+  # nvidia-gpucomp
+  mkdir -p ${INSTALL}/usr/lib
+    cp -P libnvidia-gpucomp.so.${PKG_VERSION} ${INSTALL}/usr/lib
 
   # nvidia-tls
   mkdir -p ${INSTALL}/usr/lib

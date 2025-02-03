@@ -2,9 +2,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mariadb"
-PKG_VERSION="10.11.4"
-PKG_REV="1"
-PKG_SHA256="ce8dac125568cc5f40da74c17212767c92d8faed81066580b526a485a591127d"
+PKG_VERSION="11.4.3"
+PKG_REV="0"
+PKG_SHA256="6f0017b9901bb1897de0eed21caef9ffa9d66ef559345a0d8a6f011308413ece"
 PKG_LICENSE="GPL2"
 PKG_SITE="https://mariadb.org"
 PKG_URL="https://downloads.mariadb.com/MariaDB/${PKG_NAME}-${PKG_VERSION}/source/${PKG_NAME}-${PKG_VERSION}.tar.gz"
@@ -12,7 +12,6 @@ PKG_DEPENDS_HOST="toolchain:host ncurses:host openssl:host"
 PKG_DEPENDS_TARGET="toolchain binutils boost bzip2 libaio libfmt libxml2 lz4 lzo ncurses openssl pcre2 systemd zlib mariadb:host"
 PKG_SHORTDESC="MariaDB is a community-developed fork of the MySQL."
 PKG_LONGDESC="MariaDB (${PKG_VERSION}) is a fast SQL database server and a drop-in replacement for MySQL."
-PKG_TOOLCHAIN="cmake"
 PKG_BUILD_FLAGS="-gold -sysroot"
 
 PKG_IS_ADDON="yes"
@@ -37,6 +36,7 @@ configure_package() {
     -DCMAKE_CROSSCOMPILING=ON \
     -DIMPORT_EXECUTABLES=${PKG_BUILD}/.${HOST_NAME}/import_executables.cmake \
     -DWITHOUT_AWS_KEY_MANAGEMENT=ON \
+    -DWITHOUT_HASHICORP_KEY_MANAGEMENT=ON \
     -DWITH_EXTRA_CHARSETS=complex \
     -DWITH_SSL=system \
     -DWITH_SSL=${SYSROOT_PREFIX}/usr \
@@ -46,6 +46,7 @@ configure_package() {
     -DWITH_ZLIB=bundled \
     -DWITH_EDITLINE=bundled \
     -DWITH_LIBEVENT=bundled \
+    -DCONNECT_WITH_JDBC=OFF \
     -DCONNECT_WITH_LIBXML2=bundled \
     -DSKIP_TESTS=ON \
     -DWITH_DEBUG=OFF \
@@ -55,6 +56,8 @@ configure_package() {
     -DWITH_EMBEDDED_SERVER=OFF \
     -DWITHOUT_SERVER=OFF \
     -DPLUGIN_AUTH_SOCKET=STATIC \
+    -DPLUGIN_OQGRAPH=NO \
+    -DPLUGIN_S3=NO \
     -DDISABLE_SHARED=NO \
     -DENABLED_PROFILING=OFF \
     -DENABLE_STATIC_LIBS=OFF \
@@ -66,7 +69,10 @@ configure_package() {
     -DMASK_LONGDOUBLE_EXITCODE=0 \
     -DMASK_LONGDOUBLE_EXITCODE__TRYRUN_OUTPUT='' \
     -DSTAT_EMPTY_STRING_BUG_EXITCODE=0 \
-    -DSTAT_EMPTY_STRING_BUG_EXITCODE__TRYRUN_OUTPUT=''"
+    -DSTAT_EMPTY_STRING_BUG_EXITCODE__TRYRUN_OUTPUT='' \
+    -DHAVE_SYSTEM_LIBFMT_EXITCODE=0 \
+    -DHAVE_SYSTEM_LIBFMT_EXITCODE__TRYRUN_OUTPUT='' \
+    -DWITH_LIBFMT=system"
 }
 
 make_host() {

@@ -3,12 +3,12 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="samba"
-PKG_VERSION="4.17.9"
-PKG_SHA256="ef1c327220f2bf433f44f85a3948785959960634f46cc84fb67389697b3490a6"
+PKG_VERSION="4.21.1"
+PKG_SHA256="bd02f55da538358c929505b21fdd8aeba53027eab14c849432a53ed0bae1c7c2"
 PKG_LICENSE="GPLv3+"
 PKG_SITE="https://www.samba.org"
 PKG_URL="https://download.samba.org/pub/samba/stable/${PKG_NAME}-${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain attr heimdal:host e2fsprogs Python3 libunwind zlib readline popt libaio connman gnutls wsdd2"
+PKG_DEPENDS_TARGET="autotools:host gcc:host heimdal:host attr connman e2fsprogs gnutls libaio libunwind popt Python3 readline talloc wsdd2 zlib"
 PKG_NEED_UNPACK="$(get_pkg_directory heimdal) $(get_pkg_directory e2fsprogs)"
 PKG_LONGDESC="A free SMB / CIFS fileserver and client."
 
@@ -20,12 +20,6 @@ configure_package() {
     SMB_AVAHI="--enable-avahi"
   else
     SMB_AVAHI="--disable-avahi"
-  fi
-
-  if [ "${TARGET_ARCH}" = x86_64 ]; then
-    SMB_AESNI="--accel-aes=intelaesni"
-  else
-    SMB_AESNI="--accel-aes=none"
   fi
 
   PKG_CONFIGURE_OPTS="--prefix=/usr \
@@ -88,14 +82,14 @@ configure_package() {
 }
 
 pre_configure_target() {
-# samba uses its own build directory
+  # samba uses its own build directory
   cd ${PKG_BUILD}
     rm -rf .${TARGET_NAME}
 
-# work around link issues
+  # work around link issues
   export LDFLAGS="${LDFLAGS} -lreadline -lncurses"
 
-# support 64-bit offsets and seeks on 32-bit platforms
+  # support 64-bit offsets and seeks on 32-bit platforms
   if [ "${TARGET_ARCH}" = "arm" ]; then
     export CFLAGS+=" -D_FILE_OFFSET_BITS=64 -D_OFF_T_DEFINED_ -Doff_t=off64_t -Dlseek=lseek64"
   fi
@@ -103,7 +97,7 @@ pre_configure_target() {
 
 configure_target() {
   cp ${PKG_DIR}/config/samba4-cache.txt ${PKG_BUILD}/cache.txt
-    echo "Checking uname machine type: \"${TARGET_ARCH}\"" >> ${PKG_BUILD}/cache.txt
+    echo "Checking uname machine type: \"${TARGET_ARCH}\"" >>${PKG_BUILD}/cache.txt
 
   export COMPILE_ET=${TOOLCHAIN}/bin/heimdal_compile_et
   export ASN1_COMPILE=${TOOLCHAIN}/bin/heimdal_asn1_compile

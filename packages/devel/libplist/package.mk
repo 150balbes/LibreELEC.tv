@@ -2,8 +2,8 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="libplist"
-PKG_VERSION="2.2.0"
-PKG_SHA256="4a5517e5377ec421df84c586ba85bb4e1d26f11ad203d7d450a907c0156fbd9a"
+PKG_VERSION="2.6.0"
+PKG_SHA256="67be9ee3169366589c92dc7c22809b90f51911dd9de22520c39c9a64fb047c9c"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.libimobiledevice.org/"
 PKG_URL="https://github.com/libimobiledevice/libplist/releases/download/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"

@@ -26,8 +26,7 @@
   # Kernel target
     KERNEL_TARGET="Image"
 
-  # Mali GPU family
-    MALI_FAMILY="t860"
+  # Graphic drivers to use
     GRAPHIC_DRIVERS="panfrost"
 
   # kernel serial console

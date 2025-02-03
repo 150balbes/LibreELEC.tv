@@ -2,14 +2,14 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="squeezelite"
-PKG_VERSION="bc72c0de3fff771540a2a45aaafafed539387b3c" # 2022-04-10 # 1.9.9.1403
-PKG_SHA256="5aa312d678a593b9a08f79e080a6ebe329d8fc40e6507e28b6705807c408bf7a"
+PKG_VERSION="c751ef146265c243cdbd7c0353dd0b70ab51730c"
+PKG_SHA256="19fd23ca52039b4e216ff74e7d93b7fd8079ab8bfd63d5fb2286bfb743e334ed"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/ralph-irving/squeezelite"
 PKG_URL="https://github.com/ralph-irving/squeezelite/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain faad2 ffmpeg flac libmad libvorbis mpg123 soxr libogg"
 PKG_DEPENDS_CONFIG="mpg123"
-PKG_LONGDESC="A client for the Logitech Media Server."
+PKG_LONGDESC="A client for the Lyrion Music Server."
 PKG_BUILD_FLAGS="-sysroot"
 
 make_target() {

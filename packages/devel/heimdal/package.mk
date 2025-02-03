@@ -8,10 +8,15 @@ PKG_SHA256="2576c5e2d793db53c86e108fd117b278437bb02d6c6db2bec4d1b86958f1980a"
 PKG_LICENSE="BSD-3c"
 PKG_SITE="http://www.h5l.org/"
 PKG_URL="https://github.com/heimdal/heimdal/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_HOST="toolchain:host Python3:host ncurses:host asn1c:host"
+PKG_DEPENDS_HOST="autotools:host Python3:host ncurses:host asn1c:host flex:host"
 PKG_LONGDESC="Kerberos 5, PKIX, CMS, GSS-API, SPNEGO, NTLM, Digest-MD5 and, SASL implementation."
 PKG_TOOLCHAIN="autotools"
 PKG_BUILD_FLAGS="-parallel"
+
+pre_configure_host() {
+  # configure step misconfigures with gcc 14 unless this error is degraded to a warning
+  export CFLAGS+=" -Wno-error=implicit-function-declaration"
+}
 
 PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_COMPILE_ET=no \
                          --enable-static --disable-shared \

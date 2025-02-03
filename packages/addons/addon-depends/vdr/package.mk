@@ -4,8 +4,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vdr"
-PKG_VERSION="2.6.3"
-PKG_SHA256="3db99b7ebbc0a60b72b191785af27efd49385bd08ef9fb7a8a83694323954ccf"
+PKG_VERSION="2.7.1"
+PKG_SHA256="ae3010a5297891f55b3d11b19fe15cd868f24250da8554e985ab163e19d98026"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvdr.de"
 PKG_URL="http://git.tvdr.de/?p=vdr.git;a=snapshot;h=refs/tags/${PKG_VERSION};sf=tbz2"
@@ -23,7 +23,7 @@ pre_configure_target() {
 }
 
 pre_make_target() {
-  cat > Make.config <<EOF
+  cat >Make.config <<EOF
   PLUGINLIBDIR = /usr/lib/vdr
   PREFIX = /usr
   VIDEODIR = /storage/videos
