@@ -20,9 +20,11 @@ configure_package() {
 }
 
 PKG_CMAKE_OPTS_HOST="-DBUILD_SCANNER=ON \
+                     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
                      -DBUILD_LIBRARIES=OFF"
 
 PKG_CMAKE_OPTS_TARGET="-DBUILD_SCANNER=OFF \
                        -DBUILD_LIBRARIES=ON \
                        -DCMAKE_CROSSCOMPILING=ON \
+                       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
                        -DWAYLAND_SCANNERPP=${TOOLCHAIN}/bin/wayland-scanner++"

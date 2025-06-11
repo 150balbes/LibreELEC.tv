@@ -21,6 +21,12 @@
   # Kernel target
     KERNEL_TARGET="Image"
 
+  # Displayserver to use (wl / no)
+    DISPLAYSERVER="wl"
+
+  # Windowmanager to use (weston / no)
+    WINDOWMANAGER="sway"
+
   # Graphic drivers to use
     GRAPHIC_DRIVERS="panfrost"
 
