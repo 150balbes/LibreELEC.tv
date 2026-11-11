@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libplist"
-PKG_VERSION="2.6.0"
-PKG_SHA256="67be9ee3169366589c92dc7c22809b90f51911dd9de22520c39c9a64fb047c9c"
-PKG_LICENSE="GPL"
+PKG_VERSION="2.8.0"
+PKG_SHA256="b1f59f7634c58b2481325a23ff4e3bf51574a42d868cbe466d2b39b04550752a"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://www.libimobiledevice.org/"
 PKG_URL="https://github.com/libimobiledevice/libplist/releases/download/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain glib"
 PKG_LONGDESC="libplist is a library for manipulating Apple Binary and XML Property Lists"
 PKG_TOOLCHAIN="autotools"

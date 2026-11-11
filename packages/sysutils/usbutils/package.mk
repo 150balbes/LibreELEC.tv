@@ -3,9 +3,9 @@
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="usbutils"
-PKG_VERSION="018"
-PKG_SHA256="83f68b59b58547589c00266e82671864627593ab4362d8c807f50eea923cad93"
-PKG_LICENSE="GPL"
+PKG_VERSION="020"
+PKG_SHA256="20287d68fcd9ebb50a05ba0645a4af7583bd8dfc7307215ba121e4bc6d057aa1"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://www.linux-usb.org/"
 PKG_URL="http://kernel.org/pub/linux/utils/usb/usbutils/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libusb systemd"

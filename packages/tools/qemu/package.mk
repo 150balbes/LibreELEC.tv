@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="qemu"
-PKG_VERSION="9.1.2"
-PKG_SHA256="19fd9d7535a54d6e044e186402aa3b3b1bdfa87c392ec8884855592c8510c96f"
-PKG_LICENSE="GPL"
+PKG_VERSION="11.1.3"
+PKG_SHA256="5a8289c7940dc77d3873c81a6c29ba3afe1446fc9d36e77fa1658cdbecb84b22"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://www.qemu.org"
 PKG_URL="https://download.qemu.org/qemu-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_HOST="toolchain:host glib:host pixman:host Python3:host zlib:host"
+PKG_DEPENDS_HOST="toolchain:host distlib:host glib:host pixman:host Python3:host zlib:host"
 PKG_LONGDESC="QEMU is a generic and open source machine emulator and virtualizer."
 PKG_TOOLCHAIN="configure"
 

@@ -1,15 +1,19 @@
 ### DISTRO INFORMATION ###
 
-# Name of the Distro to build (full name, without special characters)
+# Distro name (full name, without special characters)
   DISTRONAME="LibreELEC"
 
-# short project description
+# Short distro description
   DESCRIPTION="LibreELEC is a fast and user-friendly Kodi Entertainment Center distribution."
 
+# Distribution Source location
+  DISTRO_MIRROR="https://sources.libreelec.tv/mirror"
+  DISTRO_SRC="https://sources.libreelec.tv/$DISTRO_VERSION"
 
-### USER INTERFACE SETTINGS ###
+# Distribution Home URL
+  DISTRO_HOME_URL="https://libreelec.tv"
 
-# Welcome Message for e.g. SSH Server (up to 5 Lines)
+# Welcome Message for SSH Server (up to 5 Lines)
   GREETING0="##############################################"
   GREETING1="#                 LibreELEC                  #"
   GREETING2="#            https://libreelec.tv            #"
@@ -23,6 +27,8 @@
   DISTRO_BOOTLABEL="LIBREELEC"
   DISTRO_DISKLABEL="STORAGE"
 
+# VFD panel boot message (use UPPERCASE and padding)
+  VFD_MESSAGE="    LIBREELEC"
 
 ### BUILDSYSTEM SETTINGS ####
 
@@ -87,6 +93,11 @@
 # debug tty path
   DEBUG_TTY="/dev/tty3"
 
+# local console login prompt (yes / no)
+  LOCAL_LOGIN="no"
+
+# Enable SSH on boot (yes / no)
+  SSH_ENABLED_DEFAULT="no"
 
 ### KODI SETTINGS ###
 # Mediacenter to use (kodi / no)
@@ -110,7 +121,7 @@
   PIPEWIRE_SUPPORT="no"
 
 # build and install eSpeak-NG support (yes / no)
-  ESPEAK_SUPPORT="no"
+  ESPEAK_SUPPORT="yes"
 
 # build and install with BluRay support (yes / no)
   KODI_BLURAY_SUPPORT="yes"
@@ -142,7 +153,7 @@
 # build with MySQL support (mariadb / none)
   KODI_MYSQL_SUPPORT="mariadb"
 
-# build xbmc with optical drive support (yes / no)
+# build Kodi with optical drive support (yes / no)
   KODI_OPTICAL_SUPPORT="yes"
 
 # build with AirPlay support (stream videos from iDevices to KODI) (yes / no)
@@ -168,10 +179,6 @@
 
 ### KODI ADDONS ###
 
-# Distribution Specific source location
-  DISTRO_MIRROR="http://sources.libreelec.tv/mirror"
-  DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
-
 # Addon Server Url
   ADDON_SERVER_URL="https://addons.libreelec.tv"
 
@@ -190,11 +197,11 @@
 
 # Configure debug groups (space delimited key=value pairs, with each value comma-delimited) and default group when DEBUG=yes
 # Use ! or - prefix to prevent a dependent package from being built with debug. Add + suffix to build dependenencies with debug.
-  DEBUG_GROUPS="kodi+=kodi+,kodi-platform+,p8-platform+,!mesa"
+  DEBUG_GROUPS="kodi+=kodi+,!mesa"
   DEBUG_GROUP_YES="kodi+"
 
-# build and install iSCSI support - iscsistart (yes / no)
-  ISCSI_SUPPORT="no"
+# build and install valgrind (yes / no)
+  VALGRIND_SUPPORT="${VALGRIND_SUPPORT:-no}"
 
 # build with NFS support (mounting nfs shares via the OS) (yes / no)
   NFS_SUPPORT="yes"
@@ -219,7 +226,7 @@
 # mediacenter also automount internally drives at boottime via udev (yes / no)
   UDEVIL="yes"
 
-# Support for partitioning and formating disks in initramfs (yes / no)
+# Support for partitioning and formatting disks in initramfs (yes / no)
 # This adds support for parted and mkfs.ext3/4 to initramfs for OEM usage
   INITRAMFS_PARTED_SUPPORT="no"
 
@@ -257,3 +264,26 @@
 # Space separated list is supported,
 # e.g. ADDITIONAL_PACKAGES="PACKAGE1 PACKAGE2"
   ADDITIONAL_PACKAGES=""
+
+# build and install driver addons (yes / no)
+  DRIVER_ADDONS_SUPPORT="no"
+
+# driver addons to install:
+# for a list of additional drivers see packages/linux-driver-addons
+# Space separated list is supported,
+  DRIVER_ADDONS="crazycat digital_devices dvb-latest"
+
+# should reusable host tools be built:
+# Space separated list is supported,
+# list of options are:
+#   - all (for all host tools to be built)
+#   - mesa:host
+#   - cargo:host (with rust:host)
+#   - save-local (saves a copy in sources/<package>-reusable
+  BUILD_REUSABLE=""
+
+# should reusable host tools be used:
+#   - yes (always, fail when not available)
+#   - preferred (when available, else build them)
+#   - no (always build them)
+  USE_REUSABLE="no"

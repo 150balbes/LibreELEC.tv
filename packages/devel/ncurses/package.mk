@@ -3,8 +3,8 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ncurses"
-PKG_VERSION="6.5"
-PKG_SHA256="136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6"
+PKG_VERSION="6.6"
+PKG_SHA256="355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11"
 PKG_LICENSE="MIT"
 PKG_SITE="http://www.gnu.org/software/ncurses/"
 PKG_URL="http://invisible-mirror.net/archives/ncurses/ncurses-${PKG_VERSION}.tar.gz"
@@ -59,13 +59,21 @@ PKG_CONFIGURE_OPTS_TARGET="--without-ada \
                            --disable-home-terminfo \
                            --disable-assertions \
                            --enable-leaks \
-                           --enable-sigwinch"
+                           --enable-sigwinch \
+                           --cache-file=config.cache"
 
 PKG_CONFIGURE_OPTS_HOST="--enable-termcap \
                          --with-termlib \
                          --with-shared \
                          --enable-pc-files \
                          --without-manpages"
+
+pre_configure_target() {
+  cat >config.cache <<EOF
+cf_cv_builtin_bool=yes
+cf_cv_header_stdbool_h=yes
+EOF
+}
 
 post_makeinstall_target() {
   local f

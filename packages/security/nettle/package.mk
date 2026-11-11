@@ -3,14 +3,15 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="nettle"
-PKG_VERSION="3.10"
-PKG_SHA256="b4c518adb174e484cb4acea54118f02380c7133771e7e9beb98a0787194ee47c"
-PKG_LICENSE="GPL2"
+PKG_VERSION="4.0"
+PKG_SHA256="3addbc00da01846b232fb3bc453538ea5468da43033f21bb345cb1e9073f5094"
+PKG_LICENSE="LGPL-3.0-or-later OR GPL-2.0-or-later"
 PKG_SITE="http://www.lysator.liu.se/~nisse/nettle"
 PKG_URL="https://ftp.gnu.org/gnu/nettle/nettle-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_HOST="autotools:host gmp:host"
 PKG_DEPENDS_TARGET="autotools:host gcc:host gmp"
 PKG_LONGDESC="A low-level cryptographic library."
+PKG_TOOLCHAIN="autotools"
 
 PKG_CONFIGURE_OPTS_COMMON="--disable-documentation \
                            --disable-openssl"

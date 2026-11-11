@@ -3,12 +3,12 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="sqlite"
-PKG_VERSION="3.47.0"
+PKG_VERSION="3.54.1"
 PKG_VERSION_SQLITE="${PKG_VERSION/./}00"
-PKG_SHA256="83eb21a6f6a649f506df8bd3aab85a08f7556ceed5dbd8dea743ea003fc3a957"
-PKG_LICENSE="PublicDomain"
+PKG_SHA256="926ef8d3eab93fbf6e06011901273eec076b25594a4e1cdadd50c987f4f6d64e"
+PKG_LICENSE="blessing"
 PKG_SITE="https://www.sqlite.org/"
-PKG_URL="https://www.sqlite.org/2024/${PKG_NAME}-autoconf-${PKG_VERSION_SQLITE/./0}.tar.gz"
+PKG_URL="https://www.sqlite.org/2026/${PKG_NAME}-autoconf-${PKG_VERSION_SQLITE/./0}.tar.gz"
 PKG_DEPENDS_HOST="ccache:host autoconf:host automake:host"
 PKG_DEPENDS_TARGET="autotools:host gcc:host ncurses"
 PKG_LONGDESC="An Embeddable SQL Database Engine."
@@ -19,8 +19,7 @@ PKG_CONFIGURE_OPTS_TARGET="--disable-static \
                            --enable-shared \
                            --disable-readline \
                            --enable-threadsafe \
-                           --enable-dynamic-extensions \
-                           --with-gnu-ld"
+                           --soname=legacy"
 
 pre_configure_target() {
   # sqlite fails to compile with fast-math link time optimization.

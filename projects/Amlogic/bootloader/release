@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 SRCDIR="$BUILD/image/system/usr/share/bootloader"
@@ -14,12 +14,13 @@ mkdir -p "$DSTDIR"
 mkdir -p "$DSTDIR/amlogic"
   ln -sf "$DSTDIR/amlogic" "$DSTDIR/dtb"
   case ${DEVICE:-$PROJECT} in
-    AMLGX)
+    Amlogic)
       cp -a "$SRCDIR"/*gxbb*.dtb "$DSTDIR/amlogic"
       cp -a "$SRCDIR"/*gxl*.dtb "$DSTDIR/amlogic"
       cp -a "$SRCDIR"/*gxm*.dtb "$DSTDIR/amlogic"
       cp -a "$SRCDIR"/*g12a*.dtb "$DSTDIR/amlogic"
       cp -a "$SRCDIR"/*g12b*.dtb "$DSTDIR/amlogic"
       cp -a "$SRCDIR"/*sm1*.dtb "$DSTDIR/amlogic"
+      cp -a "$SRCDIR"/*s4*.dtb "$DSTDIR/amlogic"
       ;;
   esac

@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="chrome"
 PKG_VERSION="1.0"
 # curl -s http://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages | grep -B 1 Version
-PKG_VERSION_NUMBER="130.0.6723.116"
-PKG_REV="1"
+PKG_VERSION_NUMBER="156.0.8078.47"
+PKG_REV="6"
 PKG_ARCH="x86_64"
-PKG_LICENSE="Custom"
+PKG_LICENSE="LicenseRef-nonfree"
 PKG_SITE="http://www.google.com/chrome"
 PKG_DEPENDS_TARGET="toolchain at-spi2-core atk cairo chrome-libXcomposite \
                     chrome-libXdamage chrome-libXfixes chrome-libXi chrome-libXrender \

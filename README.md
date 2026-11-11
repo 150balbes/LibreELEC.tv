@@ -2,6 +2,12 @@
 
 LibreELEC is a 'Just enough OS' Linux distribution for the award-winning [Kodi](https://kodi.tv) software on popular mediacentre hardware. Further information on the project can be found on the [LibreELEC website](https://libreelec.tv).
 
+**Documentation**
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to report issues and submit pull requests
+- [STANDARDS.md](STANDARDS.md) — coding standards for build scripts and package files
+- [packages/README.md](packages/README.md) — detailed guide to `package.mk` structure and variables
+
 **Issues & Support**
 
 Please ask questions in the [LibreELEC forum: Help & Support](https://forum.libreelec.tv/forum-3.html) or ask a member of project staff in the #libreelec IRC channel on Libera.Chat. Please report bugs via [GitHub Issues](https://github.com/LibreELEC/LibreELEC.tv/issues).

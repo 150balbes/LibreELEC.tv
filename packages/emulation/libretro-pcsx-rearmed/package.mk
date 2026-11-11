@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-pcsx-rearmed"
-PKG_VERSION="459f02ad03fa10b5c403fed724d47fe5adfd5fb1"
-PKG_SHA256="2d305cb8a24cfb33c911b58d10b4f4f2e4e7863fe099a348337a464bdf0638dc"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="a97efbb0646dd7766bd66fe9e93118206edec36a"
+PKG_SHA256="ca8bbe47b4e4720d62c3ec9f42ba31e60d3aa3e15643dbc7620fffbb6a1bf80d"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/pcsx_rearmed"
 PKG_URL="https://github.com/libretro/pcsx_rearmed/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -39,7 +39,7 @@ if [ "${ARCH}" = "arm" ]; then
   if [ "${DEVICE}" = "OdroidGoAdvance" ]; then
     sed -e "s|armv8-a|armv8-a+crc|" \
         -i ../Makefile.libretro
-    PKG_MAKE_OPTS_TARGET+=" platfrom=classic_armv8_a35"
+    PKG_MAKE_OPTS_TARGET+=" platform=classic_armv8_a35"
   else
     PKG_MAKE_OPTS_TARGET+=" platform=unix"
   fi
@@ -48,6 +48,12 @@ elif [ "${ARCH}" = "aarch64" ]; then
 else
   PKG_MAKE_OPTS_TARGET+=" platform=unix DYNAREC=none"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+  echo "#define REV \"${PKG_VERSION:0:7}\"" >${PKG_BUILD}/include/revision.h
+  MAKEFLAGS+=" --assume-old=include/revision.h"
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

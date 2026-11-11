@@ -2,14 +2,14 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.bsnes2014-performance"
-PKG_VERSION="0.94.0.22-Nexus"
-PKG_SHA256="26199622b148721cbac566e1c556467df3583507898b9f286afed8e71d16c17f"
-PKG_REV="3"
+PKG_VERSION="0.94.0.26-Omega"
+PKG_SHA256="0e29dcc47305bdd623866ee83c799249f75ad9b89374612800a9db487ff9a620"
+PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
+PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://github.com/kodi-game/game.libretro.bsnes2014-performance"
 PKG_URL="https://github.com/kodi-game/game.libretro.bsnes2014-performance/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-bsnes2014-performance"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host libretro-bsnes2014-performance"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.bsnes2014-performance: bSNES 2014 for Kodi (performance profile)"
 

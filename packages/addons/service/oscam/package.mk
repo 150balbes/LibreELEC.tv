@@ -1,12 +1,12 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="oscam"
-PKG_VERSION="11799"
-PKG_SHA256="10e7ffb153c66b4f29c21dd5a239d1186f988e918e8ff2673a4ea5fb9073a209"
-PKG_REV="0"
+PKG_VERSION="11968"
+PKG_SHA256="4ba32fe602fdda9150495dd397c4663de94c63345e981291e4e4d5ada5a1a09f"
+PKG_REV="12"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://git.streamboard.tv/common/oscam/-/wikis"
 PKG_URL="https://git.streamboard.tv/common/oscam/-/archive/${PKG_VERSION}/oscam-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain openssl pcsc-lite"
@@ -16,6 +16,9 @@ PKG_LONGDESC="OSCam is a software to be used to decrypt digital television chann
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="OSCam"
+PKG_ADDON_ICON_NAME="none"
+PKG_ADDON_ICON_SIZE="250"
+PKG_ADDON_ICON_OFFSET='+5'
 PKG_ADDON_TYPE="xbmc.service"
 
 PKG_CMAKE_OPTS_TARGET="\
@@ -57,12 +60,17 @@ PKG_CMAKE_OPTS_TARGET="\
   -DCW_CYCLE_CHECK=ON \
   -DHAVE_DVBAPI=1 \
   -DHAVE_LIBCRYPTO=1 \
+  -DSTATIC_LIBCRYPTO=0 \
+  -DHAVE_LIBUSB=1 \
   -DSTATIC_LIBUSB=1 \
+  -DHAVE_PCSC=1 \
+  -DSTATIC_PCSC=0 \
   -DWEBIF=1 \
   -DWEBIF_LIVELOG=1 \
   -DWEBIF_JQUERY=1 \
   -DWITH_DEBUG=0 \
   -DWITH_SSL=1 \
+  -DSTATIC_SSL=0 \
   -DWITH_STAPI=0"
 
 makeinstall_target() {
@@ -70,7 +78,12 @@ makeinstall_target() {
 }
 
 addon() {
-  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+  mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,lib.private}
     cp -P ${PKG_BUILD}/.${TARGET_NAME}/oscam ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
     cp -P ${PKG_BUILD}/.${TARGET_NAME}/utils/list_smargo ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -L $(get_install_dir pcsc-lite)/usr/lib/libpcsclite.so.1 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+    cp -L $(get_install_dir pcsc-lite)/usr/lib/libpcsclite_real.so.1 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+
+  patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/oscam
+  patchelf --add-rpath '${ORIGIN}/../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private/libpcsclite.so.1
 }

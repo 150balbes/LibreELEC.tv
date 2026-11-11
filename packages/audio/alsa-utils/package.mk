@@ -3,9 +3,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="alsa-utils"
-PKG_VERSION="1.2.13"
-PKG_SHA256="1702a6b1cdf9ba3e996ecbc1ddcf9171e6808f5961d503d0f27e80ee162f1daa"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.2.16"
+PKG_SHA256="092399d5e8749a1d5e188e393157521cec4b75693b60ebb79bbce728cff2232c"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://www.alsa-project.org/"
 PKG_URL="https://www.alsa-project.org/files/pub/utils/alsa-utils-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain alsa-lib ncurses systemd"

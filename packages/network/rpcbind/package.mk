@@ -3,11 +3,11 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rpcbind"
-PKG_VERSION="1.2.7"
-PKG_SHA256="f6edf8cdf562aedd5d53b8bf93962d61623292bfc4d47eedd3f427d84d06f37e"
-PKG_LICENSE="OSS"
+PKG_VERSION="1.3.1"
+PKG_SHA256="8e551b445f5172f8ef218845af342fb2a2d741b57ce8c777c781a01ea92f92a5"
+PKG_LICENSE="BSD-3-Clause"
 PKG_SITE="http://rpcbind.sourceforge.net/"
-PKG_URL="${SOURCEFORGE_SRC}/rpcbind/rpcbind/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_URL="https://downloads.sourceforge.net/project/rpcbind/rpcbind/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libtirpc systemd"
 PKG_LONGDESC="The rpcbind utility is a server that converts RPC program numbers into universal addresses."
 PKG_BUILD_FLAGS="-cfg-libs"

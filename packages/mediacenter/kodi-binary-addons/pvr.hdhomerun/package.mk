@@ -3,14 +3,14 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.hdhomerun"
-PKG_VERSION="22.2.0-Piers"
-PKG_SHA256="e38b343f71754d67115eaa78016428cf1d4822e211ff82baffb662e9a54cbff3"
+PKG_VERSION="22.2.7-Piers"
+PKG_SHA256="437cc682fe61e0da2e239b90f1ba6d8d4c43c10078e57f30175aa00227954aec"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/kodi-pvr/pvr.hdhomerun"
 PKG_URL="https://github.com/kodi-pvr/pvr.hdhomerun/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform jsoncpp libhdhomerun"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host jsoncpp libhdhomerun"
 PKG_SECTION=""
 PKG_SHORTDESC="pvr.hdhomerun"
 PKG_LONGDESC="pvr.hdhomerun"

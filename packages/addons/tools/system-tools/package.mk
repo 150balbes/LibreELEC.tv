@@ -1,20 +1,22 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="system-tools"
 PKG_VERSION="1.0"
-PKG_REV="1"
+PKG_REV="31"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-only"
 PKG_SITE="https://libreelec.tv"
 PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="A bundle of system tools and programs"
-PKG_LONGDESC="This bundle currently includes 7-zip, autossh, bottom, diffutils, dool, dtach, efibootmgr, encfs, evtest, fdupes, file, getscancodes, hddtemp, hd-idle, hid_mapper, htop, i2c-tools, inotify-tools, jq, libgpiod, lm_sensors, lshw, mc, mmc-utils, mtpfs, nmon, patch, pv, screen, smartmontools, stress-ng, tree, unrar, usb-modeswitch and vim."
+PKG_LONGDESC="This bundle currently includes 7-zip, autossh, bottom, diffutils, dool, dtach, efibootmgr, encfs, evtest, fdupes, file, getscancodes, hddtemp, hd-idle, hid_mapper, htop, i2c-tools, inotify-tools, jq, libgpiod, lm_sensors, lshw, mc, mmc-utils, mtpfs, nmon, patch, pv, screen, smartmontools, stress-ng, tmux, tree, unrar, usb-modeswitch and vim."
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="System Tools"
+PKG_ADDON_ICON_NAME="TOOLS"
+PKG_ADDON_ICON_SIZE="280"
 PKG_ADDON_TYPE="xbmc.python.script"
 
 PKG_DEPENDS_TARGET="toolchain \
@@ -49,6 +51,7 @@ PKG_DEPENDS_TARGET="toolchain \
                     sdparm \
                     smartmontools \
                     stress-ng \
+                    tmux \
                     tree \
                     unrar \
                     usb-modeswitch \
@@ -136,7 +139,12 @@ addon() {
     cp -P $(get_install_dir oniguruma)/usr/lib/{libonig.so,libonig.so.5,libonig.so.5.*.*} ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 
     # libgpiod
-    cp -P $(get_install_dir libgpiod)/usr/bin/{gpiodetect,gpioget,gpioinfo,gpiomon,gpioset} ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -P $(get_install_dir libgpiod)/usr/bin/{gpiodetect,gpioget,gpioinfo,gpiomon,gpionotify,gpioset} ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+    cp -L $(get_install_dir libgpiod)/usr/lib/libgpiod.so.3 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private/
+    cp -L $(get_install_dir libgpiod)/usr/lib/libgpiotools.so.1 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private/
+    patchelf --add-rpath '${ORIGIN}/../../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/{gpiodetect,gpioget,gpioinfo,gpiomon,gpionotify,gpioset}
+    cp -PR $(get_build_dir libgpiod)/bindings/python/build/lib.linux*/* ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
+    patchelf --add-rpath '${ORIGIN}/../../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/gpiod/_ext.*.so
 
     # lm_sensors
     cp -P $(get_install_dir lm_sensors)/usr/bin/sensors ${ADDON_BUILD}/${PKG_ADDON_ID}/bin 2>/dev/null || :
@@ -177,6 +185,9 @@ addon() {
 
     # stress-ng
     cp -P $(get_install_dir stress-ng)/usr/bin/stress-ng ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+
+    # tmux
+    cp -P $(get_install_dir tmux)/usr/bin/tmux ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
 
     # tree
     cp -P $(get_install_dir tree)/usr/bin/tree ${ADDON_BUILD}/${PKG_ADDON_ID}/bin

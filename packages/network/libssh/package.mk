@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libssh"
-PKG_VERSION="0.11.1"
-PKG_SHA256="14b7dcc72e91e08151c58b981a7b570ab2663f630e7d2837645d5a9c612c1b79"
-PKG_LICENSE="LGPL"
+PKG_VERSION="0.12.2"
+PKG_SHA256="49560f677d96e3706a904ac2de1116e25f3680937d51e5c92198fcba4a1c1e9f"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://www.libssh.org/"
 PKG_URL="https://www.libssh.org/files/$(get_pkg_version_maj_min)/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain zlib openssl"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-atari800"
-PKG_VERSION="8bfa3b80f6a2db365dfd1e8a6c06b7b0844327cf"
-PKG_SHA256="c1fee7ff0a87ff2ca1dc1d9ace1bb3a66615a299c0f4e796e75ba97c680852bb"
-PKG_LICENSE="GPL"
+PKG_VERSION="7f3456f16109c34915d0bad7393b6c4df66c3850"
+PKG_SHA256="5c6a6880998ab547c5a1404e2230573940a4ec7cb545cde1271158da794b0e40"
+PKG_LICENSE="GPL-2.0-only"
 PKG_SITE="https://github.com/libretro/libretro-atari800"
 PKG_URL="https://github.com/libretro/libretro-atari800/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -14,6 +14,10 @@ PKG_TOOLCHAIN="make"
 PKG_LIBNAME="atari800_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="ATARI800_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

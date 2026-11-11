@@ -3,11 +3,11 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="fuse"
-PKG_VERSION="2.9.9"
-PKG_SHA256="d0e69d5d608cc22ff4843791ad097f554dd32540ddc9bed7638cc6fea7c1b4b5"
-PKG_LICENSE="GPL"
+PKG_VERSION="5a43d0f724c56f8836f3f92411e0de1b5f82db32" # 2.9.9+
+PKG_SHA256="1df88a204e1673e29112f1ee4efe6b3cd4de2ae78945838e406ead0fe24ec5f1"
+PKG_LICENSE="LGPL-2.1-only"
 PKG_SITE="https://github.com/libfuse/libfuse/"
-PKG_URL="https://github.com/libfuse/libfuse/releases/download/${PKG_NAME}-${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/libfuse/libfuse/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="FUSE provides a simple interface for userspace programs to export a virtual filesystem to the Linux kernel."
 PKG_TOOLCHAIN="autotools"

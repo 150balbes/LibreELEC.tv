@@ -2,14 +2,14 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.supafaust"
-PKG_VERSION="1.29.0.31-Nexus"
-PKG_SHA256="9918bbad9f2ffa8b7e0ade224b29d4f6a155381ab52c0c3ddde4207758a7e0c5"
-PKG_REV="3"
+PKG_VERSION="1.29.0.40-Omega"
+PKG_SHA256="97bdcb0fb6d04243e3a7f0b476cfaf31b925c597b5ff27ee93bacc1f2b73e509"
+PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2+"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/kodi-game/game.libretro.supafaust"
 PKG_URL="https://github.com/kodi-game/game.libretro.supafaust/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-supafaust"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host libretro-supafaust"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.supafaust: Beetle supafaust for Kodi"
 

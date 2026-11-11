@@ -3,10 +3,10 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-intel"
-PKG_VERSION="ce811e78882d9f31636351dfe65351f4ded52c74"
-PKG_SHA256="b68c91f93a3bb4ff6aba1184b468c88b7403135b0e1518616f20c6dd8acb18e1"
+PKG_VERSION="4a64400ec6a7d8c0aba0e6a39b16a5e86d0af843"
+PKG_SHA256="d01b788dd2506432d7b203ef80f0c96f28f129a0ef68a8371fe2e9346fc42d1d"
 PKG_ARCH="x86_64"
-PKG_LICENSE="OSS"
+PKG_LICENSE="MIT"
 PKG_SITE="https://www.x.org/wiki/IntelGraphicsDriver/"
 PKG_URL="https://gitlab.freedesktop.org/xorg/driver/${PKG_NAME}/-/archive/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libXcomposite libXxf86vm libXdamage libdrm util-macros systemd xorg-server"

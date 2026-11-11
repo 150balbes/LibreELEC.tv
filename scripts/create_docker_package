@@ -93,7 +93,7 @@ case "${ARCH}" in
         projects="Generic"
         ;;
     *)
-        echo "Unkown project"
+        echo "Unknown project"
         exit 1
         ;;
 esac

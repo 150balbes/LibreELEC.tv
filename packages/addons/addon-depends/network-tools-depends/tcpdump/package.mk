@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="tcpdump"
-PKG_VERSION="4.99.5"
-PKG_SHA256="8c75856e00addeeadf70dad67c9ff3dd368536b2b8563abf6854d7c764cd3adb"
+PKG_VERSION="4.99.7"
+PKG_SHA256="8be364e28d3b745ef1459b385cd2f4bc0e1ebad7a5d2ebdf70071d6c9b5b9a54"
 PKG_SITE="https://www.tcpdump.org/"
 PKG_URL="https://www.tcpdump.org/release/tcpdump-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libpcap libtirpc"

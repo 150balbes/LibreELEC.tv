@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Frank Hartung (supervisedthinking (@) gmail.com)
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vulkan-tools"
-PKG_VERSION="1.3.302"
-PKG_SHA256="75264092f597e883c236345f188d4f09b635891fba53b517d9953aff8ada6571"
+PKG_VERSION="1.4.367"
+PKG_SHA256="fcef91ae098b49dd1edc288e7056fc0b9fafe218470bbc79a88135d212988879"
 PKG_LICENSE="Apache-2.0"
 PKG_SITE="https://github.com/KhronosGroup/Vulkan-Tools"
 PKG_URL="https://github.com/KhronosGroup/Vulkan-tools/archive/v${PKG_VERSION}.tar.gz"
@@ -16,7 +16,7 @@ configure_package() {
   if [ "${DISPLAYSERVER}" = "x11" ]; then
     PKG_DEPENDS_TARGET+=" libxcb libX11"
   elif [ "${DISPLAYSERVER}" = "wl" ]; then
-    PKG_DEPENDS_TARGET+=" wayland"
+    PKG_DEPENDS_TARGET+=" wayland wayland-protocols"
   fi
 }
 
@@ -25,7 +25,6 @@ pre_configure_target() {
                          -DBUILD_VULKANINFO=ON \
                          -DBUILD_ICD=OFF \
                          -DBUILD_WSI_DIRECTFB_SUPPORT=OFF \
-                         -DPython3_EXECUTABLE=${TOOLCHAIN}/bin/python3 \
                          -Wno-dev"
 
   if [ "${DISPLAYSERVER}" = "x11" ]; then
@@ -40,7 +39,7 @@ pre_configure_target() {
                              -DCOMPILE_CUBE_SHADERS=ON \
                              -DBUILD_WSI_XCB_SUPPORT=OFF \
                              -DBUILD_WSI_XLIB_SUPPORT=OFF \
-                             -DBUILD_WSI_WAYLAND_SUPPORT=ON
+                             -DBUILD_WSI_WAYLAND_SUPPORT=ON \
                              -DCUBE_WSI_SELECTION=WAYLAND"
   else
     PKG_CMAKE_OPTS_TARGET+=" -DBUILD_CUBE=ON \
@@ -59,6 +58,6 @@ pre_make_target() {
 }
 
 post_makeinstall_target() {
-  # Clean up - two graphic test tools are superflous
+  # Clean up - two graphic test tools are superfluous
   safe_remove ${INSTALL}/usr/bin/vkcubepp
 }

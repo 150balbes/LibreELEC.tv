@@ -1,23 +1,26 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="inotify-tools"
-PKG_VERSION="4.23.9.0"
-PKG_SHA256="1dfa33f80b6797ce2f6c01f454fd486d30be4dca1b0c5c2ea9ba3c30a5c39855"
-PKG_LICENSE="GPLv2"
-PKG_SITE="http://wiki.github.com/inotify-tools/inotify-tools/"
-PKG_URL="https://github.com/inotify-tools/inotify-tools/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="A C library and a set of command-line programs for Linux providing a simple interface to inotify."
-PKG_TOOLCHAIN="autotools"
-PKG_BUILD_FLAGS="-sysroot"
+PKG_VERSION="4.26.270"
+PKG_SHA256="cfee168ed9fd914178e586e3ccb9b1180ae1cf33776f9ab2db16c54b9c0662a5"
+PKG_LICENSE="GPL-2.0-or-later"
+PKG_SITE="https://github.com/inotify-tools/inotify-tools"
+PKG_URL="https://github.com/inotify-tools/inotify-tools/releases/download/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain cargo:host"
+PKG_LONGDESC="A library and a set of command-line programs for Linux providing a simple interface to inotify."
+PKG_TOOLCHAIN="manual"
 
-PKG_CONFIGURE_OPTS_TARGET="--enable-static --disable-shared --disable-doxygen"
-
-pre_configure_target() {
-  CXXFLAGS+=" -Wno-error=unused-parameter"
+make_target() {
+  cargo build \
+    --target ${TARGET_NAME} \
+    --release \
+    --locked \
+    --package inotify-tools \
+    --bins
 }
 
-post_configure_target() {
-  libtool_remove_rpath libtool
+makeinstall_target() {
+  mkdir -p ${INSTALL}/usr/bin
+  cp ${PKG_BUILD}/.${TARGET_NAME}/target/${TARGET_NAME}/release/{inotifywait,inotifywatch} ${INSTALL}/usr/bin
 }

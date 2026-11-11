@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2020-2021 Ian Leonard (antonlacon@gmail.com)
 
 # This performs an automated scan with corrections to the packages feed to
 # follow certain coding standards used in the project. Corrections are grouped
-# by the subdirectory within the packages feed, and then commited.
+# by the subdirectory within the packages feed, and then committed.
 
 # Corrections made:
 # PKG_VAR="$PKG_VAR stuff" -> PKG_VAR+=" stuff"

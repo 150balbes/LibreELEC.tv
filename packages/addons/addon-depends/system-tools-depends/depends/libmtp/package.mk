@@ -1,21 +1,33 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libmtp"
-PKG_VERSION="1.1.21"
-PKG_SHA256="c4ffa5ab8c8f48c91b0047f2e253c101c418d5696a5ed65c839922a4280872a7"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.1.23"
+PKG_SHA256="74a2b6e8cb4a0304e95b995496ea3ac644c29371649b892b856e22f12a0bdeed"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://libmtp.sourceforge.net/"
-PKG_URL="${SOURCEFORGE_SRC}/project/${PKG_NAME}/${PKG_NAME}/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain libusb"
+PKG_URL="https://downloads.sourceforge.net/project/libmtp/libmtp/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libusb gettext"
 PKG_LONGDESC="An Initiator implementation of the Media Transfer Protocol (MTP)."
 PKG_TOOLCHAIN="autotools"
 
 PKG_CONFIGURE_OPTS_TARGET="ac_cv_func_malloc_0_nonnull=yes \
                            --disable-shared \
                            --enable-static \
+                           --enable-crossbuilddir \
                            --disable-mtpz"
+
+pre_configure_target() {
+  # override mtp-hotplug with true as the built files are not used.
+  # the generated udev files are deleted is the post_makeinstall_target.
+  export HOST_MTP_HOTPLUG="/usr/bin/true"
+}
 
 post_configure_target() {
   libtool_remove_rpath libtool
+}
+
+post_makeinstall_target() {
+  safe_remove ${INSTALL}/usr/lib/udev/hwdb.d
+  safe_remove ${INSTALL}/usr/lib/udev/rules.d
 }

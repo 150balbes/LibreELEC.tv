@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="imagedecoder.raw"
-PKG_VERSION="20.1.0-Nexus"
-PKG_SHA256="6235c0be431bbb814b3e464753af9ad17febf6001f77cbf030e6c6e1cdc41a04"
-PKG_REV="9"
+PKG_VERSION="22.1.1-Piers"
+PKG_SHA256="ee4692563acff8fce4d77ffd629778d9df3cb516825b7a74ffc80f25d902f419"
+PKG_REV="2"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/xbmc/imagedecoder.raw"
 PKG_URL="https://github.com/xbmc/imagedecoder.raw/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform libraw"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host libraw"
 PKG_SECTION=""
 PKG_SHORTDESC="imagedecoder.raw"
 PKG_LONGDESC="imagedecoder.raw"

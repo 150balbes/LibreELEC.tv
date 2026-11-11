@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="fuse3"
-PKG_VERSION="3.16.2"
-PKG_SHA256="f797055d9296b275e981f5f62d4e32e089614fc253d1ef2985851025b8a0ce87"
-PKG_LICENSE="GPL"
+PKG_VERSION="3.18.3"
+PKG_SHA256="bcd19582c5e30f7fe45dd86a5540e998590aa01903afc7ebcbeea6c8ac5421ee"
+PKG_LICENSE="LGPL-2.1-only"
 PKG_SITE="https://github.com/libfuse/libfuse/"
 PKG_URL="https://github.com/libfuse/libfuse/releases/download/fuse-${PKG_VERSION}/fuse-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain systemd"

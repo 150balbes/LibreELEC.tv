@@ -3,9 +3,9 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libinput"
-PKG_VERSION="1.27.0"
-PKG_SHA256="8e823cc9f44c51b63ae90af0b73676ed82c0402cc1cbd4a59ac91b7bb6cad716"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.32.0"
+PKG_SHA256="3a6065c07b118c08d0c7b7b85a265ecb050a8cfc91eeb360890d768a51b4cce9"
+PKG_LICENSE="MIT"
 PKG_SITE="https://www.freedesktop.org/wiki/Software/libinput/"
 PKG_URL="https://gitlab.freedesktop.org/libinput/libinput/-/archive/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain systemd libevdev mtdev"

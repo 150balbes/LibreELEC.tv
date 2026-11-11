@@ -3,14 +3,14 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.demo"
-PKG_VERSION="22.4.0-Piers"
-PKG_SHA256="24caa810bb2148effbac08639f1ca6a023cf9ea3c7d0e2e432e10f314201bbbc"
+PKG_VERSION="22.4.5-Piers"
+PKG_SHA256="723f3c31f41abbb97fd2b57c62d8c4ae82568f4c4bb904248dc6287a51f9521f"
 PKG_REV="1"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/kodi-pvr/pvr.demo"
 PKG_URL="https://github.com/kodi-pvr/pvr.demo/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform tinyxml2"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host tinyxml2"
 PKG_SECTION=""
 PKG_SHORTDESC="pvr.demo"
 PKG_LONGDESC="pvr.demo"

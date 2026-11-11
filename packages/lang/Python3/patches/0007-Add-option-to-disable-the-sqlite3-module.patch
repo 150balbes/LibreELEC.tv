@@ -16,18 +16,18 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5fad7f82fb..7b6c9811a6 100644
+index 642740c..3dfca55 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2108,7 +2108,6 @@ LIBSUBDIRS=	asyncio \
- 		multiprocessing multiprocessing/dummy \
+@@ -2587,7 +2587,6 @@ LIBSUBDIRS=	asyncio \
+ 		pathlib \
  		re \
  		site-packages \
 -		sqlite3 \
+ 		string \
+ 		sysconfig \
  		tkinter \
- 		tomllib \
- 		turtledemo \
-@@ -2272,6 +2271,10 @@ ifeq (@IDLE@,yes)
+@@ -2758,6 +2757,10 @@ ifeq (@IDLE@,yes)
  LIBSUBDIRS += idlelib idlelib/Icons
  endif
  
@@ -39,10 +39,10 @@ index 5fad7f82fb..7b6c9811a6 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 561e33f550..d1c54bd67c 100644
+index fd408bd..e988373 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4516,6 +4516,13 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4880,6 +4880,13 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -57,5 +57,5 @@ index 561e33f550..d1c54bd67c 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.34.1
+2.53.0
 

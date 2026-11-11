@@ -5,9 +5,9 @@
 PKG_NAME="lirc"
 PKG_VERSION="0.10.2"
 PKG_SHA256="3d44ec8274881cf262f160805641f0827ffcc20ade0d85e7e6f3b90e0d3d222a"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://www.lirc.org"
-PKG_URL="https://sourceforge.net/projects/lirc/files/LIRC/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
+PKG_URL="https://downloads.sourceforge.net/project/lirc/LIRC/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libftdi1 libusb-compat libxslt alsa-lib"
 PKG_LONGDESC="LIRC is a package that allows you to decode and send infra-red signals."
 PKG_TOOLCHAIN="autotools"
@@ -16,7 +16,14 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-devinput \
                            --enable-uinput \
                            --with-gnu-ld \
                            --without-x \
-                           --runstatedir=/run"
+                           --runstatedir=/run \
+                           --with-lockdir=/var/lock"
+
+post_unpack() {
+  # remove confusing static config.h in lirc 0.10.2 release package (temp fix)
+  # lead to "LIRC_LOCKDIR" redefined to "/var/lock/lockdir"
+  rm ${PKG_BUILD}/lib/lirc/config.h
+}
 
 pre_configure_target() {
   export HAVE_WORKING_POLL=yes
@@ -32,9 +39,6 @@ pre_configure_target() {
 
 post_configure_target() {
   libtool_remove_rpath libtool
-
-  nodots=$(grep "#define VERSION_NODOTS" ../lib/lirc/config.h)
-  sed -i "s/^#define VERSION_NODOTS.*/${nodots}/" config.h
 }
 
 post_makeinstall_target() {

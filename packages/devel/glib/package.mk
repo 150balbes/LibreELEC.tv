@@ -3,9 +3,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="glib"
-PKG_VERSION="2.83.0"
-PKG_SHA256="a07d9e1a57a4279c5ece71c26dc44eea12bd518ea9ff695d53e722997032b614"
-PKG_LICENSE="LGPL"
+PKG_VERSION="2.90.1"
+PKG_SHA256="93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://www.gtk.org/"
 PKG_URL="https://download.gnome.org/sources/glib/$(get_pkg_version_maj_min)/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="libffi:host pcre2:host Python3:host meson:host ninja:host"
@@ -15,18 +15,20 @@ PKG_LONGDESC="A library which includes support routines for C such as lists, tre
 PKG_MESON_OPTS_HOST="-Ddefault_library=static \
                      -Dinstalled_tests=false \
                      -Dlibmount=disabled \
+                     -Dintrospection=disabled \
+                     -Dsysprof=disabled \
                      -Dtests=false"
 
 PKG_MESON_OPTS_TARGET="-Ddefault_library=shared \
                        -Dinstalled_tests=false \
                        -Dselinux=disabled \
                        -Dxattr=true \
-                       -Dgtk_doc=false \
-                       -Dman=false \
-                       -Ddtrace=false \
-                       -Dsystemtap=false \
+                       -Ddocumentation=false \
+                       -Dman-pages=disabled \
+                       -Ddtrace=disabled \
+                       -Dsystemtap=disabled \
                        -Dbsymbolic_functions=true \
-                       -Dforce_posix_threads=true \
+                       -Dsysprof=disabled \
                        -Dtests=false"
 
 post_makeinstall_target() {

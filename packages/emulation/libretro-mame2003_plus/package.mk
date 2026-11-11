@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mame2003_plus"
-PKG_VERSION="d1ea797420e2429a03aa019a29e8897de06fa860"
-PKG_SHA256="6584297717104e1718c1e5d479fefff6ce9c381b1e722b9f3ee82c5b8fc6515b"
-PKG_LICENSE="MAME"
+PKG_VERSION="23c1680f562cdb745c6d7d87f436aff8c18ebbc6"
+PKG_SHA256="8c3da06c5bb5a72d55d8c22cc12217463960b1f822d154ed51788d17c92ffcac"
+PKG_LICENSE="LicenseRef-MAME"
 PKG_SITE="https://github.com/libretro/mame2003-plus-libretro"
 PKG_URL="https://github.com/libretro/mame2003-plus-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -16,6 +16,7 @@ PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="MAME2003_PLUS_LIB"
 
 pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
   PKG_MAKE_OPTS_TARGET="ARCH= CC=${CC} NATIVE_CC=${CC} LD=${CC}"
 }
 

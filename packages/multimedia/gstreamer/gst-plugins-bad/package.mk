@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gst-plugins-bad"
-PKG_VERSION="1.24.9"
-PKG_SHA256="36fcf7a9af0a753b43bb03b9835246f74d72f7124369e66a1e2dc7b04f5a5cab"
+PKG_VERSION="1.29.2"
+PKG_SHA256="bf5811da6159e0d2ae0617fd22f354f2f3a15cbc5baea00ca5b4620a8bc3c38c"
 PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://gstreamer.freedesktop.org/modules/gst-plugins-bad.html"
 PKG_URL="https://gstreamer.freedesktop.org/src/gst-plugins-bad/${PKG_NAME}-${PKG_VERSION}.tar.xz"
@@ -75,10 +75,10 @@ pre_configure_target() {
                          -Dvideoparsers=enabled \
                          -Dvideosignal=disabled \
                          -Dvmnc=disabled \
-                         -Dy4m=disabled \
                          -Dopencv=disabled \
                          -Dwayland=disabled \
                          -Dx11=disabled \
+                         -Daes=disabled \
                          -Daom=disabled \
                          -Davtp=disabled \
                          -Dandroidmedia=disabled \
@@ -177,9 +177,9 @@ pre_configure_target() {
                          -Dintrospection=disabled \
                          -Dnls=disabled \
                          -Dorc=disabled \
-                         -Dgobject-cast-checks=disabled \
-                         -Dglib-asserts=disabled \
-                         -Dglib-checks=disabled \
+                         -Dglib_debug=disabled \
+                         -Dglib_assert=false \
+                         -Dglib_checks=false \
                          -Dpackage-name=gst-plugins-bad \
                          -Dpackage-origin=LibreELEC.tv \
                          -Ddoc=disabled"

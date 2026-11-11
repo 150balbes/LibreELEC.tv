@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="wavpack"
-PKG_VERSION="5.7.0"
-PKG_SHA256="e81510fd9ec5f309f58d5de83e9af6c95e267a13753d7e0bbfe7b91273a88bee"
-PKG_LICENSE="BSD"
+PKG_VERSION="5.9.0"
+PKG_SHA256="b5291bc4e6d69ebbd3da3800c5bf4a70f19bb92679b23e09b3b612c1e648d1ff"
+PKG_LICENSE="BSD-3-Clause"
 PKG_SITE="https://www.wavpack.com"
 PKG_URL="https://www.wavpack.com/wavpack-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libiconv"

@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-dinothawr"
-PKG_VERSION="33fb82a8df4e440f96d19bba38668beaa1b414fc"
-PKG_SHA256="092c5c97b73605747baa4cfb3156c7ff80ba2128618ee1cc4d8f12900a0d374b"
+PKG_VERSION="fbf022d21ce3b226225e434c8686944cf4ac0f82"
+PKG_SHA256="c0368bd9da3ae2ebd8875235f81456c3a6ee5a2c1a91a2ae38f628bd69c4f861"
 PKG_LICENSE="CC-BY-NC-SA-3.0"
 PKG_SITE="https://github.com/libretro/Dinothawr"
 PKG_URL="https://github.com/libretro/Dinothawr/archive/${PKG_VERSION}.tar.gz"
@@ -18,6 +18,10 @@ PKG_LIBVAR="DINOTHAWR_LIB"
 if target_has_feature neon; then
   PKG_MAKE_OPTS_TARGET="HAVE_NEON=1"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

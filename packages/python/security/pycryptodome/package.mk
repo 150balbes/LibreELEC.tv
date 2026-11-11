@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pycryptodome"
-PKG_VERSION="3.21.0"
-PKG_SHA256="195e5cdfbb550b03f83f2af2aa4652c14b64783574d835fe61bb06c8fc06ba21"
-PKG_LICENSE="BSD"
+PKG_VERSION="4.3.0"
+PKG_SHA256="08e9841425a70b31635cafc58a35349f508b9c8794d4d45b0ccc472c737b4494"
+PKG_LICENSE="Unlicense AND BSD-2-Clause"
 PKG_SITE="https://pypi.org/project/pycryptodome"
 PKG_URL="https://github.com/Legrandin/${PKG_NAME}/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain Python3 setuptools:host"

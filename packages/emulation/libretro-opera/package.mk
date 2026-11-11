@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-opera"
-PKG_VERSION="35e16483be900ea8aa20e87d2710b677437f73ce"
-PKG_SHA256="a77ad25719cbdf7a359c64b5efee18b854f842221d8abe61d2cddec6c61f50c3"
-PKG_LICENSE="LGPL with additional notes"
+PKG_VERSION="4c4ca6bf741c40715723a8b8dae4b6187ff6ac30"
+PKG_SHA256="1487bc56bfba97f648d54e864e1b138ab929e885b70170b8f1323e0f0ac97b2f"
+PKG_LICENSE="LicenseRef-FreeDO"
 PKG_SITE="https://github.com/libretro/opera-libretro"
 PKG_URL="https://github.com/libretro/opera-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -16,6 +16,7 @@ PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="OPERA_LIB"
 
 pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
   PKG_MAKE_OPTS_TARGET="CC=${CC} CXX=${CXX} AR=${AR}"
 }
 

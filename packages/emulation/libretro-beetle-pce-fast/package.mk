@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-pce-fast"
-PKG_VERSION="087f70453a23185796c67440d4143442a857b3ff"
-PKG_SHA256="674b1e8a7c3a8bb08ce6f913020e4281cc2b78417870a17100c96a90dd4c5b58"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="9ba79648d6ec85e833aef719d7f359117498d89c"
+PKG_SHA256="b31d2f4ed7245eec14f7ba7bbd7604cf4eac1ceea1468b20915b570658759d00"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/beetle-pce-fast-libretro"
 PKG_URL="https://github.com/libretro/beetle-pce-fast-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -16,6 +16,10 @@ PKG_MAKE_OPTS_TARGET="HAVE_CDROM=1"
 PKG_LIBNAME="mednafen_pce_fast_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="BEETLE-PCE-FAST_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

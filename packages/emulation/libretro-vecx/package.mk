@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-vecx"
-PKG_VERSION="a401c268e425dc8ae6a301e7fdb9a9e96f39b8ea"
-PKG_SHA256="348c335607af6bdbe12f72b4252110a8eac2a65e7f38fc8e746e697724ad1f4e"
-PKG_LICENSE="GPLv3"
+PKG_VERSION="dccff5402a16d1ea7c112095a8e42632bf149506"
+PKG_SHA256="684808db7e9d3a81647e25e8a7e34df3e0f62ed317df578143055c6536d23a32"
+PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://github.com/libretro/libretro-vecx"
 PKG_URL="https://github.com/libretro/libretro-vecx/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -19,6 +19,11 @@ PKG_MAKE_OPTS_TARGET="-f Makefile.libretro"
 
 if [ "${OPENGL_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_TARGET+=" ${OPENGL}"
+fi
+
+if [ "${OPENGL_SUPPORT}" = "yes" ] &&
+   [ "${DISPLAYSERVER}" != "x11" ]; then
+  PKG_MAKE_OPTS_TARGET+=" USE_GLVND=1"
 fi
 
 if [ "${OPENGLES_SUPPORT}" = "yes" ]; then
@@ -38,6 +43,10 @@ if [ "${PROJECT}" = "RPi" ]; then
 elif [ "${OPENGLES_SUPPORT}" = "yes" ]; then
   PKG_MAKE_OPTS_TARGET+=" HAS_GLES=1 GLES=1"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

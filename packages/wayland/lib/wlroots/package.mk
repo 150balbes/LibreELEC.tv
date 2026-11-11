@@ -1,14 +1,19 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="wlroots"
-PKG_VERSION="0.18.1"
-PKG_SHA256="c42269d6c6c3e2bc3b19d5254c0a9defb81b92707efa7af4c0cf1b550039a5d3"
+PKG_VERSION="0.20.2"
+PKG_SHA256="20c37b521dc3054b6e9627b79bdd45fc716db9ebc58bdf97e57e84d04b04610f"
 PKG_LICENSE="MIT"
 PKG_SITE="https://gitlab.freedesktop.org/wlroots/wlroots/"
 PKG_URL="https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
-PKG_DEPENDS_TARGET="toolchain hwdata libdisplay-info libinput libxkbcommon pixman libdrm wayland wayland-protocols seatd"
+PKG_DEPENDS_TARGET="toolchain hwdata:host libdisplay-info libinput libxkbcommon pixman libdrm wayland wayland-protocols seatd"
 PKG_LONGDESC="A modular Wayland compositor library"
+
+if [ "${DISPLAYSERVER}" != "wl" ]; then
+  PKG_BUILD_FLAGS="-sysroot"
+  PKG_DEPENDS_CONFIG="wayland wayland-protocols seatd"
+fi
 
 configure_package() {
   # OpenGLES Support

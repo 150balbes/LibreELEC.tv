@@ -50,7 +50,7 @@
  KEY_BACKSPACE     = KEY_EXIT          # BACK
 
  alt+KEY_F4        = KEY_CLOSE         # Close
- meta+KEY_D        = KEY_INFO          # Desktop, remapped to Info in XBMC
- KEY_COMPOSE       = KEY_EPG           # More, remapped to Context Menu in XBMC
+ meta+KEY_D        = KEY_INFO          # Desktop, remapped to Info in Kodi
+ KEY_COMPOSE       = KEY_EPG           # More, remapped to Context Menu in Kodi
  ctrl+KEY_R        = KEY_RECORD        # Record
  KEY_ESC           = KEY_DELETE        # Clear

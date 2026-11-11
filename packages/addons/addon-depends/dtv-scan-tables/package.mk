@@ -2,9 +2,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="dtv-scan-tables"
-PKG_VERSION="2022-04-30-57ed29822750"
-PKG_SHA256="6a6268aa392459378fa3a13922fc015a3fa63ff822f4b0d64d33d71350a6ec9e"
-PKG_LICENSE="GPL"
+PKG_VERSION="2026-04-11-be35975ac877"
+PKG_SHA256="653ce8dad61e7ba7ba90dca6e88465eeef035ed9deeb2c9f6c9cbc9ed841297c"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://git.linuxtv.org/dtv-scan-tables.git"
 PKG_URL="https://linuxtv.org/downloads/dtv-scan-tables/dtv-scan-tables-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain"

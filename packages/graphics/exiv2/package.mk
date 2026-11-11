@@ -2,12 +2,12 @@
 # Copyright (C) 2024-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="exiv2"
-PKG_VERSION="0.28.3"
-PKG_SHA256="1315e17d454bf4da3cc0edb857b1d2c143670f3485b537d0f946d9ed31d87b70"
+PKG_VERSION="0.28.9"
+PKG_SHA256="700b76b97695b2fab4ef8c79619c68ae57d09e0c130724791cafbd39e0eb4aef"
 PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://exiv2.org"
 PKG_URL="https://github.com/Exiv2/exiv2/archive/refs/tags/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain zlib"
 PKG_LONGDESC="Exiv2 is a Cross-platform C++ library to manage image metadata."
 PKG_TOOLCHAIN="cmake"
 

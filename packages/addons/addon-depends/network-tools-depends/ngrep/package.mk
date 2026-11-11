@@ -1,15 +1,14 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ngrep"
-PKG_VERSION="2a9603bc67dface9606a658da45e1f5c65170444" # 2019-01-29
-PKG_SHA256="500c29914dd26f5aa6df07446388d49b60249622c9b0fd1f266f62a5706f056c"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.49.0"
+PKG_SHA256="6c94b31681316b7469a3ace92d2aeec7c9f490bd6782453dff2ade0e289a3348"
+PKG_LICENSE="LicenseRef-ngrep AND BSD-3-Clause"
 PKG_SITE="https://github.com/jpr5/ngrep"
-PKG_URL="https://github.com/jpr5/ngrep/archive/${PKG_VERSION}.tar.gz"
+PKG_URL="https://github.com/jpr5/ngrep/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libpcap pcre2"
 PKG_LONGDESC="A tool like GNU grep applied to the network layer."
-PKG_TOOLCHAIN="autotools"
 PKG_BUILD_FLAGS="-sysroot -parallel -cfg-libs"
 
 PKG_CONFIGURE_OPTS_TARGET="--with-pcap-includes=${SYSROOT_PREFIX}/usr/include \

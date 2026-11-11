@@ -1,14 +1,16 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="valgrind"
-PKG_VERSION="3.24.0"
-PKG_SHA256="71aee202bdef1ae73898ccf7e9c315134fa7db6c246063afc503aef702ec03bd"
-PKG_LICENSE="GPL"
+PKG_VERSION="3.28.0"
+PKG_SHA256="9f7a18d128f05d3a80fea53e6953f34aad7200a425ceaee46099a8a798a7dd9c"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://valgrind.org/"
 PKG_URL="https://sourceware.org/pub/valgrind/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="A tool to help find memory-management problems in programs"
+PKG_TOOLCHAIN="autotools"
+PKG_BUILD_FLAGS="-cfg-libs"
 
 if [ "${TARGET_ARCH}" = "arm" ]; then
   PKG_CONFIGURE_OPTS_TARGET="--enable-only32bit"

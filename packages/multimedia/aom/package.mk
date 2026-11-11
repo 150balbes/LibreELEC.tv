@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="aom"
-PKG_VERSION="3.9.1"
-PKG_SHA256="dba99fc1c28aaade28dda59821166b2fa91c06162d1bc99fde0ddaad7cecc50e"
-PKG_LICENSE="BSD"
+PKG_VERSION="3.15.3"
+PKG_SHA256="12c01dc731ed7b5a999e28120b45bf58a002ba3435a4ba2cfbc1e084a27c9c04"
+PKG_LICENSE="BSD-2-Clause"
 PKG_SITE="https://www.webmproject.org"
 PKG_URL="https://storage.googleapis.com/aom-releases/libaom-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -17,7 +17,8 @@ PKG_CMAKE_OPTS_TARGET="-DENABLE_CCACHE=1 \
                        -DENABLE_TESTS=0 \
                        -DENABLE_TOOLS=0"
 
-#workaround gcc-14 erroring with neon declarations
+# workaround: aom uses implicit neon function declarations on 32-bit arm targets
+# upstream bug: https://bugs.chromium.org/p/aomedia/issues/detail?id=3576
 if [ "${ARCH}" = "arm" ]; then
   TARGET_CFLAGS+=" -Wno-implicit-function-declaration"
 fi

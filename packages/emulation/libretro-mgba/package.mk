@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mgba"
-PKG_VERSION="314bf7b676f5b820f396209eb0c7d6fbe8103486"
-PKG_SHA256="66d9766d6f129bff9bfacc8a94787daa018b9c4a9a56fd49673c019eba19ae53"
-PKG_LICENSE="MPLv2.0"
+PKG_VERSION="6dce57eef127dc4cc292644f38196e0e7c58590c"
+PKG_SHA256="2195b204a7949551ef6ad935497566dc80960bae58fd803183b84ddeca77e5c9"
+PKG_LICENSE="MPL-2.0"
 PKG_SITE="https://github.com/libretro/mgba"
 PKG_URL="https://github.com/libretro/mgba/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -24,6 +24,10 @@ fi
 if target_has_feature neon; then
   PKG_MAKE_OPTS_TARGET+=" HAVE_NEON=1"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

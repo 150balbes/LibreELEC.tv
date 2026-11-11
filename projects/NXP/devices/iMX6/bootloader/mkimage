@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 if [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot.img" ]; then
@@ -16,11 +16,11 @@ mcopy -s -o "${RELEASE_DIR}/3rdparty/bootloader"/imx6d*${UBOOT_SYSTEM}*.dtb ::
 mcopy -s -o "${RELEASE_DIR}/3rdparty/bootloader"/imx6q*${UBOOT_SYSTEM}*.dtb ::
 
 echo "image: copying exlinux.conf"
-mkdir -p "${LE_TMP}/extlinux"
-cat << EOF > "${LE_TMP}/extlinux/extlinux.conf"
+mkdir -p "${IMG_TMP}/extlinux"
+cat << EOF > "${IMG_TMP}/extlinux/extlinux.conf"
 LABEL ${DISTRO}
   LINUX /${KERNEL_NAME}
   FDTDIR /
   APPEND boot=UUID=${UUID_SYSTEM} disk=UUID=${UUID_STORAGE} quiet ${EXTRA_CMDLINE}
 EOF
-mcopy -s -o "${LE_TMP}/extlinux" ::
+mcopy -s -o "${IMG_TMP}/extlinux" ::

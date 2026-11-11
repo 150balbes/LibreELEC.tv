@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2024-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="flit"
-PKG_VERSION="3.9.0"
-PKG_SHA256="72ad266176c4a3fcfab5f2930d76896059851240570ce9a98733b658cb786eba"
-PKG_LICENSE="BSD"
+PKG_VERSION="4.2.0"
+PKG_SHA256="84e4e4d8fdd45ba2613800a3ebc6834de26d47ec9746efc3719f94181137b460"
+PKG_LICENSE="BSD-3-Clause"
 PKG_SITE="https://pypi.org/project/flit-core/"
 PKG_URL="https://files.pythonhosted.org/packages/source/f/flit_core/flit_core-${PKG_VERSION}.tar.gz"
 PKG_SOURCE_DIR="flit_core-${PKG_VERSION}"

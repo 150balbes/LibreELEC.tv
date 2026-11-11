@@ -21,10 +21,10 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
  2 files changed, 17 insertions(+), 12 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 283ca1bd60..13f7512f42 100644
+index 3c6819b..32f5990 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2113,7 +2113,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2594,7 +2594,6 @@ LIBSUBDIRS=	asyncio \
  		urllib \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
  		wsgiref \
@@ -32,7 +32,7 @@ index 283ca1bd60..13f7512f42 100644
  		xmlrpc \
  		zipfile zipfile/_path \
  		zoneinfo \
-@@ -2280,6 +2279,10 @@ ifeq (@SQLITE3@,yes)
+@@ -2766,6 +2765,10 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
  endif
  
@@ -44,10 +44,10 @@ index 283ca1bd60..13f7512f42 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 92d663ed40..1cb95f41fd 100644
+index 75cd3b6..cc6f0bb 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3823,17 +3823,19 @@ LIBS="$withval $LIBS"
+@@ -4150,17 +4150,19 @@ LIBS="$withval $LIBS"
  [AC_MSG_RESULT([no])])
  
  # Check for use of the system expat library
@@ -79,5 +79,5 @@ index 92d663ed40..1cb95f41fd 100644
    LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
    LIBEXPAT_INTERNAL=
 -- 
-2.34.1
+2.53.0
 

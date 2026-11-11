@@ -1,0 +1,11 @@
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -219,6 +219,7 @@
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-roc-pc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-rock-5a.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-rock-5c.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-blueberry-r58-4x4.dtb
+ 
+ # Overlay application tests
+ #
+

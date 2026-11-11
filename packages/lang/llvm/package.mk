@@ -3,19 +3,15 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="llvm"
-PKG_VERSION="19.1.4"
-PKG_SHA256="3aa2d2d2c7553164ad5c6f3b932b31816e422635e18620c9349a7da95b98d811"
-PKG_LICENSE="Apache-2.0"
+PKG_VERSION="23.1.5"
+PKG_SHA256="fb50b1eac93ddeb3aa8dab4cfe324dff74f4a9c2bdee6160c9e36188f8d06a6e"
+PKG_LICENSE="Apache-2.0 WITH LLVM-exception"
 PKG_SITE="http://llvm.org/"
 PKG_URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-${PKG_VERSION}/llvm-project-${PKG_VERSION/-/}.src.tar.xz"
 PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain llvm:host zlib"
 PKG_LONGDESC="Low-Level Virtual Machine (LLVM) is a compiler infrastructure."
 PKG_TOOLCHAIN="cmake"
-
-if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
-  PKG_DEPENDS_UNPACK="spirv-headers spirv-llvm-translator"
-fi
 
 PKG_CMAKE_OPTS_COMMON="-DLLVM_INCLUDE_TOOLS=ON \
                        -DLLVM_BUILD_TOOLS=OFF \
@@ -44,11 +40,15 @@ PKG_CMAKE_OPTS_COMMON="-DLLVM_INCLUDE_TOOLS=ON \
                        -DLLVM_ENABLE_RTTI=ON \
                        -DLLVM_ENABLE_UNWIND_TABLES=OFF \
                        -DLLVM_ENABLE_Z3_SOLVER=OFF \
-                       -DLLVM_SPIRV_INCLUDE_TESTS=OFF \
                        -DCMAKE_SKIP_RPATH=ON"
 
+if listcontains "${GRAPHIC_DRIVERS}" "(imagination|iris|panfrost)"; then
+  PKG_DEPENDS_UNPACK="spirv-headers spirv-llvm-translator"
+  PKG_CMAKE_OPTS_COMMON+=" -DLLVM_SPIRV_INCLUDE_TESTS=OFF"
+fi
+
 post_unpack() {
-  if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
+  if listcontains "${GRAPHIC_DRIVERS}" "(imagination|iris|panfrost)"; then
     mkdir -p "${PKG_BUILD}"/llvm/projects/{SPIRV-Headers,SPIRV-LLVM-Translator}
       tar --strip-components=1 \
         -xf "${SOURCES}/spirv-headers/spirv-headers-$(get_pkg_version spirv-headers).tar.gz" \
@@ -99,32 +99,62 @@ pre_configure_host() {
 }
 
 post_make_host() {
-  ninja ${NINJA_OPTS} llvm-config llvm-tblgen
+  ninja ${NINJA_OPTS} llc llvm-ar llvm-as llvm-config llvm-cov llvm-dis \
+                      llvm-link llvm-nm llvm-objcopy llvm-objdump \
+                      llvm-profdata llvm-readobj llvm-size llvm-strip \
+                      llvm-tblgen opt
 
-  if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
-    ninja ${NINJA_OPTS} llvm-as llvm-link llvm-spirv opt
+  if listcontains "${GRAPHIC_DRIVERS}" "imagination"; then
+    ninja ${NINJA_OPTS} clang-tblgen
+  fi
+
+  if listcontains "${GRAPHIC_DRIVERS}" "(imagination|iris|panfrost)"; then
+    ninja ${NINJA_OPTS} llvm-spirv
   fi
 }
 
 post_makeinstall_host() {
   mkdir -p ${TOOLCHAIN}/bin
-    cp -a bin/llvm-config ${TOOLCHAIN}/bin
-    cp -a bin/llvm-tblgen ${TOOLCHAIN}/bin
+    cp -a bin/{llc,llvm-ar,llvm-as,llvm-config,llvm-cov,llvm-dis} "${TOOLCHAIN}/bin"
+    cp -a bin/{llvm-link,llvm-nm,llvm-objcopy,llvm-objdump} "${TOOLCHAIN}/bin"
+    cp -a bin/{llvm-profdata,llvm-readobj,llvm-size,llvm-strip} "${TOOLCHAIN}/bin"
+    cp -a bin/{llvm-tblgen,opt} "${TOOLCHAIN}/bin"
 
-  if listcontains "${GRAPHIC_DRIVERS}" "iris"; then
-    cp -a bin/{llvm-as,llvm-link,llvm-spirv,opt} "${TOOLCHAIN}/bin"
+  if listcontains "${GRAPHIC_DRIVERS}" "imagination"; then
+    cp -a bin/clang-tblgen "${TOOLCHAIN}/bin"
+  fi
+
+  if listcontains "${GRAPHIC_DRIVERS}" "(imagination|iris|panfrost)"; then
+    cp -a bin/llvm-spirv "${TOOLCHAIN}/bin"
   fi
 }
 
 pre_configure_target() {
+  case "${TARGET_ARCH}" in
+    "aarch64")
+      LLVM_BUILD_TARGETS=""
+      LLVM_BUILD_CLANG="-DLLVM_ENABLE_PROJECTS=''"
+      ;;
+    "arm")
+      LLVM_BUILD_TARGETS=""
+      LLVM_BUILD_CLANG="-DLLVM_ENABLE_PROJECTS=''"
+      ;;
+    "x86_64")
+      LLVM_BUILD_TARGETS="AMDGPU"
+      # do not build clang (not needed)
+      # llvm:target is only required to build mesa amd on x86_64 targets
+      LLVM_BUILD_CLANG="-DLLVM_ENABLE_PROJECTS=''"
+      ;;
+  esac
+
   mkdir -p ${PKG_BUILD}/.${TARGET_NAME}
   cd ${PKG_BUILD}/.${TARGET_NAME}
   PKG_CMAKE_OPTS_TARGET="${PKG_CMAKE_OPTS_COMMON} \
                          -DCMAKE_BINARY_DIR=${PKG_BUILD}/.${TARGET_NAME} \
                          -DLLVM_NATIVE_BUILD=${PKG_BUILD}/.${TARGET_NAME}/native \
                          -DCMAKE_CROSSCOMPILING=ON \
-                         -DLLVM_ENABLE_PROJECTS='' \
-                         -DLLVM_TARGETS_TO_BUILD=AMDGPU \
+                         ${LLVM_BUILD_CLANG} \
+                         -DLLVM_TARGETS_TO_BUILD=${LLVM_BUILD_TARGETS} \
                          -DLLVM_TARGET_ARCH="${TARGET_ARCH}" \
                          -DLLVM_TABLEGEN=${TOOLCHAIN}/bin/llvm-tblgen"
 }

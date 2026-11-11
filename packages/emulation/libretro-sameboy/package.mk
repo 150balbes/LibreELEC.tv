@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-sameboy"
-PKG_VERSION="09138330990da32362246c7034cf4de2ea0a2a2b"
-PKG_SHA256="9ef470c7c6bee83bbeb1e861a1c76b722d78de5e5a3849e7132d03d40fa8828d"
+PKG_VERSION="06c184f0b186f161bcdfec50ebd604fe789ed04a"
+PKG_SHA256="0afbed5dae436c9006836b1801ab53b7a8fa6e1fbc740950303b34bc54758765"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/sameboy"
 PKG_URL="https://github.com/libretro/SameBoy/archive/${PKG_VERSION}.tar.gz"
@@ -16,6 +16,10 @@ PKG_LIBPATH="libretro/${PKG_LIBNAME}"
 PKG_LIBVAR="SAMEBOY_LIB"
 
 PKG_MAKE_OPTS_TARGET="-C libretro/"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

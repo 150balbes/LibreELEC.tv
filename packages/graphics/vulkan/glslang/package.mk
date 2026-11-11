@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Frank Hartung (supervisedthinking (@) gmail.com)
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
@@ -6,9 +6,9 @@ PKG_NAME="glslang"
 # The SPIRV-Tools & SPIRV-Headers pkg_version/s need to match the compatible (known_good) glslang pkg_version.
 # https://raw.githubusercontent.com/KhronosGroup/glslang/${PKG_VERSION}/known_good.json
 # When updating glslang pkg_version please update to the known_good spirv-tools & spirv-headers pkg_version/s.
-PKG_VERSION="15.0.0"
-PKG_SHA256="c31c8c2e89af907507c0631273989526ee7d5cdf7df95ececd628fd7b811e064"
-PKG_LICENSE="Apache-2.0"
+PKG_VERSION="16.6.0"
+PKG_SHA256="9c09b901149c729df745057dafa815278aaa101b84d2b6e14f16a42de52f97f2"
+PKG_LICENSE="BSD-3-Clause AND BSD-2-Clause AND MIT AND Apache-2.0"
 PKG_SITE="https://github.com/KhronosGroup/glslang"
 PKG_URL="https://github.com/KhronosGroup/glslang/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_HOST="toolchain:host Python3:host"
@@ -17,7 +17,6 @@ PKG_LONGDESC="Khronos-reference front end for GLSL/ESSL, partial front end for H
 PKG_DEPENDS_UNPACK="spirv-headers spirv-tools"
 
 PKG_CMAKE_OPTS_COMMON="-DBUILD_EXTERNAL=ON \
-                       -DENABLE_SPVREMAPPER=OFF \
                        -DENABLE_GLSLANG_JS=OFF \
                        -DENABLE_RTTI=OFF \
                        -DENABLE_EXCEPTIONS=OFF \
@@ -27,7 +26,7 @@ PKG_CMAKE_OPTS_COMMON="-DBUILD_EXTERNAL=ON \
                        -Wno-dev"
 
 post_unpack() {
-  # Enables SPIR-V optimzer capability needed for ENABLE_OPT CMake build option
+  # Enables SPIR-V optimizer capability needed for ENABLE_OPT CMake build option
   mkdir -p ${PKG_BUILD}/External/spirv-tools
     tar --strip-components=1 \
       -xf "${SOURCES}/spirv-tools/spirv-tools-$(get_pkg_version spirv-tools).tar.gz" \

@@ -1,11 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Lukas Rusak (lrusak@libreelec.tv)
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="containerd"
-PKG_VERSION="2.0.0"
-PKG_SHA256="346d644e1b96e1f4a39bfe9d1eb0eb01ca676f806c12d95e5dbe35325bbc1780"
-PKG_LICENSE="APL"
+PKG_VERSION="2.4.2"
+PKG_SHA256="02cbbecd0ef78a521d124afa791b843ba5458ef206e1f7f017999ff45c80c0b4"
+PKG_LICENSE="Apache-2.0"
 PKG_SITE="https://containerd.io"
 PKG_URL="https://github.com/containerd/containerd/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain go:host"
@@ -13,7 +12,7 @@ PKG_LONGDESC="A daemon to control runC, built for performance and density."
 PKG_TOOLCHAIN="manual"
 
 # Git commit of the matching release https://github.com/containerd/containerd/releases
-export PKG_GIT_COMMIT="207ad711eabd375a01713109a8a197d197ff6542"
+export PKG_GIT_COMMIT="b7a25261e029d68978bbf290df0a62fc819b3c51"
 
 pre_make_target() {
 
@@ -33,10 +32,13 @@ pre_make_target() {
   mv ${GOPATH}/src/github.com/containerd/containerd/api ${PKG_BUILD}/api-vendor-duplicate
   ln -fs ${PKG_BUILD} ${GOPATH}/src/github.com/containerd/containerd/v2
   ln -fs ${PKG_BUILD}/api ${GOPATH}/src/github.com/containerd/containerd/api
+
+  sed -i "s#/etc/containerd#/storage/.kodi/userdata/addon_data/service.system.docker/config#" \
+    ${PKG_BUILD}/defaults/defaults_unix.go
 }
 
 make_target() {
   mkdir -p bin
-  ${GOLANG} build -v -o bin/containerd              -a -tags "static_build no_btrfs" -ldflags "${LDFLAGS}" ./cmd/containerd
-  ${GOLANG} build -v -o bin/containerd-shim-runc-v2 -a -tags "static_build no_btrfs" -ldflags "${LDFLAGS}" ./cmd/containerd-shim-runc-v2
+  ${GOLANG} build -v -o bin/containerd              -a -tags "static_build no_cri no_btrfs no_devmapper no_zfs" -ldflags "${LDFLAGS}" ./cmd/containerd
+  ${GOLANG} build -v -o bin/containerd-shim-runc-v2 -a -tags "static_build no_cri no_btrfs no_devmapper no_zfs" -ldflags "${LDFLAGS}" ./cmd/containerd-shim-runc-v2
 }

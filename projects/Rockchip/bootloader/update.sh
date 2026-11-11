@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 [ -z "${SYSTEM_ROOT}" ] && SYSTEM_ROOT=""
@@ -52,7 +52,7 @@ fi
         cp -p ${SYSTEM_ROOT}/usr/share/bootloader/${dtb} ${BOOT_ROOT}
         echo "done"
       elif [ "$(grep -c "FDT /${dtb}" ${BOOT_ROOT}/extlinux/extlinux.conf)" -ne 0 ]; then
-        non_existend_dtb="${dtb}"
+        non_existent_dtb="${dtb}"
       fi
     fi
   done
@@ -81,10 +81,9 @@ fi
   sync
   mount -o remount,ro ${BOOT_ROOT}
 
-# warning if device tree was not updated
-  if [ -n "${non_existend_dtb}" ]; then
-    echo "The device tree ${non_existend_dtb} your installation uses does not exist in this update package."
-    echo "The updated system will continue to use the device tree from the previous system and your installation might be broken."
-    echo "Please check documentation to find out which boards are supported by this package."
+# warn if device tree was not updated
+  if [ -n "${non_existent_dtb}" ]; then
+    echo "WARNING: The device-tree file ${non_existent_dtb} was not found in the update"
+    echo "package and has not been updated. Your device may not boot or work correctly!"
     sleep 10
   fi

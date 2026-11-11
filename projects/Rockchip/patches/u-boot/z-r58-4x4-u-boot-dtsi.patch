@@ -1,0 +1,5 @@
+--- /dev/null
++++ /arch/arm/dts/rk3588-blueberry-r58-4x4-u-boot.dtsi
+@@ -0,0 +1 @@
++#include "rk3588-generic-u-boot.dtsi"
+

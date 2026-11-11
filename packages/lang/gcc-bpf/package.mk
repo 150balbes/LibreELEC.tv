@@ -4,7 +4,7 @@
 
 PKG_NAME="gcc-bpf"
 PKG_VERSION="$(get_pkg_version gcc)"
-PKG_LICENSE="GPL-2.0-or-later"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_URL=""
 PKG_DEPENDS_HOST="toolchain:host ccache:host autoconf:host binutils-bpf:host gmp:host mpfr:host mpc:host zstd:host"
 PKG_LONGDESC="This package contains the GNU Compiler Collection for 64-bit ARM."
@@ -16,7 +16,7 @@ if [ "${MOLD_SUPPORT}" = "yes" ]; then
 fi
 
 PKG_CONFIGURE_OPTS_HOST="--target=bpf \
-                         --with-sysroot=${SYSROOT_PREFIX} \
+                         --with-sysroot=${TOOLCHAIN}/bpf/sysroot \
                          --with-gmp=${TOOLCHAIN} \
                          --with-mpfr=${TOOLCHAIN} \
                          --with-mpc=${TOOLCHAIN} \
@@ -55,4 +55,11 @@ PKG_CONFIGURE_OPTS_HOST="--target=bpf \
 unpack() {
   mkdir -p ${PKG_BUILD}
   tar --strip-components=1 -xf ${SOURCES}/gcc/gcc-${PKG_VERSION}.tar.xz -C ${PKG_BUILD}
+}
+
+pre_configure_host() {
+  unset CPPFLAGS
+  unset CFLAGS
+  unset CXXFLAGS
+  unset LDFLAGS
 }

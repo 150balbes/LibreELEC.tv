@@ -1,20 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="crust"
 PKG_VERSION="0.6"
 PKG_SHA256="43b89585dd7b6f022200bd788a97a85a831feffa988affc04bca18757a133efd"
 PKG_ARCH="arm aarch64"
-PKG_LICENSE="BSD-3c"
+PKG_LICENSE="BSD-3-Clause AND GPL-2.0-only"
 PKG_SITE="https://github.com/crust-firmware/crust"
 PKG_URL="https://github.com/crust-firmware/crust/archive/v${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="gcc-or1k:host"
 PKG_LONGDESC="Crust: Libre SCP firmware for Allwinner sunxi SoCs"
 PKG_TOOLCHAIN="manual"
 PKG_STAMP="${UBOOT_SYSTEM}"
-
-if [ ! -z "${UBOOT_SYSTEM}" ]; then
-  PKG_DEPENDS_TARGET="gcc-or1k:host"
-fi
 
 pre_configure_target() {
   export CROSS_COMPILE="or1k-none-elf-"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libmediainfo"
-PKG_VERSION="24.06"
-PKG_SHA256="0683f28a2475dc2417205ba528debccc407da4d9fa6516eb4b75b3ff7244e96e"
-PKG_LICENSE="GPL"
+PKG_VERSION="26.10"
+PKG_SHA256="a806fd36592549a03e810486f415a6858d4d8f14066bfbe97b32a447cd5eb590"
+PKG_LICENSE="BSD-2-Clause"
 PKG_SITE="https://mediaarea.net/en/MediaInfo/Download/Source"
 PKG_URL="https://mediaarea.net/download/source/libmediainfo/${PKG_VERSION}/libmediainfo_${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libzen zlib"

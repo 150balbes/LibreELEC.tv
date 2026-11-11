@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="automake"
-PKG_VERSION="1.17"
-PKG_SHA256="8920c1fc411e13b90bf704ef9db6f29d540e76d232cb3b2c9f4dc4cc599bd990"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.19"
+PKG_SHA256="e3e2c2e3abf37898138db5b6c1d1dc35c9160c5978be7947d2c741705251d445"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://sources.redhat.com/automake/"
-PKG_URL="http://ftpmirror.gnu.org/automake/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_URL="https://ftp.gnu.org/gnu/automake/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="ccache:host autoconf:host"
 PKG_LONGDESC="A GNU tool for automatically creating Makefiles."
 PKG_BUILD_FLAGS="-parallel -cfg-libs:host"

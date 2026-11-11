@@ -3,12 +3,12 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="fluidsynth"
-PKG_VERSION="2.4.0"
-PKG_SHA256="fd4d216a3030abc56a339985ab0506328660cd77b2d71dd98c240c58c03d8f7f"
-PKG_LICENSE="GPL"
+PKG_VERSION="2.6.2"
+PKG_SHA256="ca376b42a3c1b186a4c8c248931789a455ac94a89b777394969d678010c2f91f"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://fluidsynth.org/"
 PKG_URL="https://github.com/FluidSynth/fluidsynth/archive/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain glib libsndfile"
+PKG_DEPENDS_TARGET="toolchain glib libsndfile gcem"
 PKG_LONGDESC="FluidSynth renders midi music files as raw audio data, for playing or conversion."
 PKG_BUILD_FLAGS="+pic"
 

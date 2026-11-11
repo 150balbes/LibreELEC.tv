@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-handy"
-PKG_VERSION="65d6b865544cd441ef2bd18cde7bd834c23d0e48"
-PKG_SHA256="d244180c5f427afbbab58409f2d2e5247ffb0624bf33cf45b2488576d9467625"
+PKG_VERSION="bc55d462f0b2d6b073ea93dc552ebd73cec60fd1"
+PKG_SHA256="65ad333df22aab7f3c8156c21ffd0b8da1ef09c7a7f1775df964b89986aa7324"
 PKG_LICENSE="Zlib"
 PKG_SITE="https://github.com/libretro/libretro-handy"
 PKG_URL="https://github.com/libretro/libretro-handy/archive/${PKG_VERSION}.tar.gz"
@@ -14,6 +14,10 @@ PKG_TOOLCHAIN="make"
 PKG_LIBNAME="handy_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="HANDY_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

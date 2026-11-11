@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="netbase"
-PKG_VERSION="6.4"
-PKG_SHA256="fa6621826ff1150e581bd90bc3c8a4ecafe5df90404f207db6dcdf2c75f26ad7"
-PKG_LICENSE="GPL"
+PKG_VERSION="6.6"
+PKG_SHA256="31f7e8a37f3f07010e484f74bcbee503923b38d1a36c6a11326b804acc07224e"
+PKG_LICENSE="GPL-2.0-only"
 PKG_SITE="https://salsa.debian.org/md/netbase"
 PKG_URL="http://ftp.debian.org/debian/pool/main/n/netbase/netbase_${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain"

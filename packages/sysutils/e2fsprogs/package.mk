@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="e2fsprogs"
-PKG_VERSION="1.47.1"
-PKG_SHA256="5a33dc047fd47284bca4bb10c13cfe7896377ae3d01cb81a05d406025d99e0d1"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.47.4"
+PKG_SHA256="fd5bf388cbdbe006a3d3b318d983b2948382440acc85a87f1e7d108653e8db0b"
+PKG_LICENSE="GPL-2.0-only AND LGPL-2.0-only AND BSD-3-Clause AND MIT"
 PKG_SITE="http://e2fsprogs.sourceforge.net/"
 PKG_URL="https://www.kernel.org/pub/linux/kernel/people/tytso/${PKG_NAME}/v${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="autotools:host"
@@ -78,12 +78,15 @@ pre_configure() {
 }
 
 post_makeinstall_target() {
+  make -C lib/e2p LIBMODE=644 DESTDIR=${SYSROOT_PREFIX} install
   make -C lib/et LIBMODE=644 DESTDIR=${SYSROOT_PREFIX} install
+  make -C lib/ext2fs LIBMODE=644 DESTDIR=${SYSROOT_PREFIX} install
 
   rm -rf ${INSTALL}/usr/sbin/badblocks
   rm -rf ${INSTALL}/usr/sbin/blkid
   rm -rf ${INSTALL}/usr/sbin/dumpe2fs
   rm -rf ${INSTALL}/usr/sbin/e2freefrag
+  rm -rf ${INSTALL}/usr/sbin/e2mmpstatus
   rm -rf ${INSTALL}/usr/sbin/e2undo
   rm -rf ${INSTALL}/usr/sbin/e4defrag
   rm -rf ${INSTALL}/usr/sbin/filefrag

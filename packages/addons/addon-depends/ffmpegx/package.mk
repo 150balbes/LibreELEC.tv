@@ -2,9 +2,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpegx"
-PKG_VERSION="6.0.1"
-PKG_SHA256="9b16b8731d78e596b4be0d720428ca42df642bb2d78342881ff7f5bc29fc9623"
-PKG_LICENSE="GPL-3.0-only"
+PKG_VERSION="9.0.2"
+PKG_SHA256="8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="https://ffmpeg.org/releases/ffmpeg-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain aom bzip2 openssl lame libvorbis libxml2 opus x264 zlib"
@@ -14,8 +14,12 @@ PKG_BUILD_FLAGS="-sysroot"
 # Dependencies
 get_graphicdrivers
 
+if [ "${TARGET_ARCH}" = "aarch64" ] || [ "${TARGET_ARCH}" = "x86_64" ]; then
+  PKG_DEPENDS_TARGET+=" x265"
+fi
+
 if [ "${TARGET_ARCH}" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET+=" nasm:host x265"
+  PKG_DEPENDS_TARGET+=" nasm:host"
 
   if listcontains "${GRAPHIC_DRIVERS}" "(crocus|i915|iris)"; then
     PKG_DEPENDS_TARGET+=" intel-vaapi-driver"
@@ -30,6 +34,11 @@ fi
 if [ "${DISPLAYSERVER}" = "x11" ]; then
   PKG_DEPENDS_TARGET+=" libxcb libX11"
 fi
+
+# lame is a -sysroot package, so ffmpeg's libmp3lame check (a direct link
+# probe, not pkg-config) cannot see it. Add lame's install paths.
+TARGET_CFLAGS+=" -I$(get_install_dir lame)/usr/include"
+TARGET_LDFLAGS+=" -L$(get_install_dir lame)/usr/lib"
 
 pre_configure_target() {
   cd ${PKG_BUILD}
@@ -61,12 +70,12 @@ pre_configure_target() {
     --enable-hwaccel=vp8_vaapi \
     --enable-hwaccel=vp9_vaapi \
     --enable-hwaccel=wmv3_vaapi"
+  fi
 
-    PKG_FFMPEG_X26x_GENERIC="\
-    --enable-libx264 \
-    --enable-encoder=libx264 \
-    --enable-libx265 \
-    --enable-encoder=libx265"
+  if [ "${TARGET_ARCH}" = "aarch64" ] || [ "${TARGET_ARCH}" = "x86_64" ]; then
+    PKG_FFMPEG_X265="\
+      --enable-libx265 \
+      --enable-encoder=libx265"
   fi
 
   # Encoders
@@ -75,7 +84,9 @@ pre_configure_target() {
     --enable-libvpx \
     --enable-encoder=libvpx_vp8 \
     --enable-encoder=libvpx_vp9 \
-    ${PKG_FFMPEG_X26x_GENERIC} \
+    --enable-libx264 \
+    --enable-encoder=libx264 \
+    ${PKG_FFMPEG_X265} \
     --enable-libaom \
     --enable-encoder=libaom_av1 \
     \

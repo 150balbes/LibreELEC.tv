@@ -3,16 +3,17 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gcc"
-PKG_VERSION="14.2.0"
-PKG_SHA256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9"
-PKG_LICENSE="GPL-2.0-or-later"
+PKG_VERSION="16.2.0"
+PKG_SHA256="e6738e29597f733270731aa90600f37ffdc045079dfc27ec7e8192cc81085c3e"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://gcc.gnu.org/"
-PKG_URL="https://ftpmirror.gnu.org/gcc/${PKG_NAME}-${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_URL="https://ftpmirror.gnu.org/gnu/gcc/${PKG_NAME}-${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_BOOTSTRAP="ccache:host autoconf:host binutils:host gmp:host mpfr:host mpc:host zstd:host"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_DEPENDS_HOST="ccache:host autoconf:host binutils:host gmp:host mpfr:host mpc:host zstd:host glibc libxcrypt"
 PKG_DEPENDS_INIT="toolchain"
 PKG_LONGDESC="This package contains the GNU Compiler Collection."
+PKG_BUILD_FLAGS="-cfg-libs:host"
 
 if [ "${MOLD_SUPPORT}" = "yes" ]; then
   PKG_DEPENDS_HOST+=" mold:host"
@@ -21,9 +22,11 @@ fi
 case ${TARGET_ARCH} in
   arm | riscv64)
     OPTS_LIBATOMIC="--enable-libatomic"
+    OPTS_STATIC="--enable-static"
     ;;
   *)
     OPTS_LIBATOMIC="--disable-libatomic"
+    OPTS_STATIC="--disable-static"
     ;;
 esac
 
@@ -74,7 +77,7 @@ PKG_CONFIGURE_OPTS_HOST="${GCC_COMMON_CONFIGURE_OPTS} \
                          --enable-decimal-float \
                          --enable-tls \
                          --enable-shared \
-                         --disable-static \
+                         ${OPTS_STATIC} \
                          --enable-long-long \
                          --enable-threads=posix \
                          --disable-libstdcxx-pch \
@@ -82,22 +85,21 @@ PKG_CONFIGURE_OPTS_HOST="${GCC_COMMON_CONFIGURE_OPTS} \
                          --enable-clocale=gnu \
                          ${TARGET_ARCH_GCC_OPTS}"
 
+# ccache identifies a compiler by the mtime and size of its driver, which do
+# not change when a patch to gcc or binutils changes what cc1 or as produce, so
+# the wrappers name the compiler by the toolchain key instead
 post_makeinstall_bootstrap() {
   GCC_VERSION=$(${TOOLCHAIN}/bin/${TARGET_NAME}-gcc -dumpversion)
-  DATE="0401$(echo ${GCC_VERSION} | sed 's/\./0/g')"
   CROSS_CC=${TARGET_PREFIX}gcc-${GCC_VERSION}
 
   rm -f ${TARGET_PREFIX}gcc
 
   cat >${TARGET_PREFIX}gcc <<EOF
 #!/bin/sh
-${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
+CCACHE_COMPILERCHECK="string:$(get_toolchain_key)" ${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
 EOF
 
   chmod +x ${TARGET_PREFIX}gcc
-
-  # To avoid cache trashing
-  touch -c -t ${DATE} ${CROSS_CC}
 
   # install lto plugin for binutils
   mkdir -p ${TOOLCHAIN}/lib/bfd-plugins
@@ -123,33 +125,27 @@ post_makeinstall_host() {
   cp -PR ${TARGET_NAME}/libstdc++-v3/src/.libs/libstdc++.so* ${SYSROOT_PREFIX}/usr/lib
 
   GCC_VERSION=$(${TOOLCHAIN}/bin/${TARGET_NAME}-gcc -dumpversion)
-  DATE="0501$(echo ${GCC_VERSION} | sed 's/\./0/g')"
   CROSS_CC=${TARGET_PREFIX}gcc-${GCC_VERSION}
   CROSS_CXX=${TARGET_PREFIX}g++-${GCC_VERSION}
+  local key="$(get_toolchain_key)"
 
   rm -f ${TARGET_PREFIX}gcc
 
   cat >${TARGET_PREFIX}gcc <<EOF
 #!/bin/sh
-${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
+CCACHE_COMPILERCHECK="string:${key}" ${TOOLCHAIN}/bin/ccache ${CROSS_CC} "\$@"
 EOF
 
   chmod +x ${TARGET_PREFIX}gcc
-
-  # To avoid cache trashing
-  touch -c -t ${DATE} ${CROSS_CC}
 
   [ ! -f "${CROSS_CXX}" ] && mv ${TARGET_PREFIX}g++ ${CROSS_CXX}
 
   cat >${TARGET_PREFIX}g++ <<EOF
 #!/bin/sh
-${TOOLCHAIN}/bin/ccache ${CROSS_CXX} "\$@"
+CCACHE_COMPILERCHECK="string:${key}" ${TOOLCHAIN}/bin/ccache ${CROSS_CXX} "\$@"
 EOF
 
   chmod +x ${TARGET_PREFIX}g++
-
-  # To avoid cache trashing
-  touch -c -t ${DATE} ${CROSS_CXX}
 
   # install lto plugin for binutils
   mkdir -p ${TOOLCHAIN}/lib/bfd-plugins
@@ -168,6 +164,14 @@ makeinstall_target() {
   mkdir -p ${INSTALL}/usr/lib
     cp -P ${PKG_BUILD}/.${HOST_NAME}/${TARGET_NAME}/libgcc/libgcc_s.so* ${INSTALL}/usr/lib
     cp -P ${PKG_BUILD}/.${HOST_NAME}/${TARGET_NAME}/libstdc++-v3/src/.libs/libstdc++.so* ${INSTALL}/usr/lib
+    if [ "${SANITIZER_SUPPORT}" = "yes" ]; then
+      for f in ${PKG_BUILD}/.${HOST_NAME}/${TARGET_NAME}/libsanitizer/*/.libs/*.so*; do
+        # exclude so.0.0.0T files
+        if [[ ! "${f}" =~ T$ ]]; then
+          cp -P "${f}" ${INSTALL}/usr/lib
+        fi
+      done
+    fi
     if [ "${OPTS_LIBATOMIC}" = "--enable-libatomic" ]; then
       cp -P ${PKG_BUILD}/.${HOST_NAME}/${TARGET_NAME}/libatomic/.libs/libatomic.so* ${INSTALL}/usr/lib
     fi

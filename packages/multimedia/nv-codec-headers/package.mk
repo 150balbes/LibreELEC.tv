@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="nv-codec-headers"
-PKG_VERSION="12.2.72.0"
-PKG_SHA256="dbeaec433d93b850714760282f1d0992b1254fc3b5a6cb7d76fc1340a1e47563"
+PKG_VERSION="13.1.15.0"
+PKG_SHA256="2255bc74d038b95aa4be30f5f66322c2176acbdb90ada1851db6993536fbeaf7"
 PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/FFmpeg/nv-codec-headers"
 PKG_URL="https://github.com/FFmpeg/nv-codec-headers/archive/n${PKG_VERSION}.tar.gz"

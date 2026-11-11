@@ -1,0 +1,14 @@
+[Unit]
+Description=HyperHDR service
+After=graphical.target
+
+[Service]
+ExecStart=/bin/sh -c "exec sh /storage/.kodi/addons/service.hyperhdr/bin/hyperhdr.start"
+TimeoutStopSec=2
+Restart=always
+RestartSec=10
+StartLimitInterval=0
+
+[Install]
+WantedBy=default.target
+Alias=hyperhdr.service

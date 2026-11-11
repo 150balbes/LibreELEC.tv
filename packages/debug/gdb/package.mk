@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gdb"
-PKG_VERSION="15.2"
-PKG_SHA256="83350ccd35b5b5a0cba6b334c41294ea968158c573940904f00b92f76345314d"
-PKG_LICENSE="GPL"
+PKG_VERSION="18.1"
+PKG_SHA256="cd9fc3fe2b47743840e42c1592d3d87f8302eb18639c0b8b4ba0898002e2348f"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://www.gnu.org/software/gdb/"
 PKG_URL="https://ftp.gnu.org/gnu/gdb/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain expat gmp mpfr ncurses zlib"
@@ -53,5 +53,6 @@ makeinstall_target() {
 }
 
 post_makeinstall_target() {
+  patchelf --remove-rpath ${INSTALL}/usr/bin/gdb
   rm -rf ${INSTALL}/usr/share/gdb/python
 }

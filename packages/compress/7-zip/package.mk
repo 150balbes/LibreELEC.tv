@@ -2,11 +2,11 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="7-zip"
-PKG_VERSION="24.08"
-PKG_SHA256="aa04aac906a04df59e7301f4c69e9f48808e6c8ecae4eb697703a47bfb0ac042"
-PKG_LICENSE="7-Zip"
+PKG_VERSION="26.05"
+PKG_SHA256="0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e"
+PKG_LICENSE="LicenseRef-7-Zip"
 PKG_SITE="https://www.7-zip.org"
-PKG_URL="https://www.7-zip.org/a/7z${PKG_VERSION/./}-src.tar.xz"
+PKG_URL="https://github.com/ip7z/7zip/releases/download/${PKG_VERSION}/7z${PKG_VERSION/./}-src.tar.xz"
 PKG_DEPENDS_HOST="ccache:host"
 PKG_DEPENDS_TARGET="make:host gcc:host"
 PKG_LONGDESC="7-Zip is a file archiver with a high compression ratio"

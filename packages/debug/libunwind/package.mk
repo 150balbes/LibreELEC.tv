@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libunwind"
-PKG_VERSION="1.8.1"
-PKG_SHA256="38833b7b1582db7d76485a62a213706c9252b3dab7380069fea5824e823d8e41"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.8.3"
+PKG_SHA256="21b26bc75cd37b548d7952f2794cde711efa6c6151c4147cc3c52cfedbf11df4"
+PKG_LICENSE="MIT"
 PKG_SITE="https://www.nongnu.org/libunwind/"
 PKG_URL="https://github.com/libunwind/libunwind/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="autotools:host gcc:host zlib"

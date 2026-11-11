@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-psx"
-PKG_VERSION="f18de4ce29b7222f7209546173768fc4f6958256"
-PKG_SHA256="eeded15cfe72094df875078eafc1db0e449c97258a4f187bfa5aec656df630f5"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="42ab8d9943b6a9f4646dfada3f40b7c9dec7bed1"
+PKG_SHA256="59aa2e163225446dce06852e110d294e8285f3c106ecb5a5b806e975c32810f4"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/beetle-psx-libretro"
 PKG_URL="https://github.com/libretro/beetle-psx-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -16,6 +16,10 @@ PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="BEETLE-PSX_LIB"
 
 PKG_MAKE_OPTS_TARGET="HAVE_CDROM=1 LINK_STATIC_LIBCPLUSPLUS=0"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vkmark"
-PKG_VERSION="ab6e6f34077722d5ae33f6bd40b18ef9c0e99a15"
-PKG_SHA256="d08143e8828d5b9ed005cb6dcef4d88a49df0ac4c9e1356ace739b449c165f54"
+PKG_VERSION="2025.01"
+PKG_SHA256="1ae362844344d0f9878b7a3f13005f77eae705108892a4e8abf237d452d37edc"
 PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://github.com/vkmark/vkmark"
 PKG_URL="https://github.com/vkmark/vkmark/archive/${PKG_VERSION}.tar.gz"

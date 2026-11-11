@@ -1,12 +1,12 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="usbmuxd"
-PKG_VERSION="360619c5f721f93f0b9d8af1a2df0b926fbcf281"
-PKG_SHA256="3f36b9f427f388c701798904ed2655867e0113ef3ac68e73f1a69a6e5e2940b2"
-PKG_REV="0"
+PKG_VERSION="3ded00c9985a5108cfc7591a309f9a23d57a8cba"
+PKG_SHA256="fe4d04223b85add8bef6a2dd6452ef6f9bb1c0eb52ba036564c9aa8d1dd9dee2"
+PKG_REV="2"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://www.libimobiledevice.org"
 PKG_URL="https://github.com/libimobiledevice/usbmuxd/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libusb libimobiledevice libimobiledevice-glue libusbmuxd libplist"

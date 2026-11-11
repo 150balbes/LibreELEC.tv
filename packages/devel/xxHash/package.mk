@@ -2,8 +2,8 @@
 # Copyright (C) 2024-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xxHash"
-PKG_VERSION="0.8.2"
-PKG_SHA256="baee0c6afd4f03165de7a4e67988d16f0f2b257b51d0e3cb91909302a26a79c4"
+PKG_VERSION="0.8.4"
+PKG_SHA256="5738270935e7c3d38a79b3adf7c9692566ce7895a25f67de43ad52ab504acd32"
 PKG_LICENSE="BSD-2-Clause"
 PKG_SITE="https://xxhash.com"
 PKG_URL="https://github.com/Cyan4973/xxHash/archive/v${PKG_VERSION}.tar.gz"

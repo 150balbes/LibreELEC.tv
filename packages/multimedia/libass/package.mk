@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libass"
-PKG_VERSION="0.17.3"
-PKG_SHA256="eae425da50f0015c21f7b3a9c7262a910f0218af469e22e2931462fed3c50959"
-PKG_LICENSE="BSD"
+PKG_VERSION="0.17.5"
+PKG_SHA256="2dca25c0e0c837ddf00b52011b3f82cac1e4ddd3ad018227806b0c2288864acc"
+PKG_LICENSE="ISC"
 PKG_SITE="https://github.com/libass/libass"
 PKG_URL="https://github.com/libass/libass/releases/download/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain freetype fontconfig fribidi harfbuzz"

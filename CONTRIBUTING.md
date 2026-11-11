@@ -20,7 +20,7 @@ and try to answer the following questions:
 - What did you expect to happen?
 - What happened instead?
 
-**It is also importent to provide logs for debugging.
+**It is also important to provide logs for debugging.
 A zip file can be found in the [logfiles] samba share, this will contain all the logs needed.**
 
 Make sure to specify which version of LibreELEC you are using.
@@ -90,7 +90,7 @@ Please follow this process; it's the best way to get your work included in the p
    git checkout -b <topic-branch-name>
    ```
 
-- Commit your changes in logical chunks. or your pull request is unlikely
+- Commit your changes in logical chunks, or your pull request is unlikely
    be merged into the main project. Use git's
    [interactive rebase](https://docs.github.com/en/github/getting-started-with-github/about-git-rebase) feature to tidy up your commits before making them public.
 

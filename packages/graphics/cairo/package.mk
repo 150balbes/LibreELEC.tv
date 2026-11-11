@@ -3,9 +3,9 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="cairo"
-PKG_VERSION="1.18.0"
-PKG_SHA256="243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64"
-PKG_LICENSE="LGPL"
+PKG_VERSION="1.18.6"
+PKG_SHA256="1c767308174337a74694da0f3ec069c271452163a1ef4540964c50c301f157d4"
+PKG_LICENSE="LGPL-2.1-or-later OR MPL-1.1"
 PKG_SITE="https://cairographics.org/"
 PKG_URL="https://cairographics.org/releases/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain zlib freetype fontconfig glib libpng pixman"

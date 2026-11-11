@@ -104,7 +104,7 @@ mkdir -p $BASEDIR/$LOGDIR
     getlog_cmd cat /storage/.config/shutdown.sh
   fi
   getlog_cmd ls -laR /storage/.config/system.d
-  # note: we dont add .mount units here as they may contan
+  # note: we dont add .mount units here as they may contain
   # login credentials
   for i in /storage/.config/system.d/*.service ; do
     if [ -f "$i" ] && [ ! -L "$i" ]; then
@@ -178,7 +178,7 @@ mkdir -p $BASEDIR/$LOGDIR
 
 # pack logfiles
   mkdir -p /storage/logfiles
-  zip -jq /storage/logfiles/log-$DATE.zip $BASEDIR/$LOGDIR/*
+  simple_zip.py -j -f "/storage/logfiles/log-${DATE}.zip" -i "${BASEDIR}/${LOGDIR}"
 
 # remove logdir
   rm -rf ${BASEDIR:?}/$LOGDIR

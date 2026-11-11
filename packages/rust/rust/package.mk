@@ -1,16 +1,42 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rust"
-PKG_VERSION="1.82.0"
-PKG_SHA256="7c53f4509eda184e174efa6ba7d5eeb586585686ce8edefc781a2b11a7cf512a"
-PKG_LICENSE="MIT"
+PKG_VERSION="1.99.1"
+PKG_SHA256="db56bbc64db491ceda6b78a2811a6d121c639338906fd944f720289cbd02245c"
+PKG_LICENSE="MIT OR Apache-2.0"
 PKG_SITE="https://www.rust-lang.org"
 PKG_URL="https://static.rust-lang.org/dist/rustc-${PKG_VERSION}-src.tar.gz"
 PKG_DEPENDS_HOST="toolchain llvm:host"
 PKG_DEPENDS_UNPACK="rustc-snapshot rust-std-snapshot cargo-snapshot"
 PKG_LONGDESC="A systems programming language that prevents segfaults, and guarantees thread safety."
 PKG_TOOLCHAIN="manual"
+
+# the prebuilt rust:host and cargo:host published by cargo-reusable, named after
+# a hash of their recipes so that a stale archive is never used. llvm, gcc,
+# glibc and openssl stay backwards compatible within a release.
+if [ "${USE_REUSABLE}" = "yes" -o "${USE_REUSABLE}" = "preferred" ] ||
+   listcontains "${BUILD_REUSABLE}" "(all|cargo:host)"; then
+  PKG_REUSABLE_HASH="$(get_reusable_inputs_hash rust cargo)"
+  PKG_REUSABLE_VERSION="${OS_VERSION}-${PKG_VERSION}"
+  PKG_REUSABLE_SOURCE_NAME="cargo-reusable-${PKG_REUSABLE_VERSION}-${MACHINE_HARDWARE_NAME}-${TARGET_NAME}-${PKG_REUSABLE_HASH}.tar.xz"
+  PKG_REUSABLE_URL="https://github.com/LibreELEC/cargo-reusable/releases/download/${PKG_REUSABLE_VERSION}/${PKG_REUSABLE_SOURCE_NAME}"
+fi
+
+# preferred falls back to building rust:host when no reusable archive is available
+if [ "${USE_REUSABLE}" = "yes" ] ||
+   { [ "${USE_REUSABLE}" = "preferred" ] &&
+     [ -n "$(get_reusable_sha256 cargo-reusable ${PKG_REUSABLE_SOURCE_NAME} ${PKG_REUSABLE_URL})" ]; }; then
+  # rust and cargo then only pull in the archive
+  PKG_REUSABLE="yes"
+  PKG_SECTION="virtual"
+  PKG_URL=""
+  PKG_SHA256=""
+  PKG_DEPENDS_HOST="cargo-reusable:host"
+  PKG_DEPENDS_UNPACK=""
+  # scripts/build still unpacks a virtual package, and there is no source to patch
+  PKG_SKIP_PATCHES="yes"
+fi
 
 pre_configure_host() {
   "$(get_build_dir rustc-snapshot)/install.sh" --prefix="${PKG_BUILD}/rust-snapshot" --disable-ldconfig
@@ -20,20 +46,11 @@ pre_configure_host() {
 
 configure_host() {
 
-  mkdir -p ${PKG_BUILD}/targets
-
-  case "${TARGET_ARCH}" in
-    "arm")
-      # the arm target is special because we specify the subarch. ie armv8a
-      cp -a ${PKG_DIR}/targets/arm-libreelec-linux-gnueabihf.json ${PKG_BUILD}/targets/${TARGET_NAME}.json
-      ;;
-    "aarch64" | "x86_64")
-      cp -a ${PKG_DIR}/targets/${TARGET_NAME}.json ${PKG_BUILD}/targets/${TARGET_NAME}.json
-      ;;
-  esac
-
   cat >${PKG_BUILD}/config.toml  <<END
-change-id = 102579
+change-id = 160100
+
+[llvm]
+download-ci-llvm = false
 
 [target.${TARGET_NAME}]
 llvm-config = "${TOOLCHAIN}/bin/llvm-config"
@@ -50,6 +67,7 @@ rpath = true
 channel = "stable"
 codegen-tests = false
 optimize = true
+download-rustc = false
 
 [build]
 submodules = false
@@ -80,25 +98,7 @@ mandir = "${TOOLCHAIN}/share/man"
 
 END
 
-  CARGO_HOME="${PKG_BUILD}/cargo_home"
-  mkdir -p "${CARGO_HOME}"
-
-  cat >${CARGO_HOME}/config.toml <<END
-[target.${TARGET_NAME}]
-linker = "${TARGET_PREFIX}gcc"
-
-[target.${RUST_HOST}]
-linker = "${CC}"
-rustflags = ["-C", "link-arg=-Wl,-rpath,${TOOLCHAIN}/lib"]
-
-[build]
-target-dir = "${PKG_BUILD}/target"
-
-[term]
-progress.when = 'always'
-progress.width = 80
-
-END
+  create_cargo_home
 }
 
 make_host() {
@@ -110,16 +110,16 @@ make_host() {
   unset LDFLAGS
 
   export RUST_TARGET_PATH="${PKG_BUILD}/targets/"
+  export HOST_CMAKE="${TOOLCHAIN}/bin/cmake"
+  export HOST_CMAKE_TOOLCHAIN_FILE="${CMAKE_CONF}"
 
   python3 src/bootstrap/bootstrap.py -j ${CONCURRENCY_MAKE_LEVEL} build --stage 2 --verbose
 }
 
 makeinstall_host() {
   mkdir -p ${TOOLCHAIN}/bin
-    cp -a build/${RUST_HOST}/stage2/bin/* ${TOOLCHAIN}/bin
+    cp -a build/${RUST_HOST}/stage2/bin/{rustc,rustdoc} ${TOOLCHAIN}/bin
 
   mkdir -p ${TOOLCHAIN}/lib/rustlib
     cp -a build/${RUST_HOST}/stage2/lib/* ${TOOLCHAIN}/lib
-
-    cp -a ${PKG_BUILD}/targets/*.json ${TOOLCHAIN}/lib/rustlib/
 }

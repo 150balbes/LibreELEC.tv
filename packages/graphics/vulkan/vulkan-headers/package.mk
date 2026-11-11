@@ -1,11 +1,11 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Frank Hartung (supervisedthinking (@) gmail.com)
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vulkan-headers"
-PKG_VERSION="1.3.302"
-PKG_SHA256="996c3f4220971e3b3cd6b8933e9e81f0bc82b6d2d6449b6f02c66946d65bf944"
-PKG_LICENSE="Apache-2.0"
+PKG_VERSION="1.4.367"
+PKG_SHA256="0df7d58b5df617e0a6a17dec521af459206719f9c7cb12d05d09275597c16f70"
+PKG_LICENSE="Apache-2.0 OR MIT"
 PKG_SITE="https://github.com/KhronosGroup/Vulkan-Headers"
 PKG_URL="https://github.com/KhronosGroup/Vulkan-Headers/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_HOST="toolchain:host"

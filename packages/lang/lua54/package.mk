@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="lua54"
-PKG_VERSION="5.4.7"
-PKG_SHA256="9fbf5e28ef86c69858f6d3d34eccc32e911c1a28b4120ff3e84aaa70cfbf1e30"
+PKG_VERSION="5.4.9"
+PKG_SHA256="2335b6c582a52654f94612bf10d2f4672805d05329aa6568b1d8cd9e5c6fb8e6"
 PKG_LICENSE="MIT"
 PKG_SITE="https://www.lua.org"
 PKG_URL="http://www.lua.org/ftp/lua-${PKG_VERSION}.tar.gz"

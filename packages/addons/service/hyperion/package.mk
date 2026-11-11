@@ -1,17 +1,16 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Lukas Rusak (lrusak@libreelec.tv)
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="hyperion"
 PKG_VERSION="fb413cd7e8825ffc26925013f57ac93a774f12bc"
 PKG_SHA256="fafa4eeddacb15a8fd96b0e69fac400faa735c6e1ccd78673c9d96b0ac84d7a3"
 PKG_VERSION_DATE="2019-08-19"
-PKG_REV="0"
+PKG_REV="2"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/hyperion-project/hyperion"
 PKG_URL="https://github.com/hyperion-project/hyperion/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain Python3 libusb qtbase protobuf rpi_ws281x"
+PKG_DEPENDS_TARGET="toolchain Python3 libusb qt5 protobuf rpi_ws281x"
 PKG_DEPENDS_UNPACK="rpi_ws281x"
 PKG_SECTION="service"
 PKG_SHORTDESC="Hyperion: an AmbiLight controller"
@@ -54,6 +53,12 @@ pre_build_target() {
 
 pre_configure_target() {
   echo "" >../cmake/FindGitVersion.cmake
+
+  cat > "${PKG_BUILD}/toolchain-qt5.cmake" <<EOF
+include("${CMAKE_CONF}")
+list(APPEND CMAKE_FIND_ROOT_PATH "$(get_install_dir qt5)/usr")
+EOF
+  PKG_CMAKE_OPTS_TARGET+=" -DCMAKE_TOOLCHAIN_FILE=${PKG_BUILD}/toolchain-qt5.cmake"
 }
 
 addon() {

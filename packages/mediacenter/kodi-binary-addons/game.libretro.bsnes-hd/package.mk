@@ -2,14 +2,14 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.bsnes-hd"
-PKG_VERSION="10.6.0.12-Nexus"
-PKG_SHA256="e0db6f1f148b3643d568389dbaa42dc530dc78b1a57ef3824cdc0f927ca69662"
+PKG_VERSION="10.6.0.16-Omega"
+PKG_SHA256="9a08d62194a562ad30d9207a785d318e1faff1530c98c0abb45f4ad956c6e675"
 PKG_REV="3"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv3"
+PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://github.com/kodi-game/game.libretro.bsnes-hd"
 PKG_URL="https://github.com/kodi-game/game.libretro.bsnes-hd/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform libretro-bsnes-hd"
+PKG_DEPENDS_TARGET="toolchain tinyxml ${MEDIACENTER}:host libretro-bsnes-hd"
 PKG_SECTION=""
 PKG_LONGDESC="game.libretro.bsnes-hd: bsnes fork that adds HD video features"
 

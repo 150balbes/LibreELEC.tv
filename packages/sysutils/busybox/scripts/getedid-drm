@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 usage() {
@@ -20,7 +20,7 @@ delete_edid() {
 create_edid() {
   CONNECTORS=$(dump-active-edids -q)
   if [ $? -ne 0 -o -z "${CONNECTORS}" ]; then
-    echo "error: cannot detemine active connectors"
+    echo "error: cannot determine active connectors"
     exit 1
   fi
   create-edid-cpio -q

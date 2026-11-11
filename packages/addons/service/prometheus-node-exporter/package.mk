@@ -1,11 +1,11 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="prometheus-node-exporter"
-PKG_VERSION="1.8.2"
-PKG_SHA256="f615c70be816550498dd6a505391dbed1a896705eff842628de13a1fa7654e8f"
-PKG_REV="0"
-PKG_LICENSE="Apache License 2.0"
+PKG_VERSION="1.12.1"
+PKG_SHA256="a90f1df0fde58d216d4a7d342e64831d2e3257db8084deadbe69754d34b15142"
+PKG_REV="2"
+PKG_LICENSE="Apache-2.0"
 PKG_SITE="https://github.com/prometheus/node_exporter"
 PKG_URL="https://github.com/prometheus/node_exporter/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain go:host systemd"

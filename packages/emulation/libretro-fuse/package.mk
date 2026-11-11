@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-fuse"
-PKG_VERSION="847dbbd6f787823ac9a5dfacdd68ab181063374e"
-PKG_SHA256="87ec7826021704e2aa6f35224f334201d4d6bf56cabd11e5c9ebc6e736360866"
-PKG_LICENSE="GPLv3"
+PKG_VERSION="bce196fb774835fe65b3e5b821887a4ccf657167"
+PKG_SHA256="43c9b548298142583c1030084aad1586ba521f0d2f84c3f56f7094d0a0f389b9"
+PKG_LICENSE="GPL-3.0-only"
 PKG_SITE="https://github.com/libretro/fuse-libretro"
 PKG_URL="https://github.com/libretro/fuse-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain bzip2"
@@ -18,6 +18,8 @@ PKG_LIBVAR="FUSE_LIB"
 PKG_MAKE_OPTS_TARGET="-f Makefile.libretro"
 
 pre_make_target() {
+  sed "s/HASH/${PKG_VERSION}/g" ${PKG_BUILD}/etc/version.c.templ >${PKG_BUILD}/src/version.c
+  MAKEFLAGS+=" --assume-old=src/version.c"
   CFLAGS+=" -DHAVE_LIBBZ2"
   CXXFLAGS+=" -DHAVE_LIBBZ2"
 }

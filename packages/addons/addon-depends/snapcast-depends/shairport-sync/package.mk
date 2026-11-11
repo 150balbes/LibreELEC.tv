@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="shairport-sync"
-PKG_VERSION="4.2"
-PKG_SHA256="649d95eede8b9284b2e8b9c97d18c1c64cffae0a6c75bc4f03e3ae494a3e25b6"
-PKG_LICENSE="OSS"
+PKG_VERSION="5.6.2"
+PKG_SHA256="0747706e19a64ec550ec8a6a5c26bf8e231a4d032de31644f5a5daa0632c41c4"
+PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/mikebrady/shairport-sync"
 PKG_URL="https://github.com/mikebrady/shairport-sync/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain alsa-lib avahi ffmpeg libconfig libdaemon libgcrypt libplist libsndfile libsodium nqptp openssl popt pulseaudio soxr util-linux xxd:host"
+PKG_DEPENDS_TARGET="toolchain alsa-lib avahi ffmpeg libconfig libdaemon libgcrypt libplist:host libplist libsndfile libsodium openssl popt pulseaudio soxr util-linux xxd:host"
 PKG_LONGDESC="AirPlay audio player."
 PKG_TOOLCHAIN="autotools"
 PKG_BUILD_FLAGS="-sysroot -cfg-libs"

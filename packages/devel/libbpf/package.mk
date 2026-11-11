@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libbpf"
-PKG_VERSION="1.5.0"
-PKG_SHA256="53492aff6dd47e4da04ef5e672d753b9743848bdb38e9d90eafbe190b7983c44"
-PKG_LICENSE="LGPL-2.1"
+PKG_VERSION="1.8.0"
+PKG_SHA256="b7a1e685f90f6a63ead0dd85d053694b222975da8d09c1a966041cff6f0055ff"
+PKG_LICENSE="LGPL-2.1-only OR BSD-2-Clause"
 PKG_SITE="https://github.com/libbpf/libbpf"
 PKG_URL="https://github.com/libbpf/libbpf/archive/refs/tags/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain elfutils"

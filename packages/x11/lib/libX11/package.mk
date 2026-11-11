@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libX11"
-PKG_VERSION="1.8.10"
-PKG_SHA256="2b3b3dad9347db41dca56beb7db5878f283bde1142f04d9f8e478af435dfdc53"
-PKG_LICENSE="OSS"
+PKG_VERSION="1.8.14"
+PKG_SHA256="bbc78c46217174655c2b32b138ad119f3ac15f50808b4d0b3a2677a4b1afc950"
+PKG_LICENSE="MIT"
 PKG_SITE="https://www.x.org/"
 PKG_URL="https://xorg.freedesktop.org/archive/individual/lib/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain util-macros xtrans libXau libxcb xorgproto"

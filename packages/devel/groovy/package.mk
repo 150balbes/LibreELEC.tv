@@ -2,8 +2,8 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="groovy"
-PKG_VERSION="4.0.24"
-PKG_SHA256="dbff36835568bec2271876f70bfcca6deb80e1b179453cca934a502ea301bb80"
+PKG_VERSION="4.0.33"
+PKG_SHA256="395a69a81d5e9915d360d630663c1d98534c9dec134cb267798e49370855d93d"
 PKG_LICENSE="Apache-2.0"
 PKG_SITE="https://groovy.apache.org"
 PKG_URL="https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-${PKG_VERSION}.zip"

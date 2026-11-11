@@ -21,11 +21,11 @@
     KERNEL_MAKE_EXTRACMD+=" rockchip/rk3288-tinker.dtb"
     KERNEL_MAKE_EXTRACMD+=" rockchip/rk3288-tinker-s.dtb"
 
-  # Graphic drivers to use
+  # Graphic drivers to use (all / lima,panfrost)
     GRAPHIC_DRIVERS="panfrost"
 
   # kernel serial console
-    EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0 coherent_pool=2M cec.debounce_ms=5000"
+    EXTRA_CMDLINE="console=uart8250,mmio32,0xff690000 console=tty0 coherent_pool=2M cec.debounce_ms=5000 cma=384M"
 
   # set the addon project
     ADDON_PROJECT="ARMv7"

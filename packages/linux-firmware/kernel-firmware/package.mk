@@ -1,13 +1,23 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="kernel-firmware"
-PKG_VERSION="20241110"
-PKG_SHA256="32e6d3eb5c7fcb69fe5d58976c6deafa0d6552719c6e74835064aff049d25bd7"
-PKG_LICENSE="other"
+PKG_VERSION="20261019"
+PKG_SHA256="a10d1ab5baf2c74ba92e8c7cf313e691696c26bddfa6df00db795e48d70cd4ca"
+PKG_LICENSE="LicenseRef-linux-firmware"
 PKG_SITE="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/"
 PKG_URL="https://cdn.kernel.org/pub/linux/kernel/firmware/linux-firmware-${PKG_VERSION}.tar.xz"
 PKG_NEED_UNPACK="${PROJECT_DIR}/${PROJECT}/packages/${PKG_NAME} ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/packages/${PKG_NAME}"
+# makeinstall_target() selects firmware from these lists, so a change to one
+# has to invalidate the stamp - they live outside the paths calculate_stamp()
+# already covers.
+PKG_NEED_UNPACK+=" ${PROJECT_DIR}/${PROJECT}/config/kernel-firmware.dat"
+PKG_NEED_UNPACK+=" ${PROJECT_DIR}/${PROJECT}/config/kernel-firmware-any.dat"
+PKG_NEED_UNPACK+=" ${PROJECT_DIR}/${PROJECT}/config/kernel-firmware-${TARGET_ARCH}.dat"
+if [ -n "${DEVICE}" ]; then
+  PKG_NEED_UNPACK+=" ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/config/kernel-firmware-any.dat"
+  PKG_NEED_UNPACK+=" ${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/config/kernel-firmware-${TARGET_ARCH}.dat"
+fi
 PKG_LONGDESC="kernel-firmware: kernel related firmware"
 PKG_TOOLCHAIN="manual"
 

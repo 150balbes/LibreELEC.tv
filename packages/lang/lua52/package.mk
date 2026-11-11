@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="lua52"
@@ -9,9 +9,10 @@ PKG_SITE="https://www.lua.org"
 PKG_URL="http://www.lua.org/ftp/lua-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="Lua is a powerful, efficient, lightweight, embeddable scripting language."
+PKG_BUILD_FLAGS="+pic"
 
 make_target() {
-  make CC=${CC} AR="${AR} rcu" posix
+  make CC=${CC} AR="${AR} rcu" MYCFLAGS="-fPIC" posix
 }
 
 makeinstall_target() {

@@ -3,9 +3,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libhdhomerun"
-PKG_VERSION="20210624"
-PKG_SHA256="deaf463bbcc3eefa72f97199efb6213f7b0e2c8e91f1b3d2cbf52056a8715d15"
-PKG_LICENSE="LGPL"
+PKG_VERSION="20260326"
+PKG_SHA256="792d43b98bdc146fa8872f8205f4f8feb1c1d5557e3c77edda6b6b1ede9b9db0"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="http://www.silicondust.com"
 PKG_URL="https://download.silicondust.com/hdhomerun/libhdhomerun_${PKG_VERSION}.tgz"
 PKG_DEPENDS_TARGET="toolchain"

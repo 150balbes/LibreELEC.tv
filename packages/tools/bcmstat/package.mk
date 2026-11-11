@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="bcmstat"
-PKG_VERSION="1698ec66f7dd38b21d92958dfe08a79dd07300a5"
-PKG_SHA256="6a4c30778abb80c47be984b01cf9a5cfce83bcc7c673303693945c9a0f5c876a"
-PKG_LICENSE="GPL"
+PKG_VERSION="32d067b86fad8214f8b9a87a16241a89974dfb6a"
+PKG_SHA256="8c40097e12aeabd3d57f20a3e8d2a1402ed338867bfa0a9e1a83fc225886c880"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/popcornmix/bcmstat"
 PKG_URL="https://github.com/popcornmix/${PKG_NAME}/archive/${PKG_VERSION}.tar.gz"
 PKG_LONGDESC="Raspberry Pi monitoring script"

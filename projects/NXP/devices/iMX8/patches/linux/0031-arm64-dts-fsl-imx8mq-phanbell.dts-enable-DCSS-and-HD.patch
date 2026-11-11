@@ -1,0 +1,68 @@
+From d0a3b4d0fd909db94fd7511776141d512a20be23 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sun, 29 Sep 2024 21:08:57 +1000
+Subject: [PATCH 31/33] arm64: dts: fsl: imx8mq-phanbell.dts: enable DCSS and
+ HDMI
+
+---
+ .../boot/dts/freescale/imx8mq-phanbell.dts    | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-phanbell.dts b/arch/arm64/boot/dts/freescale/imx8mq-phanbell.dts
+index 21321d7fd12a..e273a7e51467 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-phanbell.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-phanbell.dts
+@@ -130,6 +130,17 @@ simple-audio-card,codec {
+ 			sound-dai = <&header_codec>;
+ 		};
+ 	};
++
++	hdmi_connector: connector {
++		compatible = "hdmi-connector";
++		label = "X11";
++		type = "a";
++
++		port {
++			hdmi_connector_in: endpoint {
++			};
++		};
++	};
+ };
+ 
+ &A53_0 {
+@@ -195,6 +206,32 @@ map4 {
+ 	};
+ };
+ 
++&dcss {
++	status = "okay";
++};
++
++&hdmi_connector {
++	port {
++		hdmi_connector_in: endpoint {
++			remote-endpoint = <&mhdp_out>;
++		};
++	};
++};
++
++&mhdp {
++	status = "okay";
++	ports {
++		port@1 {
++			reg = <1>;
++
++			mhdp_out: endpoint {
++				remote-endpoint = <&hdmi_connector_in>;
++				data-lanes = <0 1 2 3>;
++			};
++		};
++	};
++};
++
+ &i2c1 {
+ 	clock-frequency = <400000>;
+ 	pinctrl-names = "default";
+-- 
+2.53.0
+

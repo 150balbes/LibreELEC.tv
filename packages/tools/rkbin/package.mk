@@ -1,16 +1,21 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rkbin"
-PKG_VERSION="7c35e21a8529b3758d1f051d1a5dc62aae934b2b"
-PKG_SHA256="18bde6ce71df308197db0e1d95fd73a19b6a32f4f0b6f5567333ef3c5b617452"
+PKG_VERSION="74213af1e952c4683d2e35952507133b61394862" # linux-6.1-stan-rkr6
+PKG_SHA256="b565faeab846950262c07e6debbd6519ea9e7f34943dbb305b9cea6b1026e11a"
 PKG_ARCH="arm aarch64"
-PKG_LICENSE="nonfree"
+PKG_LICENSE="LicenseRef-nonfree"
 PKG_SITE="https://github.com/rockchip-linux/rkbin"
 PKG_URL="https://github.com/rockchip-linux/rkbin/archive/${PKG_VERSION}.tar.gz"
 PKG_LONGDESC="rkbin: Rockchip Firmware and Tool Binaries"
 PKG_TOOLCHAIN="manual"
 PKG_STAMP="$UBOOT_SYSTEM"
+
+post_unpack() {
+  cp -a "${PKG_BUILD}/RKBOOT/RK3566MINIALL.ini" "${PKG_BUILD}/RKBOOT/RK356XMINIALL.ini"
+  cp -a "${PKG_BUILD}/RKTRUST/RK3568TRUST.ini" "${PKG_BUILD}/RKTRUST/RK356XTRUST.ini"
+}
 
 make_target() {
   if [ -n "${UBOOT_SYSTEM}" ]; then

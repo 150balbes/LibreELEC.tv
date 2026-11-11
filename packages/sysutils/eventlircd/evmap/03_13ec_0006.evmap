@@ -12,5 +12,5 @@
  KEY_PVR           = KEY_MEDIA         # Home
  KEY_AUX           = KEY_CAMERA        # Photo
 
- KEY_MENU          = KEY_EPG           # Menu (used for XBMC's context menu)
- KEY_K             = KEY_EPG           # Title (used for XBMC's context menu)
+ KEY_MENU          = KEY_EPG           # Menu (used for Kodi's context menu)
+ KEY_K             = KEY_EPG           # Title (used for Kodi's context menu)

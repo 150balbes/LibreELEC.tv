@@ -15,8 +15,8 @@ Requires=network-online.service
 # 'network-online.service' fails we can not mount and this scripts fails too
 After=network-online.service
 
-# usually we mount networks shares because we want they avaible *before* XBMC starts.
-# so XBMC has access to this mounts from beginning. Note: this slows down the boot!
+# usually we mount network shares because we want them available *before* Kodi starts.
+# so Kodi has access to mounts from the beginning. Note: this slows down the boot sequence!
 Before=kodi.service
 
 

@@ -3,11 +3,11 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="boost"
-PKG_VERSION="1.86.0"
-PKG_SHA256="1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b"
-PKG_LICENSE="OSS"
+PKG_VERSION="1.92.0"
+PKG_SHA256="5c1d40cb8e19adbf740a4ec2da35b3e58f3f5804b1dce44deb53df72193cbc6c"
+PKG_LICENSE="BSL-1.0"
 PKG_SITE="https://www.boost.org/"
-PKG_URL="https://boostorg.jfrog.io/artifactory/main/release/${PKG_VERSION}/source/${PKG_NAME}_${PKG_VERSION//./_}.tar.bz2"
+PKG_URL="https://archives.boost.io/release/${PKG_VERSION}/source/${PKG_NAME}_${PKG_VERSION//./_}.tar.bz2"
 PKG_DEPENDS_HOST="toolchain:host"
 PKG_DEPENDS_TARGET="toolchain boost:host Python3 zlib bzip2"
 PKG_LONGDESC="boost: Peer-reviewed STL style libraries for C++"
@@ -54,7 +54,6 @@ makeinstall_target() {
                       --with-random \
                       --with-regex -sICU_PATH="${SYSROOT_PREFIX}/usr" \
                       --with-serialization \
-                      --with-system \
                       --with-thread \
                       install
 }

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-fbneo"
-PKG_VERSION="d48f1485e7052b97962594c18714de762214ae2b"
-PKG_SHA256="d9cd7b2152f2fb50b9d4f457cd96a89e28961df79d19ae0df4b2f856df42092a"
-PKG_LICENSE="Non-commercial"
+PKG_VERSION="3eeec034f9c7a17c3e7a820ad034861bb1a9522f"
+PKG_SHA256="72cf7ffa3c1f5e417c7324568383da7461b2f170140091743bbcb8c9c390a0dd"
+PKG_LICENSE="LicenseRef-Non-commercial"
 PKG_SITE="https://github.com/libretro/fbneo"
 PKG_URL="https://github.com/libretro/FBNeo/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -31,6 +31,10 @@ if [ "${ARCH}" = "arm" ]; then
 else
   PKG_MAKE_OPTS_TARGET+=" profile=accuracy"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=${PKG_VERSION:0:7} GIT_DATE=$(date -u -r ${PKG_BUILD}/LICENSE.md +%y%m%d)"
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

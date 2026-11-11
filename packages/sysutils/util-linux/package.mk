@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="util-linux"
-PKG_VERSION="2.40"
-PKG_SHA256="d57a626081f9ead02fa44c63a6af162ec19c58f53e993f206ab7c3a6641c2cd7"
-PKG_LICENSE="GPL"
+PKG_VERSION="2.42.4"
+PKG_SHA256="fbd62a100ab7bb8746ba0661255c3c48185b1e9021507c624da01fbc696330ec"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_URL="https://www.kernel.org/pub/linux/utils/util-linux/v$(get_pkg_version_maj_min)/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="ccache:host autoconf:host automake:host intltool:host libtool:host pkg-config:host"
 PKG_DEPENDS_TARGET="autotools:host gcc:host"
@@ -56,7 +56,13 @@ PKG_CONFIGURE_OPTS_TARGET="${UTILLINUX_CONFIG_DEFAULT} \
                            --enable-blkid \
                            --enable-lscpu \
                            --enable-lsfd \
-                           --enable-mount"
+                           --enable-lsblk \
+                           --enable-mount \
+                           --enable-nologin"
+
+if [ "${LOCAL_LOGIN}" = "yes" ]; then
+  PKG_CONFIGURE_OPTS_TARGET+=" --enable-agetty"
+fi
 
 if [ "${SWAP_SUPPORT}" = "yes" ]; then
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-swapon"

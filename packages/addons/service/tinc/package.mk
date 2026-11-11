@@ -1,12 +1,12 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="tinc"
-PKG_VERSION="4c6a9a9611442f958c3049a566ac4369653978e9"
-PKG_SHA256="409829f454fdfe87f7222f131de88006640709ff046e2241bfdb44a49a146059"
-PKG_REV="0"
+PKG_VERSION="211e3dfaef32d8736962e25f0b096dad951b7104"
+PKG_SHA256="070d33485f760867fd945d397396d29453fca80b88390e860c3b145a2025c059"
+PKG_REV="2"
 PKG_ARCH="any"
-PKG_LICENSE="GPLv2"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://www.tinc-vpn.org/"
 PKG_URL="https://github.com/gsliepen/tinc/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain lz4 lzo miniupnpc ncurses openssl readline zlib"

@@ -136,7 +136,7 @@ set_pkg_version() {
 download_pkg_file() {
   local pkg_name="$1"
   local pkg_url=$(get_pkg_var "${pkg_name}" PKG_URL)
-  wget -q -O "${TMP_PKG_FILE}" "${pkg_url}"
+  curl -q --location --max-redirs 5 --output "${TMP_PKG_FILE}" "${pkg_url}"
 }
 
 extract_pkg_file() {

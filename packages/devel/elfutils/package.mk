@@ -3,18 +3,18 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="elfutils"
-PKG_VERSION="0.192"
-PKG_SHA256="616099beae24aba11f9b63d86ca6cc8d566d968b802391334c91df54eab416b4"
-PKG_LICENSE="GPL"
+PKG_VERSION="0.197"
+PKG_SHA256="1fdf525f22dcf796d99a99ba3ea00a1f7b1ae5421bc62e8443a708920b99b904"
+PKG_LICENSE="GPL-3.0-or-later AND (GPL-2.0-or-later OR LGPL-3.0-or-later)"
 PKG_SITE="https://sourceware.org/elfutils/"
 PKG_URL="https://sourceware.org/elfutils/ftp/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_HOST="autoconf:host automake:host m4:host make:host zlib:host"
-PKG_DEPENDS_TARGET="toolchain zlib elfutils:host"
+PKG_DEPENDS_TARGET="toolchain zlib elfutils:host libarchive"
 PKG_LONGDESC="A collection of utilities to handle ELF objects."
 PKG_TOOLCHAIN="autotools"
 PKG_BUILD_FLAGS="+pic -cfg-libs -cfg-libs:host"
 
-if [ "${LIBREELEC_VERSION}" = "devel" ]; then
+if [ "${DISTRO_VERSION}" = "devel" ]; then
   PKG_PROGRAMS="--enable-programs --program-prefix="
   PKG_PROGRAMS_LIST="readelf"
 else
@@ -39,6 +39,10 @@ PKG_CONFIGURE_OPTS_TARGET="utrace_cv_cc_biarch=false \
                            --with-zlib \
                            --without-bzlib \
                            --without-lzma"
+
+pre_configure_target() {
+  export PKG_CONFIG="${PKG_CONFIG} --static"
+}
 
 post_makeinstall_target() {
   # don't install progs into sysroot

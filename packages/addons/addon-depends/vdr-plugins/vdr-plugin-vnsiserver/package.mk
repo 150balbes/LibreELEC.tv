@@ -3,12 +3,13 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vdr-plugin-vnsiserver"
-PKG_VERSION="47a90dd9298753083a9a6482bb9990ea9a88aa7a"
-PKG_SHA256="cd8087306dc5d77b150ca9f77bba91460507dc9a2336b9f61ce13aeefecf23e3"
-PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/mdre77/vdr-plugin-vnsiserver"
-PKG_URL="https://github.com/mdre77/vdr-plugin-vnsiserver/archive/${PKG_VERSION}.tar.gz"
+PKG_VERSION="1.8.4"
+PKG_SHA256="c8fe885a979dd9b6ba1536b9141096fe228975a39e08077218d845e7f2f0a947"
+PKG_LICENSE="GPL-2.0-or-later"
+PKG_SITE="https://github.com/vdr-projects/vdr-plugin-vnsiserver"
+PKG_URL="https://github.com/vdr-projects/vdr-plugin-vnsiserver/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain vdr"
+PKG_DEPENDS_UNPACK="vdr-plugin-wirbelscan"
 PKG_NEED_UNPACK="$(get_pkg_directory vdr) $(get_pkg_directory vdr-plugin-wirbelscan)"
 PKG_LONGDESC="VDR plugin to handle Kodi clients."
 PKG_TOOLCHAIN="manual"

@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-genplus"
-PKG_VERSION="5c805c4bed75fc2b8ebec8d65c33d40c4eac0a23"
-PKG_SHA256="ac78a68a09fc076717bb7bdfe1c0ee0e3f5d2a274ece815a69f13b5b85d4f7d2"
-PKG_LICENSE="Non-commercial"
+PKG_VERSION="252694adb9ebf2abcc7a1340d4078dce53d8954f"
+PKG_SHA256="e466a9757bc7a0e85e3a9a0bfc25e7d5f068ac01e8515b726a0b30d8f92e5970"
+PKG_LICENSE="LicenseRef-Non-commercial"
 PKG_SITE="https://github.com/ekeeke/Genesis-Plus-GX"
 PKG_URL="https://github.com/libretro/Genesis-Plus-GX/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -22,6 +22,7 @@ if [ "${ARCH}" = "aarch64" ]; then
 fi
 
 pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
   if [ "${ARCH}" = "arm" -o "${ARCH}" = "aarch64" ]; then
     CFLAGS+=" -DALIGN_LONG"
   fi

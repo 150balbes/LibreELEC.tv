@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gstreamer"
-PKG_VERSION="1.24.9"
-PKG_SHA256="ebf47b6beef508a00c8557d4c1f1713e5c7ef9ba70dac45deed80e182bcf260f"
-PKG_LICENSE="GPL-2.1-or-later"
+PKG_VERSION="1.29.2"
+PKG_SHA256="e4e1dccc92cb4be7c34dc513216f0ffc3610fe071d87e28ceecf784b43d6ccf3"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://gstreamer.freedesktop.org"
 PKG_URL="https://gstreamer.freedesktop.org/src/gstreamer/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain glib"
@@ -30,9 +30,9 @@ pre_configure_target() {
                          -Ddoc=disabled \
                          -Dintrospection=disabled \
                          -Dnls=disabled \
-                         -Dgobject-cast-checks=disabled \
-                         -Dglib-asserts=disabled \
-                         -Dglib-checks=disabled \
+                         -Dglib_debug=disabled \
+                         -Dglib_assert=false \
+                         -Dglib_checks=false \
                          -Dextra-checks=disabled \
                          -Dpackage-name="gstreamer"
                          -Dpackage-origin="LibreELEC.tv"

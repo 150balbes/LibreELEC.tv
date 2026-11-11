@@ -3,11 +3,11 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="proftpd"
-PKG_VERSION="1.3.8b"
-PKG_SHA256="183ab7c6107de271a2959ff268f55c9b6c76b2cf0029e6584fccc019686601e0"
-PKG_REV="0"
+PKG_VERSION="1.3.9e"
+PKG_SHA256="7db91f229f8c3ad18e233f38a3c1749bd11bf92e1079b6c7f86e51a3fcfce5eb"
+PKG_REV="4"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://www.proftpd.org/"
 PKG_URL="https://github.com/proftpd/proftpd/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain libcap openssl ncurses pcre2"

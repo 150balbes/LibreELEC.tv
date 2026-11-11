@@ -2,9 +2,9 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="gpgme"
-PKG_VERSION="1.23.2"
-PKG_SHA256="9499e8b1f33cccb6815527a1bc16049d35a6198a6c5fae0185f2bd561bce5224"
-PKG_LICENSE="gpgme"
+PKG_VERSION="2.2.0"
+PKG_SHA256="7160e80e84dafd00d956c84891c533bb7ab16a6a54fbe1574b2f3acf0496977b"
+PKG_LICENSE="LGPL-2.1-or-later AND MIT"
 PKG_SITE="https://gnupg.org/software/gpgme/index.html"
 PKG_URL="https://gnupg.org/ftp/gcrypt/gpgme/gpgme-${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libassuan libgpg-error"
@@ -21,6 +21,7 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-languages=cl \
                            --disable-gpgsm-test \
                            --disable-g13-test \
                            --with-pic \
+                           --enable-fixed-path=/storage/.kodi/addons/tools.gnupg/bin \
                            --with-libgpg-error-prefix=${SYSROOT_PREFIX}/usr \
                            --with-libassuan-prefix=$(get_install_dir libassuan)/usr"
 

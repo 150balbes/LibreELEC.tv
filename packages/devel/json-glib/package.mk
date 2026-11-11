@@ -1,16 +1,16 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="json-glib"
-PKG_VERSION="1.10.0"
-PKG_SHA256="447890f9de2a04c312871768208f6c8aeec4069392af7605bc77e61165dcb374"
-PKG_LICENSE="LGPL-2.1"
+PKG_VERSION="1.10.8"
+PKG_SHA256="7a114bdac0b2611a7207e981c37fa9b1e70d9cb642470cd9e967b135428cec52"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://github.com/GNOME/json-glib"
 PKG_URL="https://github.com/GNOME/json-glib/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain glib"
 PKG_LONGDESC="JSON-GLib implements a full suite of JSON-related tools using GLib and GObject."
 
 PKG_MESON_OPTS_TARGET="-Dintrospection=disabled \
-                       -Dgtk_doc=disabled \
+                       -Ddocumentation=disabled \
                        -Dman=false \
                        -Dtests=false"

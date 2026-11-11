@@ -1,16 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="lcdd"
-PKG_VERSION="9ec9ba4e5dda653288bc55d2898723aa2c2ad9c1"
-PKG_SHA256="442f60fc7c26847508e7fb99d901e905016c136d0f6eb320e3262bef20f39452"
-PKG_VERSION_DATE="0.5dev+2020-07-21"
-PKG_REV="0"
+PKG_VERSION="0be7b90354e91d430edb3b650d817edb8f4bb8d7"
+PKG_SHA256="c92fb4a6be87c6a7e6374ae7f9d3e1810304d1b6d3db4e7882eee0a2fafb30a2"
+PKG_VERSION_DATE="0.5dev+2026-06-20"
+PKG_REV="6"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="http://lcdproc.org/"
 PKG_URL="https://github.com/lcdproc/lcdproc/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain freetype libftdi1 libhid libugpio libusb ncurses serdisplib"
+PKG_DEPENDS_TARGET="toolchain freetype libftdi1 libgpiod libhid libugpio libusb ncurses serdisplib"
+PKG_DEPENDS_CONFIG="libgpiod"
 PKG_SECTION="service"
 PKG_SHORTDESC="LCDproc: Software to display system information from your Linux/*BSD box on a LCD"
 PKG_LONGDESC="LCDproc (${PKG_VERSION}) is a piece of software that displays real-time system information from your Linux/*BSD box on a LCD. The server supports several serial devices: Matrix Orbital, Crystal Fontz, Bayrad, LB216, LCDM001 (kernelconcepts.de), Wirz-SLI, Cwlinux(.com) and PIC-an-LCD; and some devices connected to the LPT port: HD44780, STV5730, T6963, SED1520 and SED1330. Various clients are available that display things like CPU load, system load, memory usage, uptime, and a lot more."
@@ -21,13 +22,13 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="LCDproc"
 PKG_ADDON_TYPE="xbmc.service"
 
-PKG_CONFIGURE_OPTS_TARGET="--with-ft-prefix=${SYSROOT_PREFIX}/usr \
-                           --enable-libusb \
-                           --enable-libftdi \
-                           --disable-libX11 \
+PKG_CONFIGURE_OPTS_TARGET="--enable-drivers=all \
+                           --enable-freetype \
                            --enable-libhid \
+                           --enable-libftdi \
                            --disable-libpng \
-                           --enable-drivers=all"
+                           --enable-libusb \
+                           --disable-libX11"
 
 pre_configure_target() {
   CFLAGS+=" -O3"
@@ -43,9 +44,11 @@ addon() {
   cp -PR ${PKG_INSTALL}/etc/LCDd.conf ${ADDON_BUILD}/${PKG_ADDON_ID}/config/
   cp -PR ${PKG_INSTALL}/usr/lib       ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/
   patchelf --add-rpath '${ORIGIN}/../../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/lcdproc/glcd.so
+  patchelf --add-rpath '${ORIGIN}/../../lib.private' ${ADDON_BUILD}/${PKG_ADDON_ID}/lib/lcdproc/hd44780.so
   cp -PR ${PKG_INSTALL}/usr/sbin      ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
 
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
+  cp -L $(get_install_dir libgpiod)/usr/lib/libgpiod.so.3 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
   cp -L $(get_install_dir serdisplib)/usr/lib/libserdisp.so.2 ${ADDON_BUILD}/${PKG_ADDON_ID}/lib.private
 
   sed -e "s|^DriverPath=.*$|DriverPath=/storage/.kodi/addons/service.lcdd/lib/lcdproc/|" \
@@ -63,5 +66,4 @@ addon() {
 
   sed -e "s/@DRIVERS@/${drivers}/" \
       -i ${ADDON_BUILD}/${PKG_ADDON_ID}/resources/settings.xml
-
 }

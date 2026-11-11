@@ -1,20 +1,20 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="Python3"
 # When changing PKG_VERSION remember to sync PKG_PYTHON_VERSION!
-PKG_VERSION="3.12.7"
-PKG_SHA256="24887b92e2afd4a2ac602419ad4b596372f67ac9b077190f459aba390faf5550"
-PKG_LICENSE="OSS"
+PKG_VERSION="3.14.10"
+PKG_SHA256="de414a57119abef52784d8993e341d53aed635fc2b05c2607d9f98a2c5b72032"
+PKG_LICENSE="PSF-2.0"
 PKG_SITE="https://www.python.org/"
 PKG_URL="https://www.python.org/ftp/python/${PKG_VERSION}/${PKG_NAME::-1}-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host util-linux:host autoconf-archive:host"
-PKG_DEPENDS_TARGET="autotools:host gcc:host Python3:host sqlite expat zlib bzip2 xz openssl libffi readline ncurses util-linux"
+PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host mpdecimal:host util-linux:host autoconf-archive:host openssl:host"
+PKG_DEPENDS_TARGET="autotools:host gcc:host Python3:host sqlite expat zlib bzip2 xz openssl libffi readline mpdecimal ncurses util-linux"
 PKG_LONGDESC="Python3 is an interpreted object-oriented programming language."
 PKG_BUILD_FLAGS="-cfg-libs -cfg-libs:host"
 PKG_TOOLCHAIN="autotools"
 
-PKG_PYTHON_VERSION="python3.12"
+PKG_PYTHON_VERSION="python3.14"
 
 PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_HAS_HG=/bin/false
                          ac_cv_prog_SVNVERSION=/bin/false
@@ -39,7 +39,6 @@ PKG_CONFIGURE_OPTS_HOST="ac_cv_prog_HAS_HG=/bin/false
                          --disable-curses
                          --disable-pydoc
                          --disable-test-modules
-                         --disable-lib2to3
                          --disable-idle3
                          --with-expat=builtin
                          --with-doc-strings
@@ -78,10 +77,10 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
                            --enable-curses
                            --disable-pydoc
                            --disable-test-modules
-                           --disable-lib2to3
                            --disable-idle3
                            --with-expat=system
                            --with-doc-strings
+                           --with-lto
                            --without-pymalloc
                            --without-ensurepip
                            --enable-ipv6
@@ -114,6 +113,12 @@ post_make_target() {
   sed -e "s,\([\'|\ ]\)/usr/lib,\1${SYSROOT_PREFIX}/usr/lib,g" -i ${PKG_SYSCONFIG_FILE}
 }
 
+pre_configure_target() {
+  export PYTHON_MODULES_INCLUDE="${TARGET_INCDIR}"
+  export PYTHON_MODULES_LIB="${TARGET_LIBDIR}"
+  export DISABLED_EXTENSIONS="${PKG_PY_DISABLED_MODULES}"
+}
+
 post_makeinstall_target() {
   ln -sf ${PKG_PYTHON_VERSION} ${INSTALL}/usr/bin/python
 
@@ -121,7 +126,7 @@ post_makeinstall_target() {
 
   PKG_INSTALL_PATH_LIB=${INSTALL}/usr/lib/${PKG_PYTHON_VERSION}
 
-  for dir in config compiler sysconfigdata lib-dynload/sysconfigdata lib2to3/tests test; do
+  for dir in config compiler sysconfigdata lib-dynload/sysconfigdata test; do
     rm -rf ${PKG_INSTALL_PATH_LIB}/${dir}
   done
 

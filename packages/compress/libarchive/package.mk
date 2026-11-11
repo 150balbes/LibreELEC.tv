@@ -1,18 +1,18 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libarchive"
-PKG_VERSION="3.7.5"
-PKG_SHA256="ca74ff8f99dd40ab8a8274424d10a12a7ec3f4428dd35aee9fdda8bdb861b570"
-PKG_LICENSE="GPL"
+PKG_VERSION="3.8.11"
+PKG_SHA256="a3dc0872b1b39da34dc18ef1b944f0f11ffd37425d70ae04be679279f1cf43d2"
+PKG_LICENSE="BSD-2-Clause"
 PKG_SITE="https://www.libarchive.org"
-PKG_URL="https://www.libarchive.org/downloads/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+PKG_URL="https://github.com/libarchive/libarchive/releases/download/v${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_HOST="cmake:host ninja:host"
-PKG_DEPENDS_TARGET="cmake:host gcc:host"
-PKG_SHORTDESC="A multi-format archive and compression library."
+PKG_DEPENDS_TARGET="cmake:host gcc:host bzip2 lz4 lzo openssl pcre2 xz zlib zstd"
+PKG_LONGDESC="A multi-format archive and compression library."
 
 PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
-                       -DBUILD_SHARED_LIBS=OFF \
+                       -DBUILD_SHARED_LIBS=ON \
                        -DENABLE_ACL=ON \
                        -DENABLE_BZip2=ON \
                        -DENABLE_CAT=OFF \
@@ -28,7 +28,7 @@ PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
                        -DENABLE_LIBGCC=ON \
                        -DENABLE_LIBXML2=OFF \
                        -DENABLE_LZ4=ON \
-                       -DENABLE_LZMA=OFF \
+                       -DENABLE_LZMA=ON \
                        -DENABLE_LZO=ON \
                        -DENABLE_MBEDTLS=OFF \
                        -DENABLE_NETTLE=OFF \
@@ -43,4 +43,5 @@ PKG_CMAKE_OPTS_TARGET="-DCMAKE_POSITION_INDEPENDENT_CODE=1 \
                        -DENABLE_WERROR=0 \
                        -DENABLE_XATTR=ON \
                        -DENABLE_ZLIB=ON \
-                       -DENABLE_ZSTD=ON"
+                       -DENABLE_ZSTD=ON \
+                       -DPOSIX_REGEX_LIB=LIBPCRE2POSIX"

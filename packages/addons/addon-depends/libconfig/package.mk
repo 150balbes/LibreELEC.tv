@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libconfig"
-PKG_VERSION="1.7.3"
-PKG_SHA256="68757e37c567fd026330c8a8449aa5f9cac08a642f213f2687186b903bd7e94e"
-PKG_LICENSE="LGPL"
+PKG_VERSION="1.8.3"
+PKG_SHA256="683f723d647befcdb36e1a4a61a83ae8c89dc7959ca872a7407b6c8152104162"
+PKG_LICENSE="LGPL-2.1-or-later"
 PKG_SITE="https://github.com/hyperrealm/libconfig"
 PKG_URL="https://github.com/hyperrealm/libconfig/archive/v${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"

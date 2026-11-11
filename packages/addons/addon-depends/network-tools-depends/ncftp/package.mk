@@ -1,12 +1,12 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ncftp"
-PKG_VERSION="3.2.7"
-PKG_SHA256="d41c5c4d6614a8eae2ed4e4d7ada6b6d3afcc9fb65a4ed9b8711344bef24f7e8"
-PKG_LICENSE="GPLv3"
+PKG_VERSION="3.3.0"
+PKG_SHA256="7920f884c2adafc82c8e41c46d6f3d22698785c7b3f56f5677a8d5c866396386"
+PKG_LICENSE="ClArtistic"
 PKG_SITE="http://www.ncftp.com/ncftp/"
-PKG_URL="https://www.ncftp.com/public_ftp/ncftp/ncftp-${PKG_VERSION}-src.tar.xz"
+PKG_URL="https://www.ncftp.com/public_ftp/ncftp/ncftp-${PKG_VERSION}-src.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="NcFTP is a set of application programs implementing the File Transfer Protocol."
 PKG_BUILD_FLAGS="-sysroot"
@@ -18,10 +18,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_header_librtmp_rtmp_h=yes \
             --without-curses"
 
 pre_configure_target() {
-  export CFLAGS="${CFLAGS} -I../ -DHAVE_STDLIB_H=1"
-
-  #workaround gcc-14 erroring with incompatible pointer type
-  CFLAGS+=" -Wno-incompatible-pointer-types"
+  export CFLAGS="${CFLAGS} -I../"
 }
 
 pre_build_target() {

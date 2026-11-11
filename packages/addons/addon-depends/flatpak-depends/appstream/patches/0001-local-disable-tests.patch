@@ -1,0 +1,20 @@
+From bc22f89fc0daa2744dd06f9119ea0abae96042fe Mon Sep 17 00:00:00 2001
+From: Matthias Reichl <hias@horus.com>
+Date: Mon, 13 Apr 2026 18:51:12 +0200
+Subject: [PATCH] local disable tests
+
+diff --git a/meson.build b/meson.build
+index b88a6dd37332..bc13affd1bfa 100644
+--- a/meson.build
++++ b/meson.build
+@@ -282,7 +282,6 @@ subdir('po/')
+ subdir('data/')
+ subdir('contrib/')
+ subdir('docs/')
+-subdir('tests/')
+ if get_option('qt')
+     subdir('qt/')
+ endif
+-- 
+2.53.0
+

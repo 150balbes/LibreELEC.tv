@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-snes9x2010"
-PKG_VERSION="d8b10c4cd7606ed58f9c562864c986bc960faaaf"
-PKG_SHA256="7faf4243226cfed3a2926ef78d7db74905947ecda8770575a81b1792b2345302"
-PKG_LICENSE="Non-commercial"
+PKG_VERSION="d9cba8a41b3407ebb929816a7033e0407fd7b2d0"
+PKG_SHA256="91e1fa0ac0f6990025bde14fea3c25e7d66a63093da82f669edcb515aebbd3ce"
+PKG_LICENSE="LicenseRef-Non-commercial"
 PKG_SITE="https://github.com/libretro/snes9x2010"
 PKG_URL="https://github.com/libretro/snes9x2010/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -22,6 +22,10 @@ PKG_MAKE_OPTS_TARGET="-f Makefile.libretro"
 if [ "${PROJECT}" = "Rockchip" -a "${DEVICE}" = "OdroidGoAdvance" ]; then
   PKG_MAKE_OPTS_TARGET+=" platform=goa_armv8_a35"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

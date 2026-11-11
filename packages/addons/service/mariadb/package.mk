@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mariadb"
-PKG_VERSION="11.4.3"
-PKG_REV="0"
-PKG_SHA256="6f0017b9901bb1897de0eed21caef9ffa9d66ef559345a0d8a6f011308413ece"
-PKG_LICENSE="GPL2"
+PKG_VERSION="12.3.3"
+PKG_REV="3"
+PKG_SHA256="e99d739fd4a55f9a11dea7bd2287a262673e287550af3071c8469dd2bec0c163"
+PKG_LICENSE="GPL-2.0-only"
 PKG_SITE="https://mariadb.org"
-PKG_URL="https://downloads.mariadb.com/MariaDB/${PKG_NAME}-${PKG_VERSION}/source/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_URL="https://archive.mariadb.org/${PKG_NAME}-${PKG_VERSION}/source/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_HOST="toolchain:host ncurses:host openssl:host"
 PKG_DEPENDS_TARGET="toolchain binutils boost bzip2 libaio libfmt libxml2 lz4 lzo ncurses openssl pcre2 systemd zlib mariadb:host"
 PKG_SHORTDESC="MariaDB is a community-developed fork of the MySQL."
@@ -17,12 +17,13 @@ PKG_BUILD_FLAGS="-gold -sysroot"
 PKG_IS_ADDON="yes"
 PKG_SECTION="service"
 PKG_ADDON_NAME="MariaDB SQL database server"
+PKG_ADDON_ICON_NAME="MariaDB"
+PKG_ADDON_ICON_SIZE="300"
 PKG_ADDON_TYPE="xbmc.service"
 
 configure_package() {
   PKG_CMAKE_OPTS_HOST=" \
     -DCMAKE_INSTALL_MESSAGE=NEVER \
-    -DSTACK_DIRECTION=-1 \
     -DHAVE_IB_GCC_ATOMIC_BUILTINS=1 \
     -DCMAKE_CROSSCOMPILING=OFF"
 
@@ -31,7 +32,6 @@ configure_package() {
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_CONFIG=mysql_release \
     -DFEATURE_SET=classic \
-    -DSTACK_DIRECTION=1 \
     -DDISABLE_LIBMYSQLCLIENT_SYMBOL_VERSIONING=ON \
     -DCMAKE_CROSSCOMPILING=ON \
     -DIMPORT_EXECUTABLES=${PKG_BUILD}/.${HOST_NAME}/import_executables.cmake \
@@ -56,6 +56,7 @@ configure_package() {
     -DWITH_EMBEDDED_SERVER=OFF \
     -DWITHOUT_SERVER=OFF \
     -DPLUGIN_AUTH_SOCKET=STATIC \
+    -DPLUGIN_DUCKDB=NO \
     -DPLUGIN_OQGRAPH=NO \
     -DPLUGIN_S3=NO \
     -DDISABLE_SHARED=NO \

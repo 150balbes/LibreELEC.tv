@@ -1,20 +1,20 @@
-From 89a7f05ee85fca27f1140a035fec804d84959dbe Mon Sep 17 00:00:00 2001
+From 5679b97392ea6f9eefe554e3ce48b62dc98347f8 Mon Sep 17 00:00:00 2001
 From: Dom Cobley <popcornmix@gmail.com>
 Date: Fri, 3 Dec 2021 16:00:50 +0000
-Subject: [PATCH 01/12] gbm: Set max bpc for high bit depth videos
+Subject: [PATCH 01/11] gbm: Set max bpc for high bit depth videos
 
 ---
  .../HwDecRender/VideoLayerBridgeDRMPRIME.cpp      | 15 +++++++++++++++
  1 file changed, 15 insertions(+)
 
 diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/HwDecRender/VideoLayerBridgeDRMPRIME.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/HwDecRender/VideoLayerBridgeDRMPRIME.cpp
-index 233e6310bb..9b36758c00 100644
+index 54509e2ee584..16430fe570e0 100644
 --- a/xbmc/cores/VideoPlayer/VideoRenderers/HwDecRender/VideoLayerBridgeDRMPRIME.cpp
 +++ b/xbmc/cores/VideoPlayer/VideoRenderers/HwDecRender/VideoLayerBridgeDRMPRIME.cpp
-@@ -34,6 +34,14 @@ void CVideoLayerBridgeDRMPRIME::Disable()
- {
+@@ -41,6 +41,14 @@ void CVideoLayerBridgeDRMPRIME::Disable()
+     return;
+ 
    // disable video plane
-   auto plane = m_DRM->GetVideoPlane();
 +  auto connector = m_DRM->GetConnector();
 +
 +  // reset max bpc back to default of 8
@@ -25,9 +25,9 @@ index 233e6310bb..9b36758c00 100644
 +
    m_DRM->AddProperty(plane, "FB_ID", 0);
    m_DRM->AddProperty(plane, "CRTC_ID", 0);
- 
-@@ -175,6 +183,13 @@ void CVideoLayerBridgeDRMPRIME::Configure(CVideoBufferDRMPRIME* buffer)
-       plane->GetPropertyValue("COLOR_RANGE", GetColorRange(picture));
+ }
+@@ -208,6 +216,13 @@ void CVideoLayerBridgeDRMPRIME::Configure(CVideoBufferDRMPRIME* buffer)
+       plane->GetPropertyEnumValue("COLOR_RANGE", GetColorRange(picture));
    if (colorRange)
      m_DRM->AddProperty(plane, "COLOR_RANGE", colorRange.value());
 +
@@ -41,5 +41,5 @@ index 233e6310bb..9b36758c00 100644
  
  void CVideoLayerBridgeDRMPRIME::SetVideoPlane(CVideoBufferDRMPRIME* buffer, const CRect& destRect)
 -- 
-2.39.2
+2.47.3
 

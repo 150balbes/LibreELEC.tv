@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-tyrquake"
-PKG_VERSION="df0d3afb623b143beb76a5b1adf2d377953bfdf2"
-PKG_SHA256="173bfc01c39d85b7c339ca1ccfec748334cce7e4bcd5dc9df08c9c1ddba31c88"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="0920dec3082d2eecd90147e2d525052d146b5f58"
+PKG_SHA256="85d61a61d7b39ff3ede468ec7d7bd5022f3382e1c729a70e0c722bde3abc351f"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/tyrquake"
 PKG_URL="https://github.com/libretro/tyrquake/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -14,6 +14,10 @@ PKG_TOOLCHAIN="make"
 PKG_LIBNAME="tyrquake_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="TYRQUAKE_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

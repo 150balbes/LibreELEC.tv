@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-yabause"
-PKG_VERSION="4c96b96f7fbe07223627c469ff33376b2a634748"
-PKG_SHA256="76f50b21d81507ac29e80bbcfbfc8dbf71d6bf051f1267973eabed99a6681654"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="7cb15b8f9eea5a6fa7cae34468a6989522bcba75"
+PKG_SHA256="4c9b818067b333583c640ac7eb395adc47f480ede4e32f94e11b2d45e2bb26be"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/yabause"
 PKG_URL="https://github.com/libretro/yabause/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -32,6 +32,10 @@ fi
 if [ "${ARCH}" = "arm" -o "${ARCH}" = "aarch64" ]; then
   PKG_MAKE_OPTS_TARGET+=" HAVE_SSE=0"
 fi
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

@@ -2,9 +2,9 @@
 # Copyright (C) 2023-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-saturn"
-PKG_VERSION="cd395e9e3ee407608450ebc565e871b24e7ffed6"
-PKG_SHA256="b8a7a359c490607187f2dd2ca49af3463731d3816a0b4411aab49dbc2abdc71e"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="02503506566bed8f0d68c9267a1c6c57400870f2"
+PKG_SHA256="29799acc867438740d66daf038218c2d1bcf02fce0219cd904ac07680a5aa01a"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/beetle-saturn-libretro"
 PKG_URL="https://github.com/libretro/beetle-saturn-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -16,6 +16,10 @@ PKG_MAKE_OPTS_TARGET="HAVE_CDROM=1"
 PKG_LIBNAME="mednafen_saturn_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="BEETLE-SATURN_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

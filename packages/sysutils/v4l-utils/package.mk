@@ -5,9 +5,9 @@
 # with 1.0.0 repeat delay is broken. test on upgrade
 
 PKG_NAME="v4l-utils"
-PKG_VERSION="1.28.1"
-PKG_SHA256="0fa075ce59b6618847af6ea191b6155565ccaa44de0504581ddfed795a328a82"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.32.0"
+PKG_SHA256="6828828a17775526eb93fb258a9294d1d1073d633c344dd71ecd4e7a1ffb7dfc"
+PKG_LICENSE="GPL-2.0-or-later AND LGPL-2.1-or-later"
 PKG_SITE="https://linuxtv.org/"
 PKG_URL="https://linuxtv.org/downloads/v4l-utils/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain alsa-lib elfutils ir-bpf-decoders libbpf systemd zlib"
@@ -35,7 +35,7 @@ create_multi_keymap() {
 post_makeinstall_target() {
   local f keymap
 
-  if [ ! "${LIBREELEC_VERSION}" == "devel" ]; then
+  if [ ! "${DISTRO_VERSION}" == "devel" ]; then
     rm ${INSTALL}/usr/bin/v4l2-compliance
   fi
 
@@ -82,6 +82,8 @@ post_makeinstall_target() {
 *		rc-rc6-mce	libreelec_multi.toml
 # multi-table for amlogic devices
 meson-ir	rc-empty	libreelec_multi.toml
+# multi-table for allwinner devices
+sunxi-ir	rc-empty	libreelec_multi.toml
 EOF
 
   fi

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import sys, os, codecs, datetime, time
@@ -108,7 +108,7 @@ else:
     for event in events:
         slotn[event.slot] = 0
 
-# Acumulate information in this hash - meh
+# Accumulate information in this hash - meh
 data = {"previous_status": None, "isactive": False, "statuses": {}}
 for status in ALL_STATUSES:
     data["statuses"][status] = {"enabled": False, "count": 0, "start": 0.0, "total": 0.0}

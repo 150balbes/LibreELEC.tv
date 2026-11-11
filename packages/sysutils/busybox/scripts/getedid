@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 #
 # exit 1 = unsupported GPU
@@ -136,7 +136,7 @@ create_edid() {
 }
 
 intel_amd() {
-  # check which output is connnected:
+  # check which output is connected:
   counter=0
   for i in /sys/class/drm/*; do
     if [ "$(cat "$i"/status 2>/dev/null)" = "connected" ]; then

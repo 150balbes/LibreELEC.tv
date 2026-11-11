@@ -3,9 +3,9 @@
 # Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libICE"
-PKG_VERSION="1.1.1"
-PKG_SHA256="03e77afaf72942c7ac02ccebb19034e6e20f456dcf8dddadfeb572aa5ad3e451"
-PKG_LICENSE="OSS"
+PKG_VERSION="1.1.2"
+PKG_SHA256="974e4ed414225eb3c716985df9709f4da8d22a67a2890066bc6dfc89ad298625"
+PKG_LICENSE="MIT"
 PKG_SITE="https://www.X.org"
 PKG_URL="https://xorg.freedesktop.org/archive/individual/lib/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain util-macros xtrans"

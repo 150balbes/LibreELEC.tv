@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-uae"
-PKG_VERSION="4493a194dd42e593914c26952ee8cb4ba750f596"
-PKG_SHA256="cc341eae2d546219ed18fa8b5aea17a2c7801f2133bfe7fb3f96dad313e14ccd"
-PKG_LICENSE="GPL"
+PKG_VERSION="20e019d4405e33472a3c20824c53bcd79f474a1b"
+PKG_SHA256="5632a68e02c4496b799136630dfe3d0071f70178a41806e6711ec774d8bfeaac"
+PKG_LICENSE="GPL-2.0-only"
 PKG_SITE="https://github.com/libretro/libretro-uae"
 PKG_URL="https://github.com/libretro/libretro-uae/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -14,6 +14,10 @@ PKG_TOOLCHAIN="make"
 PKG_LIBNAME="puae_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="UAE_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

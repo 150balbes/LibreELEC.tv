@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-tgbdual"
-PKG_VERSION="a6f3018e6a23030afc1873845ee54d4b2d8ec9d3"
-PKG_SHA256="5df48cf8a8091cb68b5f21e90671cf27afaf2d0fcf35431093cccff0e4e95c7f"
-PKG_LICENSE="GPLv2"
+PKG_VERSION="12540f0b2d3783259a0dce34ac8aa7a86beeaa11"
+PKG_SHA256="2717509184ae532d147e1e8cc8009a49721cbdf6958af5d0f5d6875e7565f273"
+PKG_LICENSE="GPL-2.0-or-later"
 PKG_SITE="https://github.com/libretro/tgbdual-libretro"
 PKG_URL="https://github.com/libretro/tgbdual-libretro/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
@@ -14,6 +14,10 @@ PKG_TOOLCHAIN="make"
 PKG_LIBNAME="tgbdual_libretro.so"
 PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="TGBDUAL_LIB"
+
+pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
+}
 
 makeinstall_target() {
   mkdir -p ${SYSROOT_PREFIX}/usr/lib/cmake/${PKG_NAME}

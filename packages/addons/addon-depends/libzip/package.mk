@@ -3,9 +3,9 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libzip"
-PKG_VERSION="1.11.1"
-PKG_SHA256="721e0e4e851073b508c243fd75eda04e4c5006158a900441de10ce274cc3b633"
-PKG_LICENSE="GPL"
+PKG_VERSION="1.12.1"
+PKG_SHA256="c40062022a1963c80573d48f6070792297cecd7c6bffe3aefcac0d8b9bee8913"
+PKG_LICENSE="BSD-3-Clause"
 PKG_SITE="https://libzip.org/"
 PKG_URL="https://libzip.org/download/${PKG_NAME}-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="toolchain zlib bzip2"

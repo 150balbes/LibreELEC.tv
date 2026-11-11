@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="procps-ng"
-PKG_VERSION="4.0.4"
-PKG_SHA256="08dbaaaae6afe8d5fbeee8aa3f8b460b01c5e09ce4706b161846f067103a2cf2"
-PKG_LICENSE="GPL"
+PKG_VERSION="4.0.7"
+PKG_SHA256="707d4d43c78b1ff9d0286a4839465e78fa1a82896ec97d3508765b31a808b4b2"
+PKG_LICENSE="GPL-2.0-or-later AND LGPL-2.1-or-later"
 PKG_SITE="https://gitlab.com/procps-ng/procps"
 PKG_URL="https://gitlab.com/procps-ng/procps/-/archive/v${PKG_VERSION}/procps-v${PKG_VERSION}.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain ncurses"

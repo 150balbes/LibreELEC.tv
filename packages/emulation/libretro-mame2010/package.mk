@@ -1,13 +1,13 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mame2010"
-PKG_VERSION="5f524dd5fca63ec1dcf5cca63885286109937587"
-PKG_SHA256="deb2a5126fcf9791ebaaba604143b6fb1bf4fa48fdc7a2ef919c900a3f9e4d69"
-PKG_LICENSE="MAME"
+PKG_VERSION="cc63285e2109263da4eca0911ba07aec60b8109b"
+PKG_SHA256="468b8b3bb35270953283b74eb915ecbaa7630f3ec8935e9f9d1efcaf0a6581cc"
+PKG_LICENSE="LicenseRef-MAME"
 PKG_SITE="https://github.com/libretro/mame2010-libretro"
 PKG_URL="https://github.com/libretro/mame2010-libretro/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain zlib"
 PKG_LONGDESC="Late 2010 version of MAME (0.139) for libretro. Compatible with MAME 0.139 romsets."
 PKG_TOOLCHAIN="manual"
 
@@ -16,6 +16,7 @@ PKG_LIBPATH="${PKG_LIBNAME}"
 PKG_LIBVAR="MAME2010_LIB"
 
 pre_make_target() {
+  MAKEFLAGS+=" GIT_VERSION=\"\\ ${PKG_VERSION:0:7}\""
   PKG_MAKE_OPTS_TARGET="CC=${CC} LD=${CC}"
   if [ "${ARCH}" = "arm" ]; then
     PKG_MAKE_OPTS_TARGET+=" PTR64=0 ARM_ENABLED=1 LCPU=arm"

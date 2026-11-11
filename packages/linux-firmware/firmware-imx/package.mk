@@ -3,10 +3,10 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="firmware-imx"
-PKG_VERSION="8.25-27879f8"
-PKG_SHA256="55766dad38961fde3ed3224ee6a46ab1c5aea62a5b947530228d8fbc4a7d2816"
+PKG_VERSION="8.31-4fa5b46"
+PKG_SHA256="7f83731cae7056ea4007bf8f0b19734cd76d53affb258405c85223ba7ade5354"
 PKG_ARCH="aarch64 arm"
-PKG_LICENSE="other"
+PKG_LICENSE="LicenseRef-nonfree"
 PKG_SITE="http://www.freescale.com"
 PKG_URL="https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/${PKG_NAME}-${PKG_VERSION}.bin"
 PKG_DEPENDS_TARGET="toolchain"

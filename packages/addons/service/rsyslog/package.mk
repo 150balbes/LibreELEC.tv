@@ -1,15 +1,16 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rsyslog"
-PKG_VERSION="8.2408.0"
-PKG_SHA256="8bb2f15f9bf9bb7e635182e3d3e370bfc39d08bf35a367dce9714e186f787206"
-PKG_REV="0"
+PKG_VERSION="8.2610.0"
+PKG_SHA256="7bdf95e81ea6c0ee5d586342d57d2a6e395b089fb3c67318a0dc555816de404b"
+PKG_REV="6"
 PKG_ARCH="any"
-PKG_LICENSE="GPL"
+PKG_LICENSE="GPL-3.0-or-later"
 PKG_SITE="https://github.com/rsyslog"
 PKG_URL="https://www.rsyslog.com/files/download/rsyslog/${PKG_NAME}-${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain curl libestr libfastjson libgcrypt liblogging liblognorm librelp util-linux zlib"
+PKG_DEPENDS_TARGET="toolchain protobuf-c:host curl libestr libfastjson libgcrypt liblogging liblognorm librelp libyaml protobuf-c snappy util-linux zlib"
+PKG_DEPENDS_CONFIG="protobuf-c snappy libyaml"
 PKG_SECTION="service"
 PKG_SHORTDESC="Rsyslog: a rocket-fast system for log processing."
 PKG_LONGDESC="Rsyslog (${PKG_VERSION}) offers high-performance, great security features and a modular design."
@@ -17,6 +18,9 @@ PKG_BUILD_FLAGS="-sysroot"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Rsyslog"
+PKG_ADDON_ICON_NAME="none"
+PKG_ADDON_ICON_SIZE="320"
+PKG_ADDON_ICON_OFFSET='+5'
 PKG_ADDON_TYPE="xbmc.service"
 
 PKG_CONFIGURE_OPTS_TARGET="--disable-default-tests \

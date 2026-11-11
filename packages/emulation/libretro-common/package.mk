@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-common"
-PKG_VERSION="50c15a88eb741cbe675743a282d8cc4c89421e3f"
-PKG_SHA256="042986fad22dc37188df7a186d17a258edfe8e552353f9b509a47418e8dfa623"
-PKG_LICENSE="Public domain"
+PKG_VERSION="0a2b63d903ea0cc7bac9e759af57db190b4aeadd"
+PKG_SHA256="cdeba2574bf659cd5b7bff6b4a6fcbe827d93d1beb8cf1ccc598836b25c75852"
+PKG_LICENSE="MIT"
 PKG_SITE="https://github.com/libretro/libretro-common"
 PKG_URL="https://github.com/libretro/libretro-common/archive/${PKG_VERSION}.tar.gz"
 PKG_LONGDESC="Reusable coding blocks useful for libretro core and frontend development"

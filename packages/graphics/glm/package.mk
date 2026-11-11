@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="glm"
-PKG_VERSION="1.0.0"
-PKG_SHA256="e51f6c89ff33b7cfb19daafb215f293d106cd900f8d681b9b1295312ccadbd23"
+PKG_VERSION="1.0.3"
+PKG_SHA256="6775e47231a446fd086d660ecc18bcd076531cfedd912fbd66e576b118607001"
 PKG_LICENSE="MIT"
 PKG_SITE="https://glm.g-truc.net/"
 PKG_URL="https://github.com/g-truc/glm/archive/refs/tags/${PKG_VERSION}.tar.gz"

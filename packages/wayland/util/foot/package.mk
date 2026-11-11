@@ -1,14 +1,19 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="foot"
-PKG_VERSION="1.19.0"
-PKG_SHA256="148b0b545ca37e15b877ff9f6a768a4ce6feb0ed256f8a5f853cb2e16e3323c1"
+PKG_VERSION="1.28.0"
+PKG_SHA256="4296be402b5684d049534598e69db92b918f92beac9dab76b585207045f0b037"
 PKG_LICENSE="MIT"
 PKG_SITE="https://codeberg.org/dnkl/foot/"
 PKG_URL="https://codeberg.org/dnkl/foot/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain ncurses wayland wayland-protocols pixman fontconfig libxkbcommon fcft"
 PKG_LONGDESC="A fast, lightweight and minimalistic Wayland terminal emulator"
+
+if [ "${DISPLAYSERVER}" != "wl" ]; then
+  PKG_BUILD_FLAGS="-sysroot"
+  PKG_DEPENDS_CONFIG="wayland wayland-protocols tllist fcft"
+fi
 
 PKG_MESON_OPTS_TARGET="-Ddocs=disabled \
                        -Dthemes=false \
